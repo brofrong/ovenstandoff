@@ -91,9 +91,6 @@ export class StateManager {
       {step: 'find', data: {anchorKey: 'create_custom_lobby'}},
       {step: 'click', data: {anchorKey: 'create_custom_lobby'}},
 
-      {step: 'find', data: {anchorKey: 'share_room_code'}},
-      {step: 'click', data: {anchorKey: 'share_room_code'}},
-      {step: 'wait', data: {amount: 500}},
       {step: 'share'},
 
       {step: 'find', data: {anchorKey: 'to_change_mode'}},

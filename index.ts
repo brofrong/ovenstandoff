@@ -27,8 +27,8 @@ async function init() {
 }
 
 async function startEmulators() {
-  // const emulators = (await LD.list2()).slice(0,1);
-  const emulators = await LD.list2();
+  const emulators = (await LD.list2()).slice(0,1);
+  // const emulators = await LD.list2();
 
   for (let emulator of emulators) {
     const newLD = new LDPlayer(emulator.name);
