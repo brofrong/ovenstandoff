@@ -1,16 +1,9 @@
-import sharp from "sharp";
-import path from "path";
-import * as fs from "fs/promises";
 import { activeLdPlayers, LDPlayer } from "./src/ldconnector/ld";
 import { LD } from "./src/ldconnector/ld-command";
 const PATH_TO_LDCONSOLE = "D:/LDPlayer/LDPlayer9/ldconsole.exe";
 
-import { sql, serve } from "bun";
-import { dirs, wait } from "./src/unitls";
-import { initStorage } from "./src/storage/init-storage";
 import { StateManager } from "./src/state-manager/state-manager";
-import { calculateSimilarity, findAnchor } from "./src/img-proccesing/img-proccesing";
-import playJson from "./anchors/play.json";
+import { initStorage } from "./src/storage/init-storage";
 
 async function init() {
   await initStorage();
@@ -37,7 +30,6 @@ async function startEmulators() {
 }
 
 await init();
-
 
   // await findAnchor(
   //   "C:\\Users\\dima7\\AppData\\Local\\ovenStandoff\\tmp\\imt\\imt-1745416070931.png",

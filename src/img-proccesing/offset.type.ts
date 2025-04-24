@@ -1,1 +1,0 @@
-export type Offset = { left: number; top: number; width: number; height: number };

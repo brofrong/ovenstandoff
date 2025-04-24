@@ -1,8 +1,5 @@
-import { findLoop } from "../img-proccesing/findloop";
 import { findAnchor } from "../img-proccesing/img-proccesing";
 import type { LDPlayer } from "../ldconnector/ld";
-import { share } from "../share/shate";
-import { deletePNG } from "../storage/init-storage";
 import { runSteps } from "./steps";
 
 type State =
@@ -57,14 +54,14 @@ export class StateManager {
     if (!activity) return { wait: 5000 };
 
     this.state = "andorid";
-    return { wait: 1000 };
+    return { wait: 0 };
   }
 
   private async andorid(): Promise<ActionRet> {
     this.ldPlayer.runapp("com.axlebolt.standoff2");
 
     this.state = "launching";
-    return { wait: 5000 };
+    return { wait: 0 };
   }
 
   private async dump(): Promise<ActionRet> {
@@ -75,56 +72,56 @@ export class StateManager {
   private async launching(): Promise<ActionRet> {
     if (await findAnchor(this.currentImg, "play")) {
       this.state = "mainMenu";
-      return { wait: 1000 };
+      return { wait: 0 };
     }
     return { wait: 5000 };
   }
 
   private async createLobby(): Promise<ActionRet> {
     await runSteps([
-      {step: 'find', data: {anchorKey: 'menu_group'}},
-      {step: 'click', data: {anchorKey: 'menu_group'}},
+      { step: 'find', data: { anchorKey: 'menu_group' } },
+      { step: 'click', data: { anchorKey: 'menu_group' } },
 
-      {step: 'find', data: {anchorKey: 'custom_lobby'}},
-      {step: 'click', data: {anchorKey: 'custom_lobby'}},
+      { step: 'find', data: { anchorKey: 'custom_lobby' } },
+      { step: 'click', data: { anchorKey: 'custom_lobby' } },
 
-      {step: 'find', data: {anchorKey: 'create_custom_lobby'}},
-      {step: 'click', data: {anchorKey: 'create_custom_lobby'}},
+      { step: 'find', data: { anchorKey: 'create_custom_lobby' } },
+      { step: 'click', data: { anchorKey: 'create_custom_lobby' } },
 
-      {step: 'share'},
+      { step: 'share' },
 
-      {step: 'find', data: {anchorKey: 'to_change_mode'}},
-      {step: 'click', data: {anchorKey: 'to_change_mode'}},
+      { step: 'find', data: { anchorKey: 'to_change_mode' } },
+      { step: 'click', data: { anchorKey: 'to_change_mode' } },
 
-      {step: 'find', data: {anchorKey: 'competitive_mode'}},
-      {step: 'click', data: {anchorKey: 'competitive_mode'}},
+      { step: 'find', data: { anchorKey: 'competitive_mode' } },
+      { step: 'click', data: { anchorKey: 'competitive_mode' } },
 
-      {step: 'find', data: {anchorKey: 'change_mode'}},
-      {step: 'click', data: {anchorKey: 'change_mode'}},
+      { step: 'find', data: { anchorKey: 'change_mode' } },
+      { step: 'click', data: { anchorKey: 'change_mode' } },
 
-      {step: 'find', data: {anchorKey: 'lobby_setting'}},
-      {step: 'click', data: {anchorKey: 'lobby_setting'}},
+      { step: 'find', data: { anchorKey: 'lobby_setting' } },
+      { step: 'click', data: { anchorKey: 'lobby_setting' } },
 
-      {step: 'find', data: {anchorKey: 'change_lobby_description'}},
-      {step: 'click', data: {anchorKey: 'change_lobby_description'}},
-      {step: 'write', data: {text: 'CH match'}},
+      { step: 'find', data: { anchorKey: 'change_lobby_description' } },
+      { step: 'click', data: { anchorKey: 'change_lobby_description' } },
+      { step: 'write', data: { text: 'CH match' } },
 
-      {step: 'find', data: {anchorKey: 'lock_team_setting'}},
-      {step: 'click', data: {anchorKey: 'lock_team_setting'}},
+      { step: 'find', data: { anchorKey: 'lock_team_setting' } },
+      { step: 'click', data: { anchorKey: 'lock_team_setting' } },
 
-      
-      {step: 'find', data: {anchorKey: 'lobby_pripare_time_setting'}},
-      {step: 'click', data: {anchorKey: 'lobby_pripare_time_setting'}},
 
-      {step: 'find', data: {anchorKey: 'lobby_rounds_count_setting'}},
-      {step: 'click', data: {anchorKey: 'lobby_rounds_count_setting'}},
+      { step: 'find', data: { anchorKey: 'lobby_pripare_time_setting' } },
+      { step: 'click', data: { anchorKey: 'lobby_pripare_time_setting' } },
 
-      {step: 'find', data: {anchorKey: 'lobby_time_setting'}},
-      {step: 'click', data: {anchorKey: 'lobby_time_setting'}},
+      { step: 'find', data: { anchorKey: 'lobby_rounds_count_setting' } },
+      { step: 'click', data: { anchorKey: 'lobby_rounds_count_setting' } },
 
-      
-      {step: 'find', data: {anchorKey: 'apply_setting'}},
-      {step: 'click', data: {anchorKey: 'apply_setting'}},
+      { step: 'find', data: { anchorKey: 'lobby_time_setting' } },
+      { step: 'click', data: { anchorKey: 'lobby_time_setting' } },
+
+
+      { step: 'find', data: { anchorKey: 'apply_setting' } },
+      { step: 'click', data: { anchorKey: 'apply_setting' } },
 
     ], this.ldPlayer);
 
