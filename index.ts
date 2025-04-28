@@ -1,3 +1,4 @@
+import { serve, ws } from "bun";
 import { activeLdPlayers, LDPlayer } from "./src/ldconnector/ld";
 import { LD } from "./src/ldconnector/ld-command";
 const PATH_TO_LDCONSOLE = "D:/LDPlayer/LDPlayer9/ldconsole.exe";
@@ -20,7 +21,7 @@ async function init() {
 }
 
 async function startEmulators() {
-  const emulators = (await LD.list2()).slice(0,1);
+  const emulators = (await LD.list2()).slice(0, 1);
   // const emulators = await LD.list2();
 
   for (let emulator of emulators) {
@@ -31,53 +32,34 @@ async function startEmulators() {
 
 await init();
 
-  // await findAnchor(
-  //   "C:\\Users\\dima7\\AppData\\Local\\ovenStandoff\\tmp\\imt\\imt-1745416070931.png",
-  //   'menu_group'
-  // );
-  // await findAnchor(
-  //   "C:\\Users\\dima7\\AppData\\Local\\ovenStandoff\\tmp\\imt\\imt-1745416070931.png",
-  //   'play'
-  // );
-  // await findAnchor(
-  //   "C:\\Users\\dima7\\AppData\\Local\\ovenStandoff\\tmp\\imt\\imt-1745416070931.png",
-  //   'play'
-  // );
-  // await findAnchor(
-  //   "C:\\Users\\dima7\\AppData\\Local\\ovenStandoff\\tmp\\imt\\imt-1745416070931.png",
-  //   'menu_group'
-  // );
-  // await findAnchor(
-  //   "C:\\Users\\dima7\\AppData\\Local\\ovenStandoff\\tmp\\imt\\imt-1745416070931.png",
-  //   'menu_group'
-  // );
 
-// console.time("total");
-// for (let i = 0; i < 100; i++) {
-//   console.time("frame");
-//  await Promise.all([
-//     findAnchor(
-//       "C:\\Users\\dima7\\AppData\\Local\\ovenStandoff\\tmp\\imt-1\\imt-1-1744964960295.png",
-//       'play'
-//     ),
-//     findAnchor(
-//       "C:\\Users\\dima7\\AppData\\Local\\ovenStandoff\\tmp\\imt-1\\imt-1-1744965002752.png",
-//       'play'
-//     )
-//   ])
-   
-//   console.timeEnd("frame");
-// }
-// console.timeEnd("total");
-
-// mainLoop();
-
-// serve({
-//   port: 3001,
-//   routes: {
-//     "/api/version": async () => {
-//       return Response.json({version: 0.1});
+// serve<{ name: string }>({
+//   port: 3000,
+//   websocket: {
+//     open: (ws) => {
+//       console.log("Client connected");
+//     },
+//     message: (ws, message) => {
+//       console.log(`${ws.data.name}: ${message}`);
+//     },
+//     close: (ws) => {
+//       console.log("Client disconnected");
 //     },
 //   },
-// });
 
+//   fetch(req, server) {
+//     const url = new URL(req.url);
+//     if (url.pathname === "/chat") {
+//       const upgraded = server.upgrade(req, {
+//         data: {
+//           name: new URL(req.url).searchParams.get("name"),
+//         },
+//       });
+//       if (!upgraded) {
+//         return new Response("Upgrade failed", { status: 400 });
+//       }
+//       return;
+//     }
+//     return new Response("Hello World");
+//   },
+// });

@@ -1,3 +1,15 @@
 {
-    "ldconsolePath": "D:\\LDPlayer\\LDPlayer9\\ldconsole.exe"
+    "ldconsolePath": "D:\\LDPlayer\\LDPlayer9\\ldconsole.exe",
+    "runners": [
+        {
+            "name": "imt-1",
+            "login": "test@test.ru",
+            "password": "qwerty"
+        },
+        {
+            "name": "imt",
+            "login": "test@test.ru",
+            "password": "qwerty"
+        }
+    ]
 }

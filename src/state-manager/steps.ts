@@ -7,24 +7,25 @@ import type { anchors } from "../img-proccesing/anchors";
 
 type Step =
   | {
-      step: "find";
-      data: { anchorKey: keyof typeof anchors };
-    }
+    step: "find";
+    data: { anchorKey: keyof typeof anchors };
+  }
   | {
-      step: "click";
-      data: { anchorKey: keyof typeof anchors };
-    }
+    step: "click";
+    data: { anchorKey: keyof typeof anchors };
+  }
   | {
-      step: "write";
-      data: { text: string };
-    }
+    step: "write";
+    data: { text: string };
+  }
   | {
-      step: "share";
-    }
+    step: "share";
+    data: { setCode: (code: string) => void };
+  }
   | {
-      step: "wait";
-      data: { amount: number };
-    };
+    step: "wait";
+    data: { amount: number };
+  };
 
 type Steps = Step[];
 
@@ -35,14 +36,15 @@ export async function runSteps(steps: Steps, ldPlayer: LDPlayer) {
         await find(step, ldPlayer);
         break;
       case "click":
+        await find(step, ldPlayer);
         await ldPlayer.clickAnchor(step.data.anchorKey);
         break;
       case "write":
         await ldPlayer.writeText(step.data.text);
         break;
       case "share":
-        const code = await share(ldPlayer.name, ldPlayer);
-        console.log(`player: ${ldPlayer.name} - ${code.code}`);
+        const shareRet = await share(ldPlayer.name, ldPlayer);
+        step.data.setCode(shareRet.code);
         break;
       case "wait": {
         await wait(step.data.amount);

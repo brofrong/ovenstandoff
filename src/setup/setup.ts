@@ -1,4 +1,3 @@
-import clipboard from "clipboardy";
 import { LD } from "../ldconnector/ld-command";
 import { initStorage } from "../storage/init-storage";
 import { wait } from "../unitls";

@@ -1,0 +1,15 @@
+meta {
+  name: connectToWS
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:3000/chat?name=brofrong
+  body: none
+  auth: inherit
+}
+
+params:query {
+  name: brofrong
+}

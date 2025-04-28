@@ -6,7 +6,6 @@ import { anchors } from "../img-proccesing/anchors";
 export const activeLdPlayers: LDPlayer[] = [];
 
 
-
 export class LDPlayer {
     public name;
 
@@ -23,11 +22,11 @@ export class LDPlayer {
         return LD.isrunning(this.name);
     }
 
-    public async adb(command: string){
+    public async adb(command: string) {
         return LD.adb(this.name, command);
     }
 
-    public async click(x: number, y: number){
+    public async click(x: number, y: number) {
         return LD.click(this.name, x, y);
     }
     public async clickAnchor(anchorKey: keyof typeof anchors) {
@@ -40,7 +39,7 @@ export class LDPlayer {
 
     public async writeText(text: string, pressEnterAfter: boolean = false) {
         const textWithSpaceChange = text.replaceAll(' ', '%s');
-            await LD.adb(this.name, `shell input text "${textWithSpaceChange}"`);
+        await LD.adb(this.name, `shell input text "${textWithSpaceChange}"`);
         if (pressEnterAfter) {
             await LD.adb(this.name, `shell input keyevent 66`);
         }
@@ -58,6 +57,10 @@ export class LDPlayer {
 
     public async runapp(packagename: string) {
         return LD.runapp(this.name, packagename);
+    }
+
+    public async killapp(packagename: string) {
+        return LD.killapp(this.name, packagename);
     }
 
 }
