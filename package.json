@@ -12,8 +12,12 @@
   },
   "dependencies": {
     "@appium/opencv": "^3.0.8",
+    "@types/adm-zip": "^0.5.7",
+    "@types/progress": "^2.0.7",
+    "adm-zip": "^0.5.16",
     "appdirsjs": "^1.2.7",
     "clipboardy": "^4.0.0",
+    "progress": "^2.0.3",
     "sharp": "^0.34.1",
     "tesseract.js": "^6.0.1",
     "zod": "^3.24.2"

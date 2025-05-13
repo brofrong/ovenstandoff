@@ -16,7 +16,7 @@ export const LD = {
     quitall: () => {
         return $`${config.ldconsolePath} quitall`.text();
     },
-    modify: (name: string, params: {resolution?: {width: number, height: number, dpi: number}, cpu?: number, memory?: number}) => {
+    modify: async (name: string, params: {resolution?: {width: number, height: number, dpi: number}, cpu?: number, memory?: number}) => {
         let toModify: string[] = [];
 
         if(params.resolution) {
@@ -32,11 +32,16 @@ export const LD = {
             toModify.push(`--memory ${params.memory}`)
         }
 
-
-        return $`${config.ldconsolePath} modify --name ${name} ${toModify.join(' ')}`.text();
+        console.log(`${config.ldconsolePath} modify --name ${name} ${toModify.join(' ')}`);
+        return await $`${config.ldconsolePath} modify --name ${name} ${toModify.join(' ')}`.text();
     },
-    copy: (newName: string, from:  string | number) => {
-        return $`${config.ldconsolePath} copy --name ${newName} --from ${from}`.text() ;
+    copy: async (newName: string, from:  string | number) => {
+        try {
+            return await $`${config.ldconsolePath} copy --name ${newName} --from ${from}`.text();
+        } catch(e) {
+            const id = (e as any)?.exitCode ?? 0;
+            return id;
+        }
     },
     runapp: (name: string, packagename: string) => {
         return $`${config.ldconsolePath} runapp --name ${name} --packagename ${packagename}`.text();
@@ -72,7 +77,28 @@ export const LD = {
     install: (name: string, apkPath: string) => {
         return $`${config.ldconsolePath} adb --name ${name} --command "install ${apkPath}`.text();
     },
-    
+    create: async (name: string): Promise<number> => {
+        try{
+            await $`${config.ldconsolePath} add --name ${name}`.text();
+        } catch(e) {
+            const id = (e as any)?.exitCode ?? 0;
+            console.log(`created ldPlayer with id ${id}`);
+            return parseInt(id);
+        }
+        console.log(`created ldPlayer with id ${0}`);
+        return 0;
+    },
+    delete: async (name: string) => {
+        try {
+           await $`${config.ldconsolePath} remove --name ${name}`.text();
+        } catch (e) {
+            const id = (e as any)?.exitCode ?? 0;
+            console.log(`deleted ldPlayer with id ${id}`);
+            return e;
+        }
+        console.log(`deleted ldPlayer with id ${0}`);
+        return 0;
+    },    
 }
 
 //D:/LDPlayer/LDPlayer9/ldconsole.exe adb --name imt --command "push C:\Users\dima7\work\ovenstandoff\standoff2\Android\obb\com.axlebolt.standoff2 /storage/emulated/0/Android/obb/"                                   

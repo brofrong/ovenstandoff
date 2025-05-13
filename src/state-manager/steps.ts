@@ -12,7 +12,7 @@ type Step =
   }
   | {
     step: "click";
-    data: { anchorKey: keyof typeof anchors };
+    data: { anchorKey?: keyof typeof anchors, x?: number, y?: number };
   }
   | {
     step: "write";
@@ -36,8 +36,13 @@ export async function runSteps(steps: Steps, ldPlayer: LDPlayer) {
         await find(step, ldPlayer);
         break;
       case "click":
-        await find(step, ldPlayer);
-        await ldPlayer.clickAnchor(step.data.anchorKey);
+        if(step.data.x && step.data.y) {
+          await ldPlayer.click(step.data.x, step.data.y);
+        }
+        if(step.data.anchorKey) {
+          await find(step, ldPlayer);
+          await ldPlayer.clickAnchor(step.data.anchorKey);
+        }
         break;
       case "write":
         await ldPlayer.writeText(step.data.text);
@@ -50,15 +55,15 @@ export async function runSteps(steps: Steps, ldPlayer: LDPlayer) {
         await wait(step.data.amount);
       }
     }
-    await wait(200);
+    await wait(500);
   }
 }
 
 async function find(step: Step, ldPlayer: LDPlayer) {
   if (step.step !== "find") return;
-  const custom_lobby = await findLoop(step.data.anchorKey, ldPlayer);
-  if (custom_lobby.error) {
-    throw new Error();
+  const findedEllement = await findLoop(step.data.anchorKey, ldPlayer);
+  if (findedEllement.error) {
+    throw new Error(`name: ${ldPlayer.name}, anchor: ${step.data.anchorKey}`);
   }
   return;
 }

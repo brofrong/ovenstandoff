@@ -10,6 +10,42 @@ import create_custom_lobbyPNG from '../../anchors/create_custom_lobby.png' with 
 import create_custom_lobbyJSON from '../../anchors/create_custom_lobby.json';
 import custom_lobbyPNG from '../../anchors/custom_lobby.png' with { type: "file" };
 import custom_lobbyJSON from '../../anchors/custom_lobby.json';
+import free_slot_1PNG from '../../anchors/free_slot_1.png' with { type: "file" };
+import free_slot_1JSON from '../../anchors/free_slot_1.json';
+import free_slot_10PNG from '../../anchors/free_slot_10.png' with { type: "file" };
+import free_slot_10JSON from '../../anchors/free_slot_10.json';
+import free_slot_2PNG from '../../anchors/free_slot_2.png' with { type: "file" };
+import free_slot_2JSON from '../../anchors/free_slot_2.json';
+import free_slot_3PNG from '../../anchors/free_slot_3.png' with { type: "file" };
+import free_slot_3JSON from '../../anchors/free_slot_3.json';
+import free_slot_4PNG from '../../anchors/free_slot_4.png' with { type: "file" };
+import free_slot_4JSON from '../../anchors/free_slot_4.json';
+import free_slot_5PNG from '../../anchors/free_slot_5.png' with { type: "file" };
+import free_slot_5JSON from '../../anchors/free_slot_5.json';
+import free_slot_6PNG from '../../anchors/free_slot_6.png' with { type: "file" };
+import free_slot_6JSON from '../../anchors/free_slot_6.json';
+import free_slot_7PNG from '../../anchors/free_slot_7.png' with { type: "file" };
+import free_slot_7JSON from '../../anchors/free_slot_7.json';
+import free_slot_8PNG from '../../anchors/free_slot_8.png' with { type: "file" };
+import free_slot_8JSON from '../../anchors/free_slot_8.json';
+import free_slot_9PNG from '../../anchors/free_slot_9.png' with { type: "file" };
+import free_slot_9JSON from '../../anchors/free_slot_9.json';
+import launch_ad_closePNG from '../../anchors/launch_ad_close.png' with { type: "file" };
+import launch_ad_closeJSON from '../../anchors/launch_ad_close.json';
+import launch_info_applyPNG from '../../anchors/launch_info_apply.png' with { type: "file" };
+import launch_info_applyJSON from '../../anchors/launch_info_apply.json';
+import launch_login_continuePNG from '../../anchors/launch_login_continue.png' with { type: "file" };
+import launch_login_continueJSON from '../../anchors/launch_login_continue.json';
+import launch_login_emailPNG from '../../anchors/launch_login_email.png' with { type: "file" };
+import launch_login_emailJSON from '../../anchors/launch_login_email.json';
+import launch_login_passwordPNG from '../../anchors/launch_login_password.png' with { type: "file" };
+import launch_login_passwordJSON from '../../anchors/launch_login_password.json';
+import launch_login_password_continuePNG from '../../anchors/launch_login_password_continue.png' with { type: "file" };
+import launch_login_password_continueJSON from '../../anchors/launch_login_password_continue.json';
+import launch_storage_applyPNG from '../../anchors/launch_storage_apply.png' with { type: "file" };
+import launch_storage_applyJSON from '../../anchors/launch_storage_apply.json';
+import launch_with_googlePNG from '../../anchors/launch_with_google.png' with { type: "file" };
+import launch_with_googleJSON from '../../anchors/launch_with_google.json';
 import lobby_pripare_time_settingPNG from '../../anchors/lobby_pripare_time_setting.png' with { type: "file" };
 import lobby_pripare_time_settingJSON from '../../anchors/lobby_pripare_time_setting.json';
 import lobby_rounds_count_settingPNG from '../../anchors/lobby_rounds_count_setting.png' with { type: "file" };
@@ -32,6 +68,8 @@ import start_lobbyPNG from '../../anchors/start_lobby.png' with { type: "file" }
 import start_lobbyJSON from '../../anchors/start_lobby.json';
 import to_change_modePNG from '../../anchors/to_change_mode.png' with { type: "file" };
 import to_change_modeJSON from '../../anchors/to_change_mode.json';
+import to_spectatorsPNG from '../../anchors/to_spectators.png' with { type: "file" };
+import to_spectatorsJSON from '../../anchors/to_spectators.json';
 
 
 export const anchors = {
@@ -41,6 +79,24 @@ export const anchors = {
     'competitive_mode': {img: competitive_modePNG, offset: competitive_modeJSON },
     'create_custom_lobby': {img: create_custom_lobbyPNG, offset: create_custom_lobbyJSON },
     'custom_lobby': {img: custom_lobbyPNG, offset: custom_lobbyJSON },
+    'free_slot_1': {img: free_slot_1PNG, offset: free_slot_1JSON },
+    'free_slot_10': {img: free_slot_10PNG, offset: free_slot_10JSON },
+    'free_slot_2': {img: free_slot_2PNG, offset: free_slot_2JSON },
+    'free_slot_3': {img: free_slot_3PNG, offset: free_slot_3JSON },
+    'free_slot_4': {img: free_slot_4PNG, offset: free_slot_4JSON },
+    'free_slot_5': {img: free_slot_5PNG, offset: free_slot_5JSON },
+    'free_slot_6': {img: free_slot_6PNG, offset: free_slot_6JSON },
+    'free_slot_7': {img: free_slot_7PNG, offset: free_slot_7JSON },
+    'free_slot_8': {img: free_slot_8PNG, offset: free_slot_8JSON },
+    'free_slot_9': {img: free_slot_9PNG, offset: free_slot_9JSON },
+    'launch_ad_close': {img: launch_ad_closePNG, offset: launch_ad_closeJSON },
+    'launch_info_apply': {img: launch_info_applyPNG, offset: launch_info_applyJSON },
+    'launch_login_continue': {img: launch_login_continuePNG, offset: launch_login_continueJSON },
+    'launch_login_email': {img: launch_login_emailPNG, offset: launch_login_emailJSON },
+    'launch_login_password': {img: launch_login_passwordPNG, offset: launch_login_passwordJSON },
+    'launch_login_password_continue': {img: launch_login_password_continuePNG, offset: launch_login_password_continueJSON },
+    'launch_storage_apply': {img: launch_storage_applyPNG, offset: launch_storage_applyJSON },
+    'launch_with_google': {img: launch_with_googlePNG, offset: launch_with_googleJSON },
     'lobby_pripare_time_setting': {img: lobby_pripare_time_settingPNG, offset: lobby_pripare_time_settingJSON },
     'lobby_rounds_count_setting': {img: lobby_rounds_count_settingPNG, offset: lobby_rounds_count_settingJSON },
     'lobby_setting': {img: lobby_settingPNG, offset: lobby_settingJSON },
@@ -52,4 +108,5 @@ export const anchors = {
     'share_room_code': {img: share_room_codePNG, offset: share_room_codeJSON },
     'start_lobby': {img: start_lobbyPNG, offset: start_lobbyJSON },
     'to_change_mode': {img: to_change_modePNG, offset: to_change_modeJSON },
+    'to_spectators': {img: to_spectatorsPNG, offset: to_spectatorsJSON },
 } as const;

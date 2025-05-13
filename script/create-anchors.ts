@@ -28,4 +28,4 @@ for(let i of imports) {
 fileString+= `} as const;\n`;
 
 
-await Bun.file('./script/anchors.ts').write(fileString);
+await Bun.file('./src/img-proccesing/anchors.ts').write(fileString);
