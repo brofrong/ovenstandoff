@@ -1,16 +1,19 @@
 {
     "ldconsolePath": "D:\\LDPlayer\\LDPlayer9\\ldconsole.exe",
     "ldPath": "D:\\LDPlayer\\LDPlayer9",
+    "masterServerHost": "ws://localhost:3000",
     "runners": [
         {
             "name": "imt-1",
             "email": "test@test.ru",
-            "password": "qwerty"
+            "password": "qwerty",
+            "lowSettings": false
         },
         {
             "name": "imt",
             "email": "test@test.ru",
-            "password": "qwerty"
+            "password": "qwerty",
+            "lowSettings": false
         }
     ]
 }

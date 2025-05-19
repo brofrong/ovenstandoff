@@ -34,6 +34,8 @@ import launch_ad_closePNG from '../../anchors/launch_ad_close.png' with { type: 
 import launch_ad_closeJSON from '../../anchors/launch_ad_close.json';
 import launch_info_applyPNG from '../../anchors/launch_info_apply.png' with { type: "file" };
 import launch_info_applyJSON from '../../anchors/launch_info_apply.json';
+import launch_is_in_lobbyPNG from '../../anchors/launch_is_in_lobby.png' with { type: "file" };
+import launch_is_in_lobbyJSON from '../../anchors/launch_is_in_lobby.json';
 import launch_login_continuePNG from '../../anchors/launch_login_continue.png' with { type: "file" };
 import launch_login_continueJSON from '../../anchors/launch_login_continue.json';
 import launch_login_emailPNG from '../../anchors/launch_login_email.png' with { type: "file" };
@@ -60,6 +62,12 @@ import menu_groupPNG from '../../anchors/menu_group.png' with { type: "file" };
 import menu_groupJSON from '../../anchors/menu_group.json';
 import playPNG from '../../anchors/play.png' with { type: "file" };
 import playJSON from '../../anchors/play.json';
+import settings_main_menuPNG from '../../anchors/settings_main_menu.png' with { type: "file" };
+import settings_main_menuJSON from '../../anchors/settings_main_menu.json';
+import settings_to_audioPNG from '../../anchors/settings_to_audio.png' with { type: "file" };
+import settings_to_audioJSON from '../../anchors/settings_to_audio.json';
+import settings_to_videoPNG from '../../anchors/settings_to_video.png' with { type: "file" };
+import settings_to_videoJSON from '../../anchors/settings_to_video.json';
 import share_iconPNG from '../../anchors/share_icon.png' with { type: "file" };
 import share_iconJSON from '../../anchors/share_icon.json';
 import share_room_codePNG from '../../anchors/share_room_code.png' with { type: "file" };
@@ -91,6 +99,7 @@ export const anchors = {
     'free_slot_9': {img: free_slot_9PNG, offset: free_slot_9JSON },
     'launch_ad_close': {img: launch_ad_closePNG, offset: launch_ad_closeJSON },
     'launch_info_apply': {img: launch_info_applyPNG, offset: launch_info_applyJSON },
+    'launch_is_in_lobby': {img: launch_is_in_lobbyPNG, offset: launch_is_in_lobbyJSON },
     'launch_login_continue': {img: launch_login_continuePNG, offset: launch_login_continueJSON },
     'launch_login_email': {img: launch_login_emailPNG, offset: launch_login_emailJSON },
     'launch_login_password': {img: launch_login_passwordPNG, offset: launch_login_passwordJSON },
@@ -104,6 +113,9 @@ export const anchors = {
     'lock_team_setting': {img: lock_team_settingPNG, offset: lock_team_settingJSON },
     'menu_group': {img: menu_groupPNG, offset: menu_groupJSON },
     'play': {img: playPNG, offset: playJSON },
+    'settings_main_menu': {img: settings_main_menuPNG, offset: settings_main_menuJSON },
+    'settings_to_audio': {img: settings_to_audioPNG, offset: settings_to_audioJSON },
+    'settings_to_video': {img: settings_to_videoPNG, offset: settings_to_videoJSON },
     'share_icon': {img: share_iconPNG, offset: share_iconJSON },
     'share_room_code': {img: share_room_codePNG, offset: share_room_codeJSON },
     'start_lobby': {img: start_lobbyPNG, offset: start_lobbyJSON },

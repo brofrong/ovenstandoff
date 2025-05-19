@@ -31,6 +31,9 @@ export async function calculateSimilarityOpenCV(
   offset: Offset,
   debug: boolean = false
 ) {
+  if(!bigImagePath || !smallImagePath) {
+    return 0;
+  }
   const smallImage = await loadBuffer(smallImagePath);
   const bigImage = await loadBuffer(bigImagePath, offset);
 

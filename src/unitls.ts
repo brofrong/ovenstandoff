@@ -1,4 +1,5 @@
 import appDirs from "appdirsjs";
+import Fuse from "fuse.js";
 import { readdir } from "node:fs/promises";
 
 export function wait(ms: number): Promise<void> {
@@ -16,3 +17,25 @@ export async function isFolderExists(path: string): Promise<boolean> {
     return false;
   }
 };
+
+
+const removeNonLatin = (name: string) => name.replace(/[^a-zA-Z0-9а-яА-ЯёЁ]/g, '');
+
+export function fuzzySearchNames(name: string, allNames: string[]): string | null {
+  const cleanName = removeNonLatin(name);
+  const cleanAllNames = allNames.map(removeNonLatin);
+
+  const fuse = new Fuse(cleanAllNames, {threshold: 0.2, includeScore: true});
+
+  const result = fuse.search(cleanName);
+  
+  const bestResult = result[0];
+
+  console.log({name, bestResult});
+
+  if(((bestResult?.score ?? 0) < 0.2) && (bestResult?.refIndex !== undefined)) {
+    return allNames[bestResult.refIndex];
+  }
+
+  return null;
+}
