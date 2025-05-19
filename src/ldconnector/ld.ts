@@ -47,12 +47,8 @@ export class LDPlayer {
         return;
     }
 
-    public async screenShot(): Promise<string> {
-        const ts = Date.now();
-        const imgPath = path.join(getImgFolder(this.name), `${this.name}-${ts}.png`);
-        const ret = await LD.adb(this.name, `shell screencap -p /sdcard/${this.name}-${ts}.png`);
-        const ret2 = await LD.adb(this.name, `pull /sdcard/${this.name}-${ts}.png ${imgPath}`)
-        return imgPath;
+    public async screenShot(): Promise<Buffer> {
+         return LD.screencap(this.name);
     }
 
     public async runapp(packagename: string) {

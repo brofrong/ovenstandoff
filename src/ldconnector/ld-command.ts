@@ -1,5 +1,6 @@
 import { config } from "../config";
 import {$} from 'bun';
+import sharp from 'sharp';
 
 type CommandProps = {
     command: ''
@@ -66,6 +67,11 @@ export const LD = {
     },
     adb: (name: string, command: string) => {
         return $`${config.ldconsolePath} adb --name ${name} --command "${command}"`.text();
+    },
+    screencap: async (name: string) => {
+        const img = await $`${config.ldconsolePath} adb --name ${name} --command "exec-out screencap -p"`.arrayBuffer();
+        const buffer = await sharp(img).toBuffer();
+        return buffer;
     },
     isrunning: async (name: string): Promise<boolean> => {
         const bashret =  await $`${config.ldconsolePath} isrunning --name ${name}`.text();

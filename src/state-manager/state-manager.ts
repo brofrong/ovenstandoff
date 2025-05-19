@@ -34,7 +34,7 @@ export const slotsNames = [
 export class StateManager {
   public ldPlayer: LDPlayer;
   public state: State = "booting";
-  public currentImg: string = "";
+  public currentImg: string | Buffer = "";
   public lobbyCode: string | null = null;
   public teams: Teams = { ct: [], t: [] };
   public occupiedSlots: string[] = [];

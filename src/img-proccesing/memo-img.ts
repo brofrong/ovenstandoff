@@ -42,7 +42,7 @@ function offsetToString(offset?: Offset): string {
   return `${offset.height}-${offset.left}-${offset.top}-${offset.width}`
 }
 
-export async function loadBuffer(imgPath: string, offset?: Offset) {
+export async function loadBuffer(imgPath: string | Buffer, offset?: Offset) {
   // Загружаем большое изображение
   let buffer = getFromMemo(imgPath, offset);
   if (!buffer) {
