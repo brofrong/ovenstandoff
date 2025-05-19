@@ -109,8 +109,8 @@ export class StateManager {
     const keyToRunners: Record<State, () => Promise<ActionRet>> = {
       booting: this.booting,
       android: this.android,
-      launching: this.debug,
-      // launching: this.launching,
+      // launching: this.debug,
+      launching: this.launching,
       readyForCreateLobby: this.readyForCreateLobby,
       createLobby: this.createLobby,
       // mainMenu: this.debug,
@@ -137,6 +137,7 @@ export class StateManager {
 
   private async debug(): Promise<ActionRet> {
     console.log("run debug", { state: this.state, ts: Date.now() });
+    await Bun.write(`./tmp/debug-${Date.now()}.png`, this.currentImg);
     return { wait: 10000 };
   }
 

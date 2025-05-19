@@ -42,19 +42,34 @@ function offsetToString(offset?: Offset): string {
   return `${offset.height}-${offset.left}-${offset.top}-${offset.width}`
 }
 
-export async function loadBuffer(imgPath: string | Buffer, offset?: Offset) {
-  // Загружаем большое изображение
-  let buffer = getFromMemo(imgPath, offset);
-  if (!buffer) {
-    if (offset) {
-      buffer = await sharp(
-        await sharp(imgPath).extract(offset).toBuffer()
-      ).toBuffer();
-    } else {
-      buffer = await sharp(imgPath).toBuffer();
+export async function loadBuffer(imgPath: string | Buffer, offset?: Offset): Promise<Buffer<ArrayBufferLike>> {
+
+  let buffer: Buffer;
+
+  if(typeof imgPath === "string") {
+    const memo = getFromMemo(imgPath, offset);
+    if(memo) {
+      return memo;
     }
-    saveToMemo(imgPath, buffer);
+    // Загружаем большое изображение
+      if (offset) {
+        buffer = await sharp(
+          await sharp(imgPath).extract(offset).toBuffer()
+        ).toBuffer();
+      } else {
+        buffer = await sharp(imgPath).toBuffer();
+      }
+      if(typeof imgPath === "string") {
+        saveToMemo(imgPath, buffer);
+      }
+      return buffer;
   }
 
-  return buffer;
+  if (offset) {
+    return sharp(
+      await sharp(imgPath).extract(offset).toBuffer()
+    ).toBuffer();
+  } 
+
+  return imgPath;
 }

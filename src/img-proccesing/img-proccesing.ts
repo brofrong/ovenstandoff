@@ -7,7 +7,7 @@ import { loadBuffer } from './memo-img';
 const SIMILARITY_GOAL = 0.98;
 
 export async function findAnchor(
-  targetImg: Buffer,
+  targetImg: Buffer | string,
   anchorKey: AnchorKey,
   debug: boolean = false
 ): Promise<boolean> {
@@ -26,7 +26,7 @@ export async function findAnchor(
 }
 
 export async function calculateSimilarityOpenCV(
-  bigImageBuffer: Buffer,
+  bigImageBuffer: Buffer | string,
   smallImagePath: string,
   offset: Offset,
   debug: boolean = false
