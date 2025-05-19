@@ -176,3 +176,5 @@ dist
 
 apk/
 tmp/
+
+*.traineddata
