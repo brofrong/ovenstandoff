@@ -100,15 +100,3 @@ export const LD = {
         return 0;
     },    
 }
-
-//D:/LDPlayer/LDPlayer9/ldconsole.exe adb --name imt --command "push C:\Users\dima7\work\ovenstandoff\standoff2\Android\obb\com.axlebolt.standoff2 /storage/emulated/0/Android/obb/"                                   
-// async function test(name: string) {
-//   for(let i = 0; i < 10; i++) {
-//     const ts = Date.now();
-//     console.time(`screencap-${name}`);
-//     const ret = await $`${PATH_TO_LDCONSOLE} adb --name ${name} --command "shell screencap -p /sdcard/screencap${ts}.png" && ${PATH_TO_LDCONSOLE} adb --name ${name} --command "pull /sdcard/screencap${ts}.png ./tmp/${name}"`.text();
-//     // const ret2 = await $``.text();
-//     console.timeEnd(`screencap-${name}`);
-//     console.log(ret);
-//   }
-// }
