@@ -1,5 +1,5 @@
 import { config } from "../config";
-import {type SendMessage, messagesSchema, startMatchSchema} from '../master-server/messages.schema';
+import { messagesMasterSchema, type SendMessageFromClient,  startMatchSchema} from '../master-server/messages.schema';
 import {activeStateManagers} from '../state-manager/state-manager';
 
 
@@ -21,7 +21,7 @@ export async function connectToMasterServer() {
   
     ws.addEventListener("message", async (event) => {
       console.log("Message from master server:", event.data);
-      const message = messagesSchema.safeParse(JSON.parse(event.data));
+      const message = messagesMasterSchema.safeParse(JSON.parse(event.data));
       if (!message.success) {
         console.error("Invalid message from master server:", message.error);
         return;
@@ -64,7 +64,7 @@ export async function connectToMasterServer() {
     });
   }
   
- export async function sendMessageToMasterServer(message: SendMessage) {
+ export async function sendMessageToMasterServer(message: SendMessageFromClient) {
     if (!ws) {
       return;   
     }

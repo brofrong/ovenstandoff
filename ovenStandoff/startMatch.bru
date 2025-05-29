@@ -1,0 +1,20 @@
+meta {
+  name: startMatch
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:3000/start-match
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "teams": {
+      "ct": ["CH auto 1"],
+      "t": ["CH auto 2"]
+    }
+  }
+}

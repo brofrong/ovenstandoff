@@ -42,9 +42,13 @@ function offsetToString(offset?: Offset): string {
   return `${offset.height}-${offset.left}-${offset.top}-${offset.width}`
 }
 
-export async function loadBuffer(imgPath: string | Buffer, offset?: Offset): Promise<Buffer<ArrayBufferLike>> {
+export async function loadBuffer(imgPath: string | Buffer | null, offset?: Offset): Promise<Buffer<ArrayBufferLike> | null> {
 
   let buffer: Buffer;
+
+  if(!imgPath) {
+    return null;
+  }
 
   if(typeof imgPath === "string") {
     const memo = getFromMemo(imgPath, offset);

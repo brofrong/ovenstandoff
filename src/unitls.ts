@@ -25,7 +25,7 @@ export function fuzzySearchNames(name: string, allNames: string[]): string | nul
   const cleanName = removeNonLatin(name);
   const cleanAllNames = allNames.map(removeNonLatin);
 
-  const fuse = new Fuse(cleanAllNames, {threshold: 0.2, includeScore: true});
+  const fuse = new Fuse(cleanAllNames, {threshold: 0.4});
 
   const result = fuse.search(cleanName);
   
@@ -33,7 +33,7 @@ export function fuzzySearchNames(name: string, allNames: string[]): string | nul
 
   console.log({name, bestResult});
 
-  if(((bestResult?.score ?? 0) < 0.2) && (bestResult?.refIndex !== undefined)) {
+  if((bestResult?.refIndex !== undefined)) {
     return allNames[bestResult.refIndex];
   }
 

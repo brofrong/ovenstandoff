@@ -47,7 +47,7 @@ export class LDPlayer {
         return;
     }
 
-    public async screenShot(): Promise<Buffer> {
+    public async screenShot(): Promise<Buffer | null> {
          return LD.screencap(this.name);
     }
 

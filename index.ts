@@ -20,11 +20,12 @@ async function init() {
   StateManagers.forEach((manager) => manager.run());
 
     // connect to master server
-    await connectToMasterServer();
+  await connectToMasterServer();
 }
 
 async function startEmulators() {
   const emulators = (await LD.list2()).filter(it => it.name !== 'clear').slice(0, 1);
+  // const emulators = (await LD.list2()).filter(it => it.name !== 'clear');
 
   for (let emulator of emulators) {
     const newLD = new LDPlayer(emulator.name);

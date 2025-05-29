@@ -6,23 +6,24 @@ import { getImageOccurrence } from "@appium/opencv";
 import clipboard from "clipboardy";
 import { wait } from "../unitls";
 import { runSteps } from "../state-manager/steps";
+import type { StateManager } from "../state-manager/state-manager";
 
 const queue = new Map<
   string,
-  { res: (ret: ReturnShare) => void; ldPlayer: LDPlayer }
+  { res: (ret: ReturnShare) => void; stateManager: StateManager }
 >();
 
 type ReturnShare = { code: string };
 
 export async function share(
   name: string,
-  ldPlayer: LDPlayer
+  stateManager: StateManager
 ): Promise<ReturnShare> {
   return new Promise(async (res, rej) => {
     if (queue.size) {
-      queue.set(name, { res, ldPlayer });
+      queue.set(name, { res, stateManager });
     } else {
-      queue.set(name, { res, ldPlayer });
+      queue.set(name, { res, stateManager });
       try {
         shareSteps(name);
       } catch (e) {
@@ -35,7 +36,7 @@ export async function share(
 async function shareSteps(name: string) {
   const queueObject = queue.get(name);
   if (!queueObject) throw new Error(`share queue don't have ${name}`);
-  const { ldPlayer, res } = queueObject;
+  const { stateManager, res } = queueObject;
 
   await runSteps(
     [
@@ -45,7 +46,7 @@ async function shareSteps(name: string) {
       { step: "click", data: { anchorKey: "share_room_code" } },
       { step: "wait", data: { amount: 500 } },
     ],
-    ldPlayer
+    stateManager
   );
 
   const code = await clipboard.read();

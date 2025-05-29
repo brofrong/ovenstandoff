@@ -6,6 +6,7 @@ export const AllStates = [
      "createLobby",
      "waitingForPlayers",
      "lowSettings",
+     "inGame",
      "debug",
   ] as const;
   

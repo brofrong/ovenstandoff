@@ -1,13 +1,12 @@
 import { findAnchor } from "../img-proccesing/img-proccesing";
 import type { LDPlayer } from "../ldconnector/ld";
 import { getRunnerAuthInfo } from "../storage/get-runner-info";
-import { getPlayerName, teamCoords } from "./player-name-detection";
 import { runSteps } from "./steps";
 import { config } from "../config";
 import { updateRunnerInfo } from "../storage/update-storage";
 import { sendMessageToMasterServer } from "../ws/ws";
 import type { State } from "./states";
-import { fuzzySearchNames } from "../unitls";
+import {waitForPlayers} from './waiting-for-players';
 
 export type Teams = {
   ct: string[];
@@ -18,58 +17,20 @@ type ActionRet = { wait: number | null };
 
 export const activeStateManagers: StateManager[] = [];
 
-export const slotsNames = [
-  "free_slot_1",
-  "free_slot_2",
-  "free_slot_3",
-  "free_slot_4",
-  "free_slot_5",
-  "free_slot_6",
-  "free_slot_7",
-  "free_slot_8",
-  "free_slot_9",
-  "free_slot_10",
-] as const;
-
 export class StateManager {
   public ldPlayer: LDPlayer;
   public state: State = "booting";
-  public currentImg: string | Buffer = "";
+  public currentImg: string | Buffer | null = "";
   public lobbyCode: string | null = null;
-  public teams: Teams = { ct: [], t: [] };
-  public occupiedSlots: string[] = [];
-  public occupiedSlotsNames: string[] = [];
+  public teams: Teams = { ct: ["CH auto 1"], t: ["CH auto 2"] };
+  public matchStartedTimestamp: number | null = null;
 
   constructor(ldPlayer: LDPlayer) {
     this.ldPlayer = ldPlayer;
     activeStateManagers.push(this);
   }
 
-  private setState(newState: State) {
-    this.state = newState;
-    console.log(`${this.ldPlayer.name} state changed to ${newState}`);
-    sendMessageToMasterServer({
-      type: "changeState",
-      data: {
-        runner: this.ldPlayer.name,
-        state: newState,
-      },
-    });
-  }
-
-  public async startCreatingLobby(teams: Teams) {
-    if (this.state !== "readyForCreateLobby") {
-      console.warn(`${this.ldPlayer.name} is not ready for create lobby`);
-      return { error: "not ready for create lobby" };
-    }
-    this.teams = teams;
-    this.setState("createLobby");
-    await this.run();
-  }
-
-  public async run() {
-    console.log(`${this.ldPlayer.name} running with state: ${this.state}`);
-
+  public async takeScreenshot() {
     const imgTimeout = new Promise<string>((resolve) => {
       setTimeout(() => {
         resolve("timeout");
@@ -85,24 +46,19 @@ export class StateManager {
       console.warn(`${this.ldPlayer.name} img timeout`);
       this.currentImg = "";
     }
-
-    try {
-      const neededAction = await this.runState();
-      // deletePNG(screenshot);
-      if (neededAction.wait !== null) {
-        setTimeout(this.run.bind(this), neededAction.wait);
-      }
-    } catch (e) {
-      console.log(`${this.ldPlayer.name}, error: ${e}`);
-      this.setState("android");
-      this.ldPlayer.killapp("com.axlebolt.standoff2");
-    }
+    return this.currentImg;
   }
 
-  public async startMatch(teams: Teams) {
-    this.teams = teams;
-    this.setState("createLobby");
-    await this.run();
+  private setState(newState: State) {
+    this.state = newState;
+    console.log(`${this.ldPlayer.name} state changed to ${newState}`);
+    sendMessageToMasterServer({
+      type: "changeState",
+      data: {
+        runner: this.ldPlayer.name,
+        state: newState,
+      },
+    });
   }
 
   private runState(): Promise<ActionRet> {
@@ -117,9 +73,42 @@ export class StateManager {
       lowSettings: this.lowSettings,
       waitingForPlayers: this.waitingForPlayers,
       debug: this.debug,
+      inGame: this.inGame,
     };
 
     return keyToRunners[this.state].bind(this)();
+  }
+
+  public async startCreatingLobby(teams: Teams) {
+    if (this.state !== "readyForCreateLobby") {
+      console.warn(`${this.ldPlayer.name} is not ready for create lobby`);
+      return { error: "not ready for create lobby" };
+    }
+    this.teams = teams;
+    this.setState("createLobby");
+    await this.run();
+  }
+
+  public async run() {
+    console.log(`${this.ldPlayer.name} running with state: ${this.state}`);
+
+    try {
+      const neededAction = await this.runState();
+      // deletePNG(screenshot);
+      if (neededAction.wait !== null) {
+        setTimeout(this.run.bind(this), neededAction.wait);
+      }
+    } catch (e) {
+      console.log(`${this.ldPlayer.name}, error: ${e}`);
+      this.ldPlayer.killapp("com.axlebolt.standoff2");
+      this.setState("android");
+    }
+  }
+
+  public async startMatch(teams: Teams) {
+    this.teams = teams;
+    this.setState("createLobby");
+    await this.run();
   }
 
   private async booting(): Promise<ActionRet> {
@@ -137,11 +126,17 @@ export class StateManager {
 
   private async debug(): Promise<ActionRet> {
     console.log("run debug", { state: this.state, ts: Date.now() });
-    await Bun.write(`./tmp/debug-${Date.now()}.png`, this.currentImg);
-    return { wait: 10000 };
+    await this.takeScreenshot();
+
+    if(this.currentImg) {
+      await Bun.write(`./tmp/debug-${Date.now()}.png`, this.currentImg);
+    }
+    return { wait: 2000 };
   }
 
   private async launching(): Promise<ActionRet> {
+    await this.takeScreenshot();
+
     if (await findAnchor(this.currentImg, "play")) {
       if (
         !config.runners.find((runner) => runner.name === this.ldPlayer.name)
@@ -158,14 +153,14 @@ export class StateManager {
     if (await findAnchor(this.currentImg, "launch_storage_apply")) {
       await runSteps(
         [{ step: "click", data: { anchorKey: "launch_storage_apply" } }],
-        this.ldPlayer
+        this
       );
     }
 
     if (await findAnchor(this.currentImg, "launch_info_apply")) {
       await runSteps(
         [{ step: "click", data: { anchorKey: "launch_info_apply" } }],
-        this.ldPlayer
+        this
       );
     }
 
@@ -176,7 +171,7 @@ export class StateManager {
           { step: "click", data: { x: 371, y: 349 } },
           { step: "click", data: { x: 25, y: 36 } },
         ],
-        this.ldPlayer
+        this
       );
       return { wait: 0 };
     }
@@ -184,7 +179,7 @@ export class StateManager {
     if (await findAnchor(this.currentImg, "launch_ad_close")) {
       await runSteps(
         [{ step: "click", data: { anchorKey: "launch_ad_close" } }],
-        this.ldPlayer
+        this
       );
     }
 
@@ -207,7 +202,7 @@ export class StateManager {
             data: { anchorKey: "launch_login_password_continue" },
           },
         ],
-        this.ldPlayer
+        this
       );
     }
 
@@ -215,6 +210,7 @@ export class StateManager {
   }
 
   private async readyForCreateLobby(): Promise<ActionRet> {
+    await this.takeScreenshot();
     console.log("readyForCreateLobby", {
       name: this.ldPlayer.name,
       ts: Date.now(),
@@ -240,74 +236,74 @@ export class StateManager {
         // lobby setting
         { step: "click", data: { anchorKey: "lobby_setting" } },
 
-        // { step: 'click', data: { anchorKey: 'change_lobby_description' } },
-        // { step: 'write', data: { text: 'CH match' } },
-        { step: "click", data: { anchorKey: "lock_team_setting" } },
-        { step: "click", data: { anchorKey: "lobby_pripare_time_setting" } },
-        { step: "click", data: { anchorKey: "lobby_rounds_count_setting" } },
-        { step: "click", data: { anchorKey: "lobby_time_setting" } },
+        // prod Settings
+        // { step: "click", data: { anchorKey: "lock_team_setting" } },
+        // { step: "click", data: { anchorKey: "lobby_pripare_time_setting" } },
+        // { step: "click", data: { anchorKey: "lobby_rounds_count_setting" } },
+        // { step: "click", data: { anchorKey: "lobby_time_setting" } },
+        // { step: "click", data: { anchorKey: "apply_setting" } },
+
+        // debug settings
+        { step: "click", data: { x: 927, y: 69 } }, // lock team
+        { step: "click", data: { x: 927, y: 129 } }, // prepare time
+        { step: "click", data: { x: 585, y: 180 } }, // roundTime time
+        { step: "click", data: { x: 586, y: 235 } }, // prepare time
+        { step: "click", data: { x: 586, y: 292 } }, // roundCount
+        { step: "click", data: { x: 586, y: 292 } }, // roundCount
+        { step: "click", data: { x: 586, y: 292 } }, // roundCount
         { step: "click", data: { anchorKey: "apply_setting" } },
 
+
         //move self to spectator
-        { step: "find", data: { anchorKey: "lobby_setting" } },
+        // { step: "find", data: { anchorKey: "lobby_setting" } },
         // { step: "click", data: { x: 383, y: 75 } },
         // { step: "wait", data: { amount: 500 } },
         // { step: "click", data: { anchorKey: "to_spectators" } },
       ],
-      this.ldPlayer
+      this
     );
     this.setState("waitingForPlayers");
     return { wait: 1000 };
   }
 
+
   private async waitingForPlayers(): Promise<ActionRet> {
-    const slotsToCheck = slotsNames.filter(
-      (it) => !this.occupiedSlots.includes(it)
-    );
+    await this.takeScreenshot();
 
-    const ret = await Promise.all(
-      slotsToCheck.map(async (slot) => ({
-        fined: !(await findAnchor(this.currentImg, slot)),
-        slot,
-      }))
-    );
-
-    console.log({ ret });
-
-    for (const it of ret) {
-      if (it.fined) {
-        const AllNames = this.getNamesFromTeam(
-          this.teams,
-          this.occupiedSlotsNames
-        );
-
-        console.log(`slot ${it.slot} is occupied`);
-        const imgPlayerName = await getPlayerName(it.slot, this.currentImg);
-        if (!imgPlayerName) continue;
-
-        const playerName = fuzzySearchNames(imgPlayerName, AllNames);
-        console.log({
-          AllNames,
-          occupiedSlots: this.occupiedSlots,
-          playerName,
-          imgPlayerName,
-        });
-        if (playerName) {
-          console.log(`slot ${it.slot} is occupied by ${playerName}`);
-          this.occupiedSlots.push(it.slot);
-          this.occupiedSlotsNames.push(playerName);
-          const playerTeam = this.teams.ct.includes(playerName) ? "ct" : "t";
-          console.log(`${playerName} is on ${playerTeam} team`);
-          await runSteps(
-            [
-              { step: "click", data: { anchorKey: it.slot } },
-              { step: "click", data: teamCoords[playerTeam][it.slot] },
-            ],
-            this.ldPlayer
-          );
-        }
-      }
+    if(await waitForPlayers.isMatchExpired(this)) {
+      this.setState("launching");
+      return { wait: 0 };
     }
+
+    //TODO: kick player from spectator
+    await waitForPlayers.kickSpectators(this);
+
+    //TODO: all slots are occupied check
+
+    const WaitingForPlayerCount = await waitForPlayers.getJoinedPlayersCountKickPlayersNotInList(this);
+
+    if (WaitingForPlayerCount !== 0) {
+      return { wait: 10000 };
+    }
+
+    //TODO: check if all players are connected kick if player not in team
+    
+    // TODO: start game
+
+    // if(WaitingForPlayerCount === 0) {
+    //   console.log("start game");
+    //   await runSteps([
+    //     {step: "click", data: {x: 433, y: 507}},
+    //     {step: "wait", data: {amount: 1000}},
+    //     {step: "write", data: {text: "Start match in 10 seconds"}},
+    //     {step: "wait", data: {amount: 1000}},
+    //     {step: "click", data: {x: 865, y: 494}},
+    //     {step: "wait", data: {amount: 5000}},
+    //     {step: "click", data: {x: 865, y: 494}},
+    //   ], this);
+      
+    //   this.setState("inGame");
+    // }
 
     return { wait: 10000 };
   }
@@ -343,7 +339,7 @@ export class StateManager {
         // back to main menu
         { step: "click", data: { x: 22, y: 38 } },
       ],
-      this.ldPlayer
+      this
     );
 
     await updateRunnerInfo(this.ldPlayer.name, true);
@@ -351,15 +347,41 @@ export class StateManager {
     return { wait: 1000 };
   }
 
-  private setCode(code: string) {
-    this.lobbyCode = code;
-    console.log({ code });
+  private async inGame(): Promise<ActionRet> {
+    await this.takeScreenshot();
+    if(await findAnchor(this.currentImg, "in_game_t_win")) {
+      sendMessageToMasterServer({
+        type: "matchEnded",
+        data: { winner: "t" },
+      });
+      return this.matchEnded();
+    }
+
+    if(await findAnchor(this.currentImg, "launch_is_in_lobby")) {
+      // TODO: send message to master server
+      sendMessageToMasterServer({
+        type: "matchEnded",
+        data: { winner: "error" },
+      });
+
+      return this.matchEnded();
+    }
+    return { wait: 200 };
   }
 
-  private getNamesFromTeam(teams: Teams, occupiedNames: string[]): string[] {
-    const AllNames: string[] = [];
-    teams.ct.forEach((it) => AllNames.push(it));
-    teams.t.forEach((it) => AllNames.push(it));
-    return AllNames.filter((it) => !occupiedNames.includes(it));
+  private async matchEnded(): Promise<ActionRet> {
+    this.teams = { ct: [], t: [] };
+    this.matchStartedTimestamp = null;
+    this.lobbyCode = null;
+    this.setState("launching");
+    return { wait: 1000 };
+  }
+
+  private setCode(code: string) {
+    this.lobbyCode = code;
+    sendMessageToMasterServer({
+      type: "lobbyCode",
+      data: { code },
+    });
   }
 }

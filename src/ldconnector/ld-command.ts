@@ -70,6 +70,9 @@ export const LD = {
     },
     screencap: async (name: string) => {
         const img = await $`${config.ldconsolePath} adb --name ${name} --command "exec-out screencap -p"`.arrayBuffer();
+        if(!img.byteLength) {
+            return null;
+        }
         const buffer = await sharp(img).toBuffer();
         return buffer;
     },

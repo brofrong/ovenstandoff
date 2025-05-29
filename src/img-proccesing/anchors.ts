@@ -30,6 +30,8 @@ import free_slot_8PNG from '../../anchors/free_slot_8.png' with { type: "file" }
 import free_slot_8JSON from '../../anchors/free_slot_8.json';
 import free_slot_9PNG from '../../anchors/free_slot_9.png' with { type: "file" };
 import free_slot_9JSON from '../../anchors/free_slot_9.json';
+import in_game_t_winPNG from '../../anchors/in_game_t_win.png' with { type: "file" };
+import in_game_t_winJSON from '../../anchors/in_game_t_win.json';
 import launch_ad_closePNG from '../../anchors/launch_ad_close.png' with { type: "file" };
 import launch_ad_closeJSON from '../../anchors/launch_ad_close.json';
 import launch_info_applyPNG from '../../anchors/launch_info_apply.png' with { type: "file" };
@@ -78,6 +80,22 @@ import to_change_modePNG from '../../anchors/to_change_mode.png' with { type: "f
 import to_change_modeJSON from '../../anchors/to_change_mode.json';
 import to_spectatorsPNG from '../../anchors/to_spectators.png' with { type: "file" };
 import to_spectatorsJSON from '../../anchors/to_spectators.json';
+import wait_for_payers_move_to_ctPNG from '../../anchors/wait_for_payers_move_to_ct.png' with { type: "file" };
+import wait_for_payers_move_to_ctJSON from '../../anchors/wait_for_payers_move_to_ct.json';
+import wait_for_payers_move_to_tPNG from '../../anchors/wait_for_payers_move_to_t.png' with { type: "file" };
+import wait_for_payers_move_to_tJSON from '../../anchors/wait_for_payers_move_to_t.json';
+import wait_for_payers_spectator_kickPNG from '../../anchors/wait_for_payers_spectator_kick.png' with { type: "file" };
+import wait_for_payers_spectator_kickJSON from '../../anchors/wait_for_payers_spectator_kick.json';
+import wait_for_payers_spectator_slot_2PNG from '../../anchors/wait_for_payers_spectator_slot_2.png' with { type: "file" };
+import wait_for_payers_spectator_slot_2JSON from '../../anchors/wait_for_payers_spectator_slot_2.json';
+import wait_for_payers_spectator_slot_3PNG from '../../anchors/wait_for_payers_spectator_slot_3.png' with { type: "file" };
+import wait_for_payers_spectator_slot_3JSON from '../../anchors/wait_for_payers_spectator_slot_3.json';
+import wait_for_payers_spectator_slot_4PNG from '../../anchors/wait_for_payers_spectator_slot_4.png' with { type: "file" };
+import wait_for_payers_spectator_slot_4JSON from '../../anchors/wait_for_payers_spectator_slot_4.json';
+import wait_for_payers_spectator_slot_5PNG from '../../anchors/wait_for_payers_spectator_slot_5.png' with { type: "file" };
+import wait_for_payers_spectator_slot_5JSON from '../../anchors/wait_for_payers_spectator_slot_5.json';
+import wait_for_payers_spectator_slot_6PNG from '../../anchors/wait_for_payers_spectator_slot_6.png' with { type: "file" };
+import wait_for_payers_spectator_slot_6JSON from '../../anchors/wait_for_payers_spectator_slot_6.json';
 
 
 export const anchors = {
@@ -97,6 +115,7 @@ export const anchors = {
     'free_slot_7': {img: free_slot_7PNG, offset: free_slot_7JSON },
     'free_slot_8': {img: free_slot_8PNG, offset: free_slot_8JSON },
     'free_slot_9': {img: free_slot_9PNG, offset: free_slot_9JSON },
+    'in_game_t_win': {img: in_game_t_winPNG, offset: in_game_t_winJSON },
     'launch_ad_close': {img: launch_ad_closePNG, offset: launch_ad_closeJSON },
     'launch_info_apply': {img: launch_info_applyPNG, offset: launch_info_applyJSON },
     'launch_is_in_lobby': {img: launch_is_in_lobbyPNG, offset: launch_is_in_lobbyJSON },
@@ -121,4 +140,12 @@ export const anchors = {
     'start_lobby': {img: start_lobbyPNG, offset: start_lobbyJSON },
     'to_change_mode': {img: to_change_modePNG, offset: to_change_modeJSON },
     'to_spectators': {img: to_spectatorsPNG, offset: to_spectatorsJSON },
+    'wait_for_payers_move_to_ct': {img: wait_for_payers_move_to_ctPNG, offset: wait_for_payers_move_to_ctJSON },
+    'wait_for_payers_move_to_t': {img: wait_for_payers_move_to_tPNG, offset: wait_for_payers_move_to_tJSON },
+    'wait_for_payers_spectator_kick': {img: wait_for_payers_spectator_kickPNG, offset: wait_for_payers_spectator_kickJSON },
+    'wait_for_payers_spectator_slot_2': {img: wait_for_payers_spectator_slot_2PNG, offset: wait_for_payers_spectator_slot_2JSON },
+    'wait_for_payers_spectator_slot_3': {img: wait_for_payers_spectator_slot_3PNG, offset: wait_for_payers_spectator_slot_3JSON },
+    'wait_for_payers_spectator_slot_4': {img: wait_for_payers_spectator_slot_4PNG, offset: wait_for_payers_spectator_slot_4JSON },
+    'wait_for_payers_spectator_slot_5': {img: wait_for_payers_spectator_slot_5PNG, offset: wait_for_payers_spectator_slot_5JSON },
+    'wait_for_payers_spectator_slot_6': {img: wait_for_payers_spectator_slot_6PNG, offset: wait_for_payers_spectator_slot_6JSON },
 } as const;

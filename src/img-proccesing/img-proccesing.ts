@@ -7,10 +7,15 @@ import { loadBuffer } from './memo-img';
 const SIMILARITY_GOAL = 0.98;
 
 export async function findAnchor(
-  targetImg: Buffer | string,
+  targetImg: Buffer | string | null,
   anchorKey: AnchorKey,
   debug: boolean = false
 ): Promise<boolean> {
+
+  if(!targetImg) {
+    return false;
+  }
+
   const anchor = anchors[anchorKey];
   const similarity = await calculateSimilarityOpenCV(
     targetImg,
@@ -36,6 +41,10 @@ export async function calculateSimilarityOpenCV(
   }
   const smallImage = await loadBuffer(smallImagePath);
   const bigImage = await loadBuffer(bigImageBuffer, offset);
+
+  if(!smallImage || !bigImage) {
+    return 0;
+  }
 
   // * - `TM_CCOEFF`
   // * - `TM_CCOEFF_NORMED` (default)
