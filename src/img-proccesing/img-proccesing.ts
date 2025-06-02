@@ -1,8 +1,8 @@
 import sharp from "sharp";
 import { anchors } from "./anchors";
-import type { Offset, AnchorKey } from './img.type';
+import type { Offset, AnchorKey } from "./img.type";
 import { getImagesSimilarity } from "@appium/opencv";
-import { loadBuffer } from './memo-img';
+import { loadBuffer } from "./memo-img";
 
 const SIMILARITY_GOAL = 0.98;
 
@@ -11,8 +11,7 @@ export async function findAnchor(
   anchorKey: AnchorKey,
   debug: boolean = false
 ): Promise<boolean> {
-
-  if(!targetImg) {
+  if (!targetImg) {
     return false;
   }
 
@@ -24,7 +23,7 @@ export async function findAnchor(
     debug
   );
 
-  if(debug) {
+  if (debug) {
     console.log(`${anchorKey} similarity: ${similarity}`);
   }
   return similarity >= SIMILARITY_GOAL;
@@ -36,13 +35,13 @@ export async function calculateSimilarityOpenCV(
   offset: Offset,
   debug: boolean = false
 ) {
-  if(!bigImageBuffer || !smallImagePath) {
+  if (!bigImageBuffer || !smallImagePath) {
     return 0;
   }
   const smallImage = await loadBuffer(smallImagePath);
   const bigImage = await loadBuffer(bigImageBuffer, offset);
 
-  if(!smallImage || !bigImage) {
+  if (!smallImage || !bigImage) {
     return 0;
   }
 
@@ -56,7 +55,7 @@ export async function calculateSimilarityOpenCV(
   const { score, visualization } = await getImagesSimilarity(
     bigImage,
     smallImage,
-    {visualize: debug, method: "TM_CCORR_NORMED"}
+    { visualize: debug, method: "TM_CCORR_NORMED" }
   );
 
   if (visualization) {

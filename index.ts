@@ -1,8 +1,9 @@
+import { config } from "./src/config";
 import { activeLdPlayers, LDPlayer } from "./src/ldconnector/ld";
 import { LD } from "./src/ldconnector/ld-command";
 import { StateManager } from "./src/state-manager/state-manager";
 import { initStorage } from "./src/storage/init-storage";
-import { connectToMasterServer, sendMessageToMasterServer } from "./src/ws/ws";
+import { connectToMasterServer } from "./src/ws/ws";
 
 async function init() {
   await initStorage();
@@ -19,13 +20,20 @@ async function init() {
   // run players
   StateManagers.forEach((manager) => manager.run());
 
-    // connect to master server
+  // connect to master server
   await connectToMasterServer();
 }
 
 async function startEmulators() {
-  const emulators = (await LD.list2()).filter(it => it.name !== 'clear').slice(0, 1);
-  // const emulators = (await LD.list2()).filter(it => it.name !== 'clear');
+  let emulators;
+
+  if (config.debug) {
+    emulators = (await LD.list2())
+      .filter((it) => it.name !== "clear")
+      .slice(0, 1);
+  } else {
+    emulators = (await LD.list2()).filter((it) => it.name !== "clear");
+  }
 
   for (let emulator of emulators) {
     const newLD = new LDPlayer(emulator.name);
@@ -34,4 +42,3 @@ async function startEmulators() {
 }
 
 await init();
-

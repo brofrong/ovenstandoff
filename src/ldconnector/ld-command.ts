@@ -1,111 +1,132 @@
 import { config } from "../config";
-import {$} from 'bun';
-import sharp from 'sharp';
+import { $ } from "bun";
+import sharp from "sharp";
 
 type CommandProps = {
-    command: ''
-}
-
+  command: "";
+};
 
 export const LD = {
-    launch: (name: string) => {
-        return $`${config.ldconsolePath} launch --name ${name}`.text();
-    },
-    quit: (name: string) => {
-        return $`${config.ldconsolePath} quit --name ${name}`.text();
-    },
-    quitall: () => {
-        return $`${config.ldconsolePath} quitall`.text();
-    },
-    modify: async (name: string, params: {resolution?: {width: number, height: number, dpi: number}, cpu?: number, memory?: number}) => {
-        let toModify: string[] = [];
+  launch: (name: string) => {
+    return $`${config.ldconsolePath} launch --name ${name}`.text();
+  },
+  quit: (name: string) => {
+    return $`${config.ldconsolePath} quit --name ${name}`.text();
+  },
+  quitall: () => {
+    return $`${config.ldconsolePath} quitall`.text();
+  },
+  modify: async (
+    name: string,
+    params: {
+      resolution?: { width: number; height: number; dpi: number };
+      cpu?: number;
+      memory?: number;
+    }
+  ) => {
+    let toModify: string[] = [];
 
-        if(params.resolution) {
-            toModify.push('--resolution'),
-            toModify.push(`${params.resolution.width},${params.resolution.height},${params.resolution.dpi}`);
-        }
-        
-        if(params.cpu) {
-            toModify.push(`--cpu ${params.cpu}`)
-        }
+    if (params.resolution) {
+      toModify.push("--resolution"),
+        toModify.push(
+          `${params.resolution.width},${params.resolution.height},${params.resolution.dpi}`
+        );
+    }
 
-        if(params.memory) {
-            toModify.push(`--memory ${params.memory}`)
-        }
+    if (params.cpu) {
+      toModify.push(`--cpu ${params.cpu}`);
+    }
 
-        console.log(`${config.ldconsolePath} modify --name ${name} ${toModify.join(' ')}`);
-        return await $`${config.ldconsolePath} modify --name ${name} ${toModify.join(' ')}`.text();
-    },
-    copy: async (newName: string, from:  string | number) => {
-        try {
-            return await $`${config.ldconsolePath} copy --name ${newName} --from ${from}`.text();
-        } catch(e) {
-            const id = (e as any)?.exitCode ?? 0;
-            return id;
-        }
-    },
-    runapp: (name: string, packagename: string) => {
-        return $`${config.ldconsolePath} runapp --name ${name} --packagename ${packagename}`.text();
-    },
-    killapp: (name: string, packagename: string) => {
-        return $`${config.ldconsolePath} killapp --name ${name} --packagename ${packagename}`.text();
-    },
-    list2: async () => {
-        const ret: {name: string, index: number}[] = [];
-        const consoleRet = await $`${config.ldconsolePath} list2`.text();
-        
-        const emulatorsInfo = consoleRet.split('\n');
+    if (params.memory) {
+      toModify.push(`--memory ${params.memory}`);
+    }
 
-        for (let emulatorInfo of emulatorsInfo) {
-            if(!emulatorInfo) continue;
+    console.log(
+      `${config.ldconsolePath} modify --name ${name} ${toModify.join(" ")}`
+    );
+    return await $`${
+      config.ldconsolePath
+    } modify --name ${name} ${toModify.join(" ")}`.text();
+  },
+  copy: async (newName: string, from: string | number) => {
+    try {
+      return await $`${config.ldconsolePath} copy --name ${newName} --from ${from}`.text();
+    } catch (e) {
+      const id = (e as any)?.exitCode ?? 0;
+      return id;
+    }
+  },
+  runapp: (name: string, packagename: string) => {
+    return $`${config.ldconsolePath} runapp --name ${name} --packagename ${packagename}`.text();
+  },
+  killapp: (name: string, packagename: string) => {
+    return $`${config.ldconsolePath} killapp --name ${name} --packagename ${packagename}`.text();
+  },
+  list2: async () => {
+    const ret: { name: string; index: number }[] = [];
+    const consoleRet = await $`${config.ldconsolePath} list2`.text();
 
-            const [index, name] = emulatorInfo.split(',');
-            ret.push({index: +index, name});
-        }
+    const emulatorsInfo = consoleRet.split("\n");
 
-        return ret;
-    },
-    adb: (name: string, command: string) => {
-        return $`${config.ldconsolePath} adb --name ${name} --command "${command}"`.text();
-    },
-    screencap: async (name: string) => {
-        const img = await $`${config.ldconsolePath} adb --name ${name} --command "exec-out screencap -p"`.arrayBuffer();
-        if(!img.byteLength) {
-            return null;
-        }
-        const buffer = await sharp(img).toBuffer();
-        return buffer;
-    },
-    isrunning: async (name: string): Promise<boolean> => {
-        const bashret =  await $`${config.ldconsolePath} isrunning --name ${name}`.text();
-        return bashret !== 'stop'
-    },
-    click: (name: string, x: number, y: number) => {
-        return $`${config.ldconsolePath} adb --name ${name} --command "shell input tap ${x} ${y}"`.text();
-    },
-    install: (name: string, apkPath: string) => {
-        return $`${config.ldconsolePath} adb --name ${name} --command "install ${apkPath}`.text();
-    },
-    create: async (name: string): Promise<number> => {
-        try{
-            await $`${config.ldconsolePath} add --name ${name}`.text();
-        } catch(e) {
-            const id = (e as any)?.exitCode ?? 0;
-            console.log(`created ldPlayer with id ${id}`);
-            return parseInt(id);
-        }
-        console.log(`created ldPlayer with id ${0}`);
-        return 0;
-    },
-    delete: async (name: string) => {
-        try {
-           await $`${config.ldconsolePath} remove --name ${name}`.text();
-        } catch (e) {
-            const id = (e as any)?.exitCode ?? 0;
-            console.log(`deleted ldPlayer with id ${id}`);
-            return e;
-        }
-        console.log(`deleted ldPlayer with id ${0}`);
-        return 0;
-    },    
-}
+    for (let emulatorInfo of emulatorsInfo) {
+      if (!emulatorInfo) continue;
+
+      const [index, name] = emulatorInfo.split(",");
+      ret.push({ index: +index, name });
+    }
+
+    return ret;
+  },
+  adb: (name: string, command: string) => {
+    return $`${config.ldconsolePath} adb --name ${name} --command "${command}"`.text();
+  },
+  screencap: async (name: string) => {
+    const img =
+      await $`${config.ldconsolePath} adb --name ${name} --command "exec-out screencap -p"`.arrayBuffer();
+    if (!img.byteLength) {
+      return null;
+    }
+    const buffer = await sharp(img).toBuffer();
+    return buffer;
+  },
+  isrunning: async (name: string): Promise<boolean> => {
+    const bashret =
+      await $`${config.ldconsolePath} isrunning --name ${name}`.text();
+    return bashret !== "stop";
+  },
+  click: (name: string, x: number, y: number) => {
+    return $`${config.ldconsolePath} adb --name ${name} --command "shell input tap ${x} ${y}"`.text();
+  },
+  install: (name: string, apkPath: string) => {
+    return $`${config.ldconsolePath} adb --name ${name} --command "install ${apkPath}`.text();
+  },
+  create: async (name: string): Promise<number> => {
+    try {
+      await $`${config.ldconsolePath} add --name ${name}`.text();
+    } catch (e) {
+      const id = (e as any)?.exitCode ?? 0;
+      console.log(`created ldPlayer with id ${id}`);
+      return parseInt(id);
+    }
+    console.log(`created ldPlayer with id ${0}`);
+    return 0;
+  },
+  delete: async (name: string) => {
+    try {
+      await $`${config.ldconsolePath} remove --name ${name}`.text();
+    } catch (e) {
+      const id = (e as any)?.exitCode ?? 0;
+      console.log(`deleted ldPlayer with id ${id}`);
+      return e;
+    }
+    console.log(`deleted ldPlayer with id ${0}`);
+    return 0;
+  },
+
+  deleteAllText: async (name: string) => {
+    for (let i = 0; i < 20; i++) {
+      await $`${config.ldconsolePath} adb --name ${name} --command "shell input keyevent 67"`.text();
+    }
+    return;
+  },
+};

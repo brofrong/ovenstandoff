@@ -30,12 +30,20 @@ import free_slot_8PNG from '../../anchors/free_slot_8.png' with { type: "file" }
 import free_slot_8JSON from '../../anchors/free_slot_8.json';
 import free_slot_9PNG from '../../anchors/free_slot_9.png' with { type: "file" };
 import free_slot_9JSON from '../../anchors/free_slot_9.json';
+import in_game_ct_winPNG from '../../anchors/in_game_ct_win.png' with { type: "file" };
+import in_game_ct_winJSON from '../../anchors/in_game_ct_win.json';
+import in_game_in_menuPNG from '../../anchors/in_game_in_menu.png' with { type: "file" };
+import in_game_in_menuJSON from '../../anchors/in_game_in_menu.json';
 import in_game_t_winPNG from '../../anchors/in_game_t_win.png' with { type: "file" };
 import in_game_t_winJSON from '../../anchors/in_game_t_win.json';
 import launch_ad_closePNG from '../../anchors/launch_ad_close.png' with { type: "file" };
 import launch_ad_closeJSON from '../../anchors/launch_ad_close.json';
+import launch_close_bpPNG from '../../anchors/launch_close_bp.png' with { type: "file" };
+import launch_close_bpJSON from '../../anchors/launch_close_bp.json';
 import launch_info_applyPNG from '../../anchors/launch_info_apply.png' with { type: "file" };
 import launch_info_applyJSON from '../../anchors/launch_info_apply.json';
+import launch_in_match_pausePNG from '../../anchors/launch_in_match_pause.png' with { type: "file" };
+import launch_in_match_pauseJSON from '../../anchors/launch_in_match_pause.json';
 import launch_is_in_lobbyPNG from '../../anchors/launch_is_in_lobby.png' with { type: "file" };
 import launch_is_in_lobbyJSON from '../../anchors/launch_is_in_lobby.json';
 import launch_login_continuePNG from '../../anchors/launch_login_continue.png' with { type: "file" };
@@ -115,9 +123,13 @@ export const anchors = {
     'free_slot_7': {img: free_slot_7PNG, offset: free_slot_7JSON },
     'free_slot_8': {img: free_slot_8PNG, offset: free_slot_8JSON },
     'free_slot_9': {img: free_slot_9PNG, offset: free_slot_9JSON },
+    'in_game_ct_win': {img: in_game_ct_winPNG, offset: in_game_ct_winJSON },
+    'in_game_in_menu': {img: in_game_in_menuPNG, offset: in_game_in_menuJSON },
     'in_game_t_win': {img: in_game_t_winPNG, offset: in_game_t_winJSON },
     'launch_ad_close': {img: launch_ad_closePNG, offset: launch_ad_closeJSON },
+    'launch_close_bp': {img: launch_close_bpPNG, offset: launch_close_bpJSON },
     'launch_info_apply': {img: launch_info_applyPNG, offset: launch_info_applyJSON },
+    'launch_in_match_pause': {img: launch_in_match_pausePNG, offset: launch_in_match_pauseJSON },
     'launch_is_in_lobby': {img: launch_is_in_lobbyPNG, offset: launch_is_in_lobbyJSON },
     'launch_login_continue': {img: launch_login_continuePNG, offset: launch_login_continueJSON },
     'launch_login_email': {img: launch_login_emailPNG, offset: launch_login_emailJSON },

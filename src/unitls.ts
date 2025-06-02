@@ -3,11 +3,10 @@ import Fuse from "fuse.js";
 import { readdir } from "node:fs/promises";
 
 export function wait(ms: number): Promise<void> {
-    return new Promise((res) => setTimeout(res, ms));
+  return new Promise((res) => setTimeout(res, ms));
 }
 
 export const dirs = appDirs({ appName: "ovenStandoff" }).data;
-
 
 export async function isFolderExists(path: string): Promise<boolean> {
   try {
@@ -16,24 +15,27 @@ export async function isFolderExists(path: string): Promise<boolean> {
   } catch (err) {
     return false;
   }
-};
+}
 
+const removeNonLatin = (name: string) =>
+  name.replace(/[^a-zA-Z0-9а-яА-ЯёЁ]/g, "");
 
-const removeNonLatin = (name: string) => name.replace(/[^a-zA-Z0-9а-яА-ЯёЁ]/g, '');
-
-export function fuzzySearchNames(name: string, allNames: string[]): string | null {
+export function fuzzySearchNames(
+  name: string,
+  allNames: string[]
+): string | null {
   const cleanName = removeNonLatin(name);
   const cleanAllNames = allNames.map(removeNonLatin);
 
-  const fuse = new Fuse(cleanAllNames, {threshold: 0.4});
+  const fuse = new Fuse(cleanAllNames, { threshold: 0.4 });
 
   const result = fuse.search(cleanName);
-  
+
   const bestResult = result[0];
 
-  console.log({name, bestResult});
+  console.log({ name, bestResult });
 
-  if((bestResult?.refIndex !== undefined)) {
+  if (bestResult?.refIndex !== undefined) {
     return allNames[bestResult.refIndex];
   }
 

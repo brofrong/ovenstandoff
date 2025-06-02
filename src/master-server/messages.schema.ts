@@ -47,7 +47,7 @@ export const lobbyCodeSchema = z.object({
 });
 
 export const matchEndedSchema = z.object({
-  winner: z.enum(["ct", "t", "error", 'player dont connect to the lobby']),
+  winner: z.enum(["ct", "t", "error", "player dont connect to the lobby"]),
 });
 
 export type SendMessageFromClient =

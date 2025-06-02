@@ -29,7 +29,10 @@ async function checkLdNamesWithConfig(LDnames: string[]) {
 
   const check = configNames.every((conf) => LDnames.find((ld) => ld === conf));
   if (!check) {
-    console.error(`config names don't match with ld Names!!!`, `config: ${configNames}, LDnames: ${LDnames}`);
+    console.error(
+      `config names don't match with ld Names!!!`,
+      `config: ${configNames}, LDnames: ${LDnames}`
+    );
   }
 }
 
@@ -42,7 +45,6 @@ async function createScreenShotFolders(emulatorsNames: string[]) {
 async function createFolderForImgIfNotExist(name: string) {
   await mkdir(getImgFolder(name), { recursive: true });
 }
-
 
 async function deleteALLPNG(emulatorsNames: string[]) {
   return Promise.all(

@@ -51,7 +51,7 @@ async function shareSteps(name: string) {
 
   const code = await clipboard.read();
 
-  if (code === 'clear') {
+  if (code === "clear") {
     await wait(2000);
     return await shareSteps(name);
   }

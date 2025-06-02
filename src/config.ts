@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { configSchema } from './storage/config.schema';
+import { configSchema } from "./storage/config.schema";
 import { CONFIG_PATH } from "./storage/init-storage";
 import defaultConfig from "./storage/default-config.json";
 
@@ -14,7 +14,7 @@ export async function loadConfig() {
 
 async function checkIsConfigExist(): Promise<void> {
   const configFile = Bun.file(CONFIG_PATH);
-  if (!await configFile.exists()) {
+  if (!(await configFile.exists())) {
     await configFile.write(JSON.stringify(defaultConfig));
     return;
   }

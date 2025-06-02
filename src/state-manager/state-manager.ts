@@ -1,12 +1,11 @@
 import { findAnchor } from "../img-proccesing/img-proccesing";
 import type { LDPlayer } from "../ldconnector/ld";
-import { getRunnerAuthInfo } from "../storage/get-runner-info";
 import { runSteps } from "./steps";
 import { config } from "../config";
 import { updateRunnerInfo } from "../storage/update-storage";
 import { sendMessageToMasterServer } from "../ws/ws";
 import type { State } from "./states";
-import {waitForPlayers} from './waiting-for-players';
+import { waitForPlayers } from "./waiting-for-players";
 
 export type Teams = {
   ct: string[];
@@ -19,10 +18,10 @@ export const activeStateManagers: StateManager[] = [];
 
 export class StateManager {
   public ldPlayer: LDPlayer;
-  public state: State = "booting";
+  public state: State = "android";
   public currentImg: string | Buffer | null = "";
   public lobbyCode: string | null = null;
-  public teams: Teams = { ct: ["CH auto 1"], t: ["CH auto 2"] };
+  public teams: Teams = { ct: [], t: [] };
   public matchStartedTimestamp: number | null = null;
 
   constructor(ldPlayer: LDPlayer) {
@@ -71,6 +70,7 @@ export class StateManager {
       createLobby: this.createLobby,
       // mainMenu: this.debug,
       lowSettings: this.lowSettings,
+      changeName: this.changeName,
       waitingForPlayers: this.waitingForPlayers,
       debug: this.debug,
       inGame: this.inGame,
@@ -128,7 +128,7 @@ export class StateManager {
     console.log("run debug", { state: this.state, ts: Date.now() });
     await this.takeScreenshot();
 
-    if(this.currentImg) {
+    if (this.currentImg) {
       await Bun.write(`./tmp/debug-${Date.now()}.png`, this.currentImg);
     }
     return { wait: 2000 };
@@ -143,6 +143,14 @@ export class StateManager {
           ?.lowSettings
       ) {
         this.setState("lowSettings");
+        return { wait: 0 };
+      }
+
+      if (
+        !config.runners.find((runner) => runner.name === this.ldPlayer.name)
+          ?.nameIsChanged
+      ) {
+        this.setState("changeName");
         return { wait: 0 };
       }
 
@@ -184,24 +192,33 @@ export class StateManager {
     }
 
     if (await findAnchor(this.currentImg, "launch_with_google")) {
-      const runnerInfo = getRunnerAuthInfo(this.ldPlayer.name);
+      // const runnerInfo = getRunnerAuthInfo(this.ldPlayer.name);
       await runSteps(
         [
           { step: "click", data: { anchorKey: "launch_with_google" } },
           { step: "wait", data: { amount: 5000 } },
           { step: "click", data: { anchorKey: "launch_login_email" } },
           { step: "wait", data: { amount: 1000 } },
-          { step: "write", data: { text: runnerInfo.email } },
-          { step: "click", data: { anchorKey: "launch_login_continue" } },
-          { step: "wait", data: { amount: 5000 } },
-          { step: "click", data: { anchorKey: "launch_login_password" } },
-          { step: "wait", data: { amount: 1000 } },
-          { step: "write", data: { text: runnerInfo.password } },
-          {
-            step: "click",
-            data: { anchorKey: "launch_login_password_continue" },
-          },
         ],
+        this
+      );
+    }
+
+    if (await findAnchor(this.currentImg, "launch_in_match_pause")) {
+      await runSteps(
+        [
+          { step: "click", data: { anchorKey: "launch_in_match_pause" } },
+          { step: "wait", data: { amount: 500 } },
+          { step: "click", data: { x: 838, y: 479 } },
+          { step: "click", data: { x: 397, y: 348 } },
+        ],
+        this
+      );
+    }
+
+    if (await findAnchor(this.currentImg, "launch_close_bp")) {
+      await runSteps(
+        [{ step: "click", data: { anchorKey: "launch_close_bp" } }],
         this
       );
     }
@@ -253,7 +270,6 @@ export class StateManager {
         { step: "click", data: { x: 586, y: 292 } }, // roundCount
         { step: "click", data: { anchorKey: "apply_setting" } },
 
-
         //move self to spectator
         // { step: "find", data: { anchorKey: "lobby_setting" } },
         // { step: "click", data: { x: 383, y: 75 } },
@@ -266,45 +282,34 @@ export class StateManager {
     return { wait: 1000 };
   }
 
-
   private async waitingForPlayers(): Promise<ActionRet> {
     await this.takeScreenshot();
 
-    if(await waitForPlayers.isMatchExpired(this)) {
+    if (await waitForPlayers.isMatchExpired(this)) {
       this.setState("launching");
       return { wait: 0 };
     }
 
-    //TODO: kick player from spectator
+    //kick player from spectator
     await waitForPlayers.kickSpectators(this);
 
-    //TODO: all slots are occupied check
-
-    const WaitingForPlayerCount = await waitForPlayers.getJoinedPlayersCountKickPlayersNotInList(this);
+    //all slots are occupied check and kick player not in team
+    const WaitingForPlayerCount =
+      await waitForPlayers.getJoinedPlayersCountKickPlayersNotInList(this);
 
     if (WaitingForPlayerCount !== 0) {
+      console.log(
+        `${this.ldPlayer.name} waiting for players, left: ${WaitingForPlayerCount}`
+      );
       return { wait: 10000 };
     }
 
-    //TODO: check if all players are connected kick if player not in team
-    
-    // TODO: start game
+    //start game
 
-    // if(WaitingForPlayerCount === 0) {
-    //   console.log("start game");
-    //   await runSteps([
-    //     {step: "click", data: {x: 433, y: 507}},
-    //     {step: "wait", data: {amount: 1000}},
-    //     {step: "write", data: {text: "Start match in 10 seconds"}},
-    //     {step: "wait", data: {amount: 1000}},
-    //     {step: "click", data: {x: 865, y: 494}},
-    //     {step: "wait", data: {amount: 5000}},
-    //     {step: "click", data: {x: 865, y: 494}},
-    //   ], this);
-      
-    //   this.setState("inGame");
-    // }
+    console.log("start game");
+    await waitForPlayers.startGame(this);
 
+    this.setState("inGame");
     return { wait: 10000 };
   }
 
@@ -347,9 +352,40 @@ export class StateManager {
     return { wait: 1000 };
   }
 
+  private async changeName(): Promise<ActionRet> {
+    const runnerName = this.ldPlayer.name;
+    await runSteps(
+      [
+        { step: "click", data: { x: 222, y: 73 } },
+        { step: "click", data: { x: 330, y: 236 } },
+        { step: "deleteAllText" },
+        { step: "write", data: { text: runnerName } },
+        { step: "click", data: { x: 544, y: 353 } },
+      ],
+      this
+    );
+
+    await updateRunnerInfo(this.ldPlayer.name, false, true);
+    this.setState("launching");
+    return { wait: 0 };
+  }
+
   private async inGame(): Promise<ActionRet> {
     await this.takeScreenshot();
-    if(await findAnchor(this.currentImg, "in_game_t_win")) {
+
+    if (await findAnchor(this.currentImg, "in_game_t_win")) {
+      console.log("match ended t win");
+      // send opposite team win because of team swap
+      sendMessageToMasterServer({
+        type: "matchEnded",
+        data: { winner: "ct" },
+      });
+      return this.matchEnded();
+    }
+
+    if (await findAnchor(this.currentImg, "in_game_ct_win")) {
+      console.log("match ended ct win");
+      // send opposite team win because of team swap
       sendMessageToMasterServer({
         type: "matchEnded",
         data: { winner: "t" },
@@ -357,8 +393,8 @@ export class StateManager {
       return this.matchEnded();
     }
 
-    if(await findAnchor(this.currentImg, "launch_is_in_lobby")) {
-      // TODO: send message to master server
+    if (await findAnchor(this.currentImg, "in_game_in_menu")) {
+      console.log("match ended with error");
       sendMessageToMasterServer({
         type: "matchEnded",
         data: { winner: "error" },
@@ -366,7 +402,22 @@ export class StateManager {
 
       return this.matchEnded();
     }
-    return { wait: 200 };
+
+    //check if match expires
+
+    if (
+      this.matchStartedTimestamp &&
+      Date.now() - this.matchStartedTimestamp > 1000 * 60 * 60
+    ) {
+      console.log("match expired");
+      sendMessageToMasterServer({
+        type: "matchEnded",
+        data: { winner: "error" },
+      });
+      return this.matchEnded();
+    }
+
+    return { wait: 1500 };
   }
 
   private async matchEnded(): Promise<ActionRet> {
