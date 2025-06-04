@@ -4,6 +4,7 @@ import { dirs } from "../unitls";
 import { mkdir, rm } from "node:fs/promises";
 import { config, loadConfig } from "../config";
 import { LD } from "../ldconnector/ld-command";
+import { writeConfig } from "./update-storage";
 
 const CONFIG_FILE_NAME = "config.json";
 export const CONFIG_PATH = path.join(dirs, CONFIG_FILE_NAME);
@@ -33,6 +34,10 @@ async function checkLdNamesWithConfig(LDnames: string[]) {
       `config names don't match with ld Names!!!`,
       `config: ${configNames}, LDnames: ${LDnames}`
     );
+
+    const newRunners = LDnames.map((ld) => ({name: ld, nameIsChanged: false, lowSettings: false}));
+    config.runners = newRunners;
+    await writeConfig(config);
   }
 }
 

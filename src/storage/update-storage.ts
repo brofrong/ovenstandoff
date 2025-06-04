@@ -25,6 +25,6 @@ export async function updateRunnerInfo(
   await writeConfig(config);
 }
 
-async function writeConfig(config: Config) {
+export async function writeConfig(config: Config) {
   return Bun.write(CONFIG_PATH, JSON.stringify(config));
 }

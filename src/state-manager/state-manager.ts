@@ -242,6 +242,10 @@ export class StateManager {
         { step: "click", data: { anchorKey: "menu_group" } },
         { step: "click", data: { anchorKey: "custom_lobby" } },
         // { step: 'click', data: { anchorKey: 'create_custom_lobby' } },
+        
+        // set lobby to private
+        { step: "click", data: { x: 810, y: 76 } },
+        { step: "click", data: { x: 608, y: 399 } },
 
         { step: "share", data: { setCode: this.setCode } },
 
@@ -271,10 +275,10 @@ export class StateManager {
         { step: "click", data: { anchorKey: "apply_setting" } },
 
         //move self to spectator
-        // { step: "find", data: { anchorKey: "lobby_setting" } },
-        // { step: "click", data: { x: 383, y: 75 } },
-        // { step: "wait", data: { amount: 500 } },
-        // { step: "click", data: { anchorKey: "to_spectators" } },
+        { step: "find", data: { anchorKey: "lobby_setting" } },
+        { step: "click", data: { x: 383, y: 75 } },
+        { step: "wait", data: { amount: 500 } },
+        { step: "click", data: { anchorKey: "to_spectators" } },
       ],
       this
     );
