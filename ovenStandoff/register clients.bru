@@ -7,7 +7,11 @@ meta {
 post {
   url: http://localhost:3000/register-clients
   body: json
-  auth: inherit
+  auth: bearer
+}
+
+auth:bearer {
+  token: 123
 }
 
 body:json {

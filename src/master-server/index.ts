@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { State } from "../state-manager/states";
 import { message, close, open, sendMessageToClient } from "./master-ws";
 import { initDB, handleRegisterClients } from './register-client';
+import { guard } from "./guard";
 
 export const openConnections: Set<Bun.ServerWebSocket<unknown>> = new Set();
 export let runners: {
@@ -18,11 +19,16 @@ export function setRunners(
 }
 
 
-await initDB();
+initDB();
 
 const server = Bun.serve({
   port: 3000,
   fetch: async (req, server) => {
+
+    if (!guard(req)) {
+      return new Response("Unauthorized", { status: 401 });
+    }
+
     const url = new URL(req.url);
 
     if (url.pathname === "/") {
