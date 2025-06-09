@@ -1,0 +1,25 @@
+FROM oven/bun:1
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json .
+COPY bun.lock .
+
+# Install dependencies
+RUN bun install
+
+# Copy source code
+COPY . .
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV CH_SERVER_HOST=
+ENV CH_TOKEN=
+ENV SECRET=
+
+# Expose port for WebSocket server
+EXPOSE 3000
+
+# Start the WebSocket server
+CMD ["bun", "run", "src/master-server/wsServer.ts"]
