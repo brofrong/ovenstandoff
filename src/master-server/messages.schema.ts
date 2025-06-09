@@ -50,23 +50,27 @@ export const matchEndedSchema = z.object({
   winner: z.enum(["ct", "t", "error", "player dont connect to the lobby"]),
 });
 
+export const registerClientsSchema = z.object({
+  count: z.number(),
+});
+
 export type SendMessageFromClient =
   | {
-      type: "registerRunners";
-      data: z.infer<typeof registerRunnersSchema>;
-    }
+    type: "registerRunners";
+    data: z.infer<typeof registerRunnersSchema>;
+  }
   | {
-      type: "lobbyCode";
-      data: z.infer<typeof lobbyCodeSchema>;
-    }
+    type: "lobbyCode";
+    data: z.infer<typeof lobbyCodeSchema>;
+  }
   | {
-      type: "changeState";
-      data: z.infer<typeof changeStateSchema>;
-    }
+    type: "changeState";
+    data: z.infer<typeof changeStateSchema>;
+  }
   | {
-      type: "matchEnded";
-      data: z.infer<typeof matchEndedSchema>;
-    };
+    type: "matchEnded";
+    data: z.infer<typeof matchEndedSchema>;
+  };
 
 export type SendMessageFromMaster = {
   type: "startMatch";

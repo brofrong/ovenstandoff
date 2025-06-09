@@ -1,0 +1,17 @@
+meta {
+  name: register clients
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:3000/register-clients
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "count": 4 
+  }
+}

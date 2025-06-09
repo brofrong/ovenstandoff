@@ -1,6 +1,5 @@
-import { WSContext } from "hono/ws";
-import WebSocket from "ws";
 import { openConnections, runners } from ".";
+import { reportMatchEnded } from './ch-server';
 import { setRunners } from "./index";
 import {
   changeStateSchema,
@@ -59,7 +58,7 @@ async function handleRegisterRunners(
     return { error: parsedData.error.message };
   }
   parsedData.data.runners.forEach((it) => {
-    runners.push({ name: it.runner, ws, state: it.state });
+    runners.push({ name: it.runner, ws, state: it.state, matchID: null });
   });
   return { error: null };
 }
@@ -130,7 +129,28 @@ async function handleMatchEnded(
   if (!parsedData.success) {
     return { error: parsedData.error.message };
   }
-  const runnerName = runners.find((it) => it.ws === ws)?.name;
-  console.log(`match ${runnerName} ended for ${parsedData.data.winner}`);
+  const runner = runners.find((it) => it.ws === ws);
+
+  if (!runner) {
+    return { error: `Runner not found` };
+  }
+  if (!runner.matchID) {
+    return { error: `Match ID not found` };
+  }
+
+  console.log(`match ${runner.name} ended for ${parsedData.data.winner} with matchID ${runner.matchID}`);
+
+  if (parsedData.data.winner === "error") {
+    await reportMatchEnded(runner.matchID, null, "error");
+  }
+
+  if (parsedData.data.winner === "player dont connect to the lobby") {
+    await reportMatchEnded(runner.matchID, null, "player dont connect to the lobby");
+  }
+
+  await reportMatchEnded(runner.matchID, parsedData.data.winner === "ct" ? 0 : 1, null);
+
+  runner.matchID = null;
+
   return { error: null };
 }

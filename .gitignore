@@ -178,3 +178,5 @@ apk/
 tmp/
 
 *.traineddata
+
+db.json

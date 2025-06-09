@@ -1,19 +1,24 @@
 import { z } from "zod";
 import type { State } from "../state-manager/states";
 import { message, close, open, sendMessageToClient } from "./master-ws";
+import { initDB, handleRegisterClients } from './register-client';
 
 export const openConnections: Set<Bun.ServerWebSocket<unknown>> = new Set();
 export let runners: {
   name: string;
   ws: Bun.ServerWebSocket<unknown>;
   state: State;
+  matchID: string | null;
 }[] = [];
 
 export function setRunners(
-  newRunners: { name: string; ws: Bun.ServerWebSocket<unknown>; state: State }[]
+  newRunners: { name: string; ws: Bun.ServerWebSocket<unknown>; state: State; matchID: string | null }[]
 ) {
   runners = newRunners;
 }
+
+
+await initDB();
 
 const server = Bun.serve({
   port: 3000,
@@ -26,6 +31,10 @@ const server = Bun.serve({
 
     if (url.pathname === "/start-match") {
       return startMatch(req);
+    }
+
+    if (url.pathname === "/register-clients") {
+      return handleRegisterClients(req);
     }
 
     if (url.pathname === "/ws") {
@@ -47,6 +56,7 @@ const server = Bun.serve({
 console.log(`WebSocket server listening on port ${server.port}`);
 
 const reqMatchStartSchema = z.object({
+  matchID: z.string(),
   teams: z.object({
     ct: z.array(z.string()),
     t: z.array(z.string()),
@@ -69,10 +79,14 @@ async function startMatch(req: Request) {
     return new Response("No free manager", { status: 400 });
   }
   freeManager.state = "createLobby";
+
+
   sendMessageToClient(freeManager.ws, {
     type: "startMatch",
     data: { teams, runner: freeManager.name },
   });
+
+  freeManager.matchID = parsedBody.data.matchID;
 
   return new Response("Match started", { status: 200 });
 }
