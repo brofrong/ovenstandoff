@@ -1,0 +1,33 @@
+# Dependency directories
+node_modules
+bun.lockb (if you want to use only the one copied in Dockerfile, but usually you want to keep this)
+.cache
+
+# Logs
+logs
+*.log
+
+# Test and coverage
+*.test.ts
+coverage
+*.lcov
+
+# Build output
+dist
+build
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Git and VCS
+.git
+.gitignore
+
+# Env files
+.env
+.env.*
+
+# Misc
+*.tgz
+*.tsbuildinfo
