@@ -3,6 +3,7 @@ import type { State } from "../state-manager/states";
 import { message, close, open, sendMessageToClient } from "./master-ws";
 import { initDB, handleRegisterClients } from './register-client';
 import { guard } from "./guard";
+import { env } from "./env";
 
 export const openConnections: Set<Bun.ServerWebSocket<unknown>> = new Set();
 export let runners: {
@@ -22,7 +23,7 @@ export function setRunners(
 initDB();
 
 const server = Bun.serve({
-  port: 3000,
+  port: env.PORT,
   fetch: async (req, server) => {
 
     if (!guard(req)) {
