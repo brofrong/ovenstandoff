@@ -105,7 +105,7 @@ async function downloadAndInstallStandoff2(count: number) {
         "Android",
         "obb",
         "com.axlebolt.standoff2"
-      )} /storage/emulated/0/Android/obb/`
+      )} /storage/emulated/0/Android/obb/com.axlebolt.standoff2/`
     )
   );
   console.log("push success");
