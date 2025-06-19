@@ -31,7 +31,7 @@ const checkAdbApproach = async () => {
     const startTime = Date.now();
     for (let i = 0; i < TIME_TO_CHECK; i++) {
         const singleFrameTime = Date.now();
-        const img = await $`${config.ldPath}/ldconsole.exe adb --name ${LD_PLAYER_NAME} --command "exec-out screencap -p"`.arrayBuffer();
+        const img = await $`${config.ldPath}\\ldconsole.exe adb --name ${LD_PLAYER_NAME} --command "exec-out screencap -p"`.arrayBuffer();
         const test = await sharp(img).raw().toBuffer();
         console.log(`adb command taken: ${Date.now() - singleFrameTime}ms`);
     }

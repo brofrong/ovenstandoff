@@ -5,13 +5,13 @@ import sharp from "sharp";
 
 export const LD = {
   launch: (name: string) => {
-    return $`${config.ldPath}/ldconsole.exe launch --name ${name}`.text();
+    return $`${config.ldPath}\\ldconsole.exe launch --name ${name}`.text();
   },
   quit: (name: string) => {
-    return $`${config.ldPath}/ldconsole.exe quit --name ${name}`.text();
+    return $`${config.ldPath}\\ldconsole.exe quit --name ${name}`.text();
   },
   quitall: () => {
-    return $`${config.ldPath}/ldconsole.exe quitall`.text();
+    return $`${config.ldPath}\\ldconsole.exe quitall`.text();
   },
   modify: async (
     name: string,
@@ -39,27 +39,27 @@ export const LD = {
     }
 
     console.log(
-      `${config.ldPath}/ldconsole.exe modify --name ${name} ${toModify.join(" ")}`
+      `${config.ldPath}\\ldconsole.exe modify --name ${name} ${toModify.join(" ")}`
     );
-    return await $`${config.ldPath}/ldconsole.exe modify --name ${name} ${toModify.join(" ")}`.text();
+    return await $`${config.ldPath}\\ldconsole.exe modify --name ${name} ${toModify.join(" ")}`.text();
   },
   copy: async (newName: string, from: string | number) => {
     try {
-      return await $`${config.ldPath}/ldconsole.exe copy --name ${newName} --from ${from}`.text();
+      return await $`${config.ldPath}\\ldconsole.exe copy --name ${newName} --from ${from}`.text();
     } catch (e) {
       const id = (e as any)?.exitCode ?? 0;
       return id;
     }
   },
   runapp: (name: string, packagename: string) => {
-    return $`${config.ldPath}/ldconsole.exe runapp --name ${name} --packagename ${packagename}`.text();
+    return $`${config.ldPath}\\ldconsole.exe runapp --name ${name} --packagename ${packagename}`.text();
   },
   killapp: (name: string, packagename: string) => {
-    return $`${config.ldPath}/ldconsole.exe killapp --name ${name} --packagename ${packagename}`.text();
+    return $`${config.ldPath}\\ldconsole.exe killapp --name ${name} --packagename ${packagename}`.text();
   },
   list2: async () => {
     const ret: { name: string; index: number }[] = [];
-    const consoleRet = await $`${config.ldPath}/ldconsole.exe list2`.text();
+    const consoleRet = await $`${config.ldPath}\\ldconsole.exe list2`.text();
 
     const emulatorsInfo = consoleRet.split("\n");
 
@@ -73,11 +73,11 @@ export const LD = {
     return ret;
   },
   adb: (name: string, command: string) => {
-    return $`${config.ldPath}/ldconsole.exe adb --name ${name} --command "${command}"`.text();
+    return $`${config.ldPath}\\ldconsole.exe adb --name ${name} --command "${command}"`.text();
   },
   screencap: async (name: string) => {
     const img =
-      await $`${config.ldPath}/ldconsole.exe adb --name ${name} --command "exec-out screencap -p"`.arrayBuffer();
+      await $`${config.ldPath}\\ldconsole.exe adb --name ${name} --command "exec-out screencap -p"`.arrayBuffer();
     if (!img.byteLength) {
       return null;
     }
@@ -86,18 +86,18 @@ export const LD = {
   },
   isrunning: async (name: string): Promise<boolean> => {
     const bashret =
-      await $`${config.ldPath}/ldconsole.exe isrunning --name ${name}`.text();
+      await $`${config.ldPath}\\ldconsole.exe isrunning --name ${name}`.text();
     return bashret !== "stop";
   },
   click: (name: string, x: number, y: number) => {
-    return $`${config.ldPath}/ldconsole.exe adb --name ${name} --command "shell input tap ${x} ${y}"`.text();
+    return $`${config.ldPath}\\ldconsole.exe adb --name ${name} --command "shell input tap ${x} ${y}"`.text();
   },
   install: (name: string, apkPath: string) => {
-    return $`${config.ldPath}/ldconsole.exe adb --name ${name} --command "install ${apkPath}`.text();
+    return $`${config.ldPath}\\ldconsole.exe adb --name ${name} --command "install ${apkPath}`.text();
   },
   create: async (name: string): Promise<number> => {
     try {
-      await $`${config.ldPath}/ldconsole.exe add --name ${name}`.text();
+      await $`${config.ldPath}\\ldconsole.exe add --name ${name}`.text();
     } catch (e) {
       const id = (e as any)?.exitCode ?? 0;
       console.log(`created ldPlayer with id ${id}`);
@@ -108,7 +108,7 @@ export const LD = {
   },
   delete: async (name: string) => {
     try {
-      await $`${config.ldPath}/ldconsole.exe remove --name ${name}`.text();
+      await $`${config.ldPath}\\ldconsole.exe remove --name ${name}`.text();
     } catch (e) {
       const id = (e as any)?.exitCode ?? 0;
       console.log(`deleted ldPlayer with id ${id}`);
@@ -120,7 +120,7 @@ export const LD = {
 
   deleteAllText: async (name: string) => {
     for (let i = 0; i < 20; i++) {
-      await $`${config.ldPath}/ldconsole.exe adb --name ${name} --command "shell input keyevent 67"`.text();
+      await $`${config.ldPath}\\ldconsole.exe adb --name ${name} --command "shell input keyevent 67"`.text();
     }
     return;
   },
