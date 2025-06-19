@@ -97,6 +97,12 @@ async function downloadAndInstallStandoff2(count: number) {
   );
 
   console.log("push obb");
+  console.log(`push ${path.join(
+    unzippedFolder,
+    "Android",
+    "obb",
+    "com.axlebolt.standoff2"
+  )} /storage/emulated/0/Android/obb/`);
   console.log(
     await LD.adb(
       "clear",
