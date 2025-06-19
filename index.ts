@@ -13,7 +13,7 @@ if (command.args[0] === 'setup') {
   await setup();
 }
 
-if (command.args[0] === 'start') {
+if (command.args[0] === 'worker') {
   await startWorker();
 }
 
