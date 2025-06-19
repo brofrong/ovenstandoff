@@ -9,8 +9,8 @@ import { activeStateManagers } from "../state-manager/state-manager";
 let ws: WebSocket | null = null;
 
 export async function connectToMasterServer() {
-  console.log(`connect to master server ${config.masterServerHost}`);
-  ws = new WebSocket(config.masterServerHost);
+  console.log(`connect to master server ${config.masterServerHost}/ws?auth=${config.secret}`);
+  ws = new WebSocket(`${config.masterServerHost}/ws?auth=${config.secret}`);
 
   ws.addEventListener("open", async () => {
     console.log("Connected to master server");
