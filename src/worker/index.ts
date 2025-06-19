@@ -10,15 +10,15 @@ export async function startWorker() {
   // stop all active ld clients
   // await LD.quitall();
 
-  await startEmulators();
+  // await startEmulators();
 
-  // create state managers
-  const StateManagers = activeLdPlayers.map(
-    (player) => new StateManager(player)
-  );
+  // // create state managers
+  // const StateManagers = activeLdPlayers.map(
+  //   (player) => new StateManager(player)
+  // );
 
-  // run players
-  StateManagers.forEach((manager) => manager.run());
+  // // run players
+  // StateManagers.forEach((manager) => manager.run());
 
   // connect to master server
   await connectToMasterServer();

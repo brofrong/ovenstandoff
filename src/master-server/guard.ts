@@ -2,8 +2,10 @@ import { env } from "./env";
 
 export function guard(req: Request): boolean {
   const Authorization = req.headers.get("Authorization");
-  if (!Authorization) {
+  const AuthorizationRequest = (new URL(req.url)).searchParams.get('auth');
+  if (!Authorization && !AuthorizationRequest) {
     return false;
   }
-  return Authorization === 'Bearer ' + env.SECRET;
+  const AuthorizationToken = Authorization || AuthorizationRequest;
+  return AuthorizationToken === 'Bearer ' + env.SECRET;
 }

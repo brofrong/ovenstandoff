@@ -8,6 +8,7 @@ export let config: z.infer<typeof configSchema>;
 export async function loadConfig() {
   await checkIsConfigExist();
   const configFile = Bun.file(CONFIG_PATH);
+  console.log(`load config from ${CONFIG_PATH}`);
   const configJSON = await configFile.json();
   config = configSchema.parse(configJSON);
 }

@@ -25,8 +25,8 @@ initDB();
 const server = Bun.serve({
   port: env.PORT,
   fetch: async (req, server) => {
-
     if (!guard(req)) {
+      console.log(`Unauthorized request ${req.url}`);
       return new Response("Unauthorized", { status: 401 });
     }
 
