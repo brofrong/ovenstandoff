@@ -8,5 +8,6 @@ export function guard(req: Request): boolean {
     return false;
   }
   const AuthorizationToken = Authorization || AuthorizationRequest;
+  console.log(`AuthorizationToken: ${AuthorizationToken}`);
   return AuthorizationToken === 'Bearer ' + env.SECRET;
 }
