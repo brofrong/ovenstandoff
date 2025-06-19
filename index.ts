@@ -1,5 +1,6 @@
 import program from "./src/cli";
 import { setup } from './src/setup/setup';
+import { startWorker } from './src/worker/index';
 
 
 const command = program.parse(process.argv);
@@ -10,5 +11,9 @@ if (command.args.length === 0) {
 
 if (command.args[0] === 'setup') {
   await setup();
+}
+
+if (command.args[0] === 'start') {
+  await startWorker();
 }
 
