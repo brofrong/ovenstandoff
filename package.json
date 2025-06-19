@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@appium/opencv": "^3.0.8",
+    "@clack/prompts": "^0.11.0",
     "@hono/node-server": "^1.14.2",
     "@hono/node-ws": "^1.1.4",
     "@types/adm-zip": "^0.5.7",
@@ -20,6 +21,7 @@
     "adm-zip": "^0.5.16",
     "appdirsjs": "^1.2.7",
     "clipboardy": "^4.0.0",
+    "commander": "^14.0.0",
     "fuse.js": "^7.1.0",
     "progress": "^2.0.3",
     "sharp": "^0.34.1",

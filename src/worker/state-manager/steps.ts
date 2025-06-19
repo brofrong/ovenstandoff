@@ -1,5 +1,5 @@
 import { findLoop } from "../img-proccesing/findloop";
-import { wait } from "../unitls";
+import { wait } from "../../unitls";
 import { share } from "../share/shate";
 import { anchors } from "../img-proccesing/anchors";
 import { StateManager } from "./state-manager";
@@ -8,32 +8,32 @@ import { loadBuffer } from "../img-proccesing/memo-img";
 
 type Step =
   | {
-      step: "find";
-      data: { anchorKey: keyof typeof anchors };
-    }
+    step: "find";
+    data: { anchorKey: keyof typeof anchors };
+  }
   | {
-      step: "click";
-      data: { anchorKey?: keyof typeof anchors; x?: number; y?: number };
-    }
+    step: "click";
+    data: { anchorKey?: keyof typeof anchors; x?: number; y?: number };
+  }
   | {
-      step: "write";
-      data: { text: string };
-    }
+    step: "write";
+    data: { text: string };
+  }
   | {
-      step: "share";
-      data: { setCode: (code: string) => void };
-    }
+    step: "share";
+    data: { setCode: (code: string) => void };
+  }
   | {
-      step: "wait";
-      data: { amount: number };
-    }
+    step: "wait";
+    data: { amount: number };
+  }
   | {
-      step: "clickOccurrence";
-      data: { anchorKey: keyof typeof anchors };
-    }
+    step: "clickOccurrence";
+    data: { anchorKey: keyof typeof anchors };
+  }
   | {
-      step: "deleteAllText";
-    };
+    step: "deleteAllText";
+  };
 
 type Steps = Step[];
 

@@ -1,6 +1,6 @@
 import { anchors } from "./anchors";
 import { findAnchor } from "./img-proccesing";
-import { wait } from "../unitls";
+import { wait } from "../../unitls";
 import { StateManager } from "../state-manager/state-manager";
 
 export async function findLoop(

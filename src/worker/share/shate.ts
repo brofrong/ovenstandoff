@@ -4,7 +4,7 @@ import ShareMenuJSON from "./share-menu.json";
 import { anchors } from "../img-proccesing/anchors";
 import { getImageOccurrence } from "@appium/opencv";
 import clipboard from "clipboardy";
-import { wait } from "../unitls";
+import { wait } from "../../unitls";
 import { runSteps } from "../state-manager/steps";
 import type { StateManager } from "../state-manager/state-manager";
 

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { State } from "../state-manager/states";
+import type { State } from "../worker/state-manager/states";
 import { message, close, open, sendMessageToClient } from "./master-ws";
 import { initDB, handleRegisterClients } from './register-client';
 import { guard } from "./guard";

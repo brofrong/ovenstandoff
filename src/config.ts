@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { configSchema } from "./storage/config.schema";
-import { CONFIG_PATH } from "./storage/init-storage";
-import defaultConfig from "./storage/default-config.json";
+import { configSchema } from "./worker/storage/config.schema";
+import { CONFIG_PATH } from "./worker/storage/init-storage";
+import defaultConfig from "./worker/storage/default-config.json";
 
 export let config: z.infer<typeof configSchema>;
 

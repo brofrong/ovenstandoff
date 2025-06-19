@@ -1,7 +1,7 @@
 import { loadBuffer } from "./memo-img";
 import { createWorker } from "tesseract.js";
 import sharp from "sharp";
-import { config } from "../config";
+import { config } from "../../config";
 
 const playerNameBoxSizes = {
   width: 83,

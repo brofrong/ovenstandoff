@@ -1,7 +1,7 @@
 {
-  "ldconsolePath": "D:\\LDPlayer\\LDPlayer9\\ldconsole.exe",
   "ldPath": "D:\\LDPlayer\\LDPlayer9",
   "masterServerHost": "ws://localhost:3000",
+  "secret": "randomString",
   "debug": false,
   "runners": [
     {

@@ -5,13 +5,13 @@ meta {
 }
 
 post {
-  url: http://localhost:3000/register-clients
+  url: https://ovenstandoff.brofrong.ru/register-clients
   body: json
   auth: bearer
 }
 
 auth:bearer {
-  token: 123
+  token: {{token}}
 }
 
 body:json {

@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export const configSchema = z.object({
-  ldconsolePath: z.string(),
   ldPath: z.string(),
   masterServerHost: z.string(),
+  secret: z.string(),
   debug: z.boolean().default(false),
   runners: z.array(
     z.object({

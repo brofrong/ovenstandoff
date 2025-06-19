@@ -3,7 +3,7 @@ import { findAnchor } from "./img-proccesing";
 import { loadBuffer } from "./memo-img";
 import { getPlayerName } from "./player-name-detection";
 import sharp from "sharp";
-import { fuzzySearchNames } from "../unitls";
+import { fuzzySearchNames } from "../../unitls";
 import {
   TEAM_COLORS_COORDS,
   slotsNames,

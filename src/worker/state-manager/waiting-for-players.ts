@@ -3,7 +3,7 @@ import { sendMessageToMasterServer } from "../ws/ws";
 import { StateManager, type Teams } from "./state-manager";
 import { findAnchor } from "../img-proccesing/img-proccesing";
 import { getPlayerName } from "../img-proccesing/player-name-detection";
-import { fuzzySearchNames } from "../unitls";
+import { fuzzySearchNames } from "../../unitls";
 import sharp from "sharp";
 
 async function isMatchExpired(stateManager: StateManager): Promise<boolean> {

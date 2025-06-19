@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { AllStates } from "../state-manager/states";
+import { AllStates } from "../worker/state-manager/states";
 
 const availableMessagesTypesMaster = ["startMatch"] as const;
 const availableMessagesTypesClient = [

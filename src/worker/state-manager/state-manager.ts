@@ -1,7 +1,7 @@
 import { findAnchor } from "../img-proccesing/img-proccesing";
 import type { LDPlayer } from "../ldconnector/ld";
 import { runSteps } from "./steps";
-import { config } from "../config";
+import { config } from "../../config";
 import { updateRunnerInfo } from "../storage/update-storage";
 import { sendMessageToMasterServer } from "../ws/ws";
 import type { State } from "./states";
@@ -242,7 +242,7 @@ export class StateManager {
         { step: "click", data: { anchorKey: "menu_group" } },
         { step: "click", data: { anchorKey: "custom_lobby" } },
         // { step: 'click', data: { anchorKey: 'create_custom_lobby' } },
-        
+
         // set lobby to private
         { step: "click", data: { x: 810, y: 76 } },
         { step: "click", data: { x: 608, y: 399 } },

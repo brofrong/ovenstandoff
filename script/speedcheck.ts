@@ -1,8 +1,8 @@
+import { $ } from 'bun';
 import sharp from "sharp";
-import { LDPlayer } from "../src/ldconnector/ld";
-import {initStorage} from '../src/storage/init-storage';
-import {config} from '../src/config';
-import {$} from 'bun';
+import { config } from '../src/config';
+import { LDPlayer } from "../src/worker/ldconnector/ld";
+import { initStorage } from '../src/worker/storage/init-storage';
 
 const LD_PLAYER_NAME = 'imt-1';
 const TIME_TO_CHECK = 20;
@@ -31,7 +31,7 @@ const checkAdbApproach = async () => {
     const startTime = Date.now();
     for (let i = 0; i < TIME_TO_CHECK; i++) {
         const singleFrameTime = Date.now();
-        const img = await $`${config.ldconsolePath} adb --name ${LD_PLAYER_NAME} --command "exec-out screencap -p"`.arrayBuffer();
+        const img = await $`${config.ldPath}/ldconsole.exe adb --name ${LD_PLAYER_NAME} --command "exec-out screencap -p"`.arrayBuffer();
         const test = await sharp(img).raw().toBuffer();
         console.log(`adb command taken: ${Date.now() - singleFrameTime}ms`);
     }
@@ -45,4 +45,3 @@ await initStorage();
 // await checkImgApproach();
 await checkAdbApproach();
 
- 

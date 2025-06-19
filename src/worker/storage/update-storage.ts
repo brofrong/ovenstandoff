@@ -1,4 +1,4 @@
-import { config } from "../config";
+import { config } from "../../config";
 import type { Config } from "./config.schema";
 import { CONFIG_PATH } from "./init-storage";
 

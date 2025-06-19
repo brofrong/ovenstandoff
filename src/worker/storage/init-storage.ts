@@ -1,8 +1,8 @@
 import * as path from "path";
-import { dirs } from "../unitls";
+import { dirs } from "../../unitls";
 
 import { mkdir, rm } from "node:fs/promises";
-import { config, loadConfig } from "../config";
+import { config, loadConfig } from "../../config";
 import { LD } from "../ldconnector/ld-command";
 import { writeConfig } from "./update-storage";
 
@@ -12,17 +12,16 @@ export const CONFIG_PATH = path.join(dirs, CONFIG_FILE_NAME);
 export async function initStorage(options?: { deleteOldOnStart?: boolean }) {
   //laod config
   await loadConfig();
-
-  const LdNames = (await LD.list2()).map((it) => it.name);
-
-  checkLdNamesWithConfig(LdNames);
-  //delete old screenshots
-  if (options?.deleteOldOnStart) {
-    await deleteALLPNG(LdNames);
+  try {
+    const LdNames = (await LD.list2()).map((it) => it.name);
+    checkLdNamesWithConfig(LdNames);
+    //delete old screenshots
+    if (options?.deleteOldOnStart) {
+      await deleteALLPNG(LdNames);
+    }
+  } catch (error) {
+    console.log("error in path to LD player!!!");
   }
-
-  //Create screenshot folders
-  await createScreenShotFolders(LdNames);
 }
 
 async function checkLdNamesWithConfig(LDnames: string[]) {
@@ -35,7 +34,7 @@ async function checkLdNamesWithConfig(LDnames: string[]) {
       `config: ${configNames}, LDnames: ${LDnames}`
     );
 
-    const newRunners = LDnames.map((ld) => ({name: ld, nameIsChanged: false, lowSettings: false}));
+    const newRunners = LDnames.map((ld) => ({ name: ld, nameIsChanged: false, lowSettings: false }));
     config.runners = newRunners;
     await writeConfig(config);
   }

@@ -1,9 +1,9 @@
-import { config } from "../config";
+import { config } from "../../config";
 import {
   messagesMasterSchema,
   type SendMessageFromClient,
   startMatchSchema,
-} from "../master-server/messages.schema";
+} from "../../master-server/messages.schema";
 import { activeStateManagers } from "../state-manager/state-manager";
 
 let ws: WebSocket | null = null;
