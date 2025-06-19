@@ -1,6 +1,6 @@
 {
-  "ldPath": "D:\\LDPlayer\\LDPlayer9",
-  "masterServerHost": "ws://localhost:3000",
+  "ldPath": "С:\\LDPlayer\\LDPlayer9",
+  "masterServerHost": "ws://https://ovenstandoff.brofrong.ru",
   "secret": "randomString",
   "debug": false,
   "runners": [

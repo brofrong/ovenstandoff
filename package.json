@@ -9,7 +9,9 @@
     "start": "bun ./index.ts",
     "script": "bun ./script/create-anchors.ts",
     "setup": "bun ./src/setup/setup.ts",
-    "wsServer": "bun ./src/master-server/index.ts"
+    "wsServer": "bun ./src/master-server/index.ts",
+    "build": "bun build ./index.ts --compile --outfile ./dist/ovenstandoff",
+    "build:windows": "bun build ./index.ts --compile --target=bun-windows-x64 --outfile ./dist/ovenstandoff.exe"
   },
   "dependencies": {
     "@appium/opencv": "^3.0.8",
