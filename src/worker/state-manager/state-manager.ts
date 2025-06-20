@@ -6,6 +6,7 @@ import { updateRunnerInfo } from "../storage/update-storage";
 import { sendMessageToMasterServer } from "../ws/ws";
 import type { State } from "./states";
 import { waitForPlayers } from "./waiting-for-players";
+import { getRunnerAuthInfo } from "../storage/get-runner-info";
 
 export type Teams = {
   ct: string[];
@@ -192,13 +193,20 @@ export class StateManager {
     }
 
     if (await findAnchor(this.currentImg, "launch_with_google")) {
-      // const runnerInfo = getRunnerAuthInfo(this.ldPlayer.name);
+      const runnerInfo = getRunnerAuthInfo(this.ldPlayer.name);
       await runSteps(
         [
           { step: "click", data: { anchorKey: "launch_with_google" } },
           { step: "wait", data: { amount: 5000 } },
           { step: "click", data: { anchorKey: "launch_login_email" } },
           { step: "wait", data: { amount: 1000 } },
+          { step: "write", data: { text: runnerInfo.email } },
+          { step: "click", data: { anchorKey: "launch_login_continue" } },
+          { step: "wait", data: { amount: 1000 } },
+          { step: "click", data: { anchorKey: "launch_login_password" } },
+          { step: "wait", data: { amount: 1000 } },
+          { step: "write", data: { text: runnerInfo.password } },
+          { step: "click", data: { anchorKey: "launch_login_continue" } },
         ],
         this
       );
