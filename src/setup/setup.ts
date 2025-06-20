@@ -11,6 +11,7 @@ import { unzip } from "./unzip";
 import { z } from 'zod';
 import { Config } from '../worker/storage/config.schema';
 import { writeConfig } from '../worker/storage/update-storage';
+import { registerClientsResponseSchema } from '../master-server/messages.schema';
 
 export async function setup() {
   await initStorage();
@@ -56,18 +57,12 @@ async function getRunnersId(masterServerHost: string, count: number, secret: str
       "Authorization": `Bearer ${secret}`
     },
   });
-  const data = await response.json() as {
-    startID: number;
-    endID: number;
-  };
+  const json = await response.json() as undefined;
 
-  const runners: Config['runners'] = [];
+  const data = registerClientsResponseSchema.parse(json);
 
-  for (let i = data.startID; i < data.endID; i++) {
-    runners.push({ name: `CH auto ${i + 1}`, nameIsChanged: false, lowSettings: false });
-  }
 
-  return runners;
+  return data;
 }
 
 async function downloadAndInstallStandoff2(count: number) {

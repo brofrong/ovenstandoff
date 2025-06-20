@@ -5,6 +5,8 @@ const envSchema = z.object({
   CH_TOKEN: z.string(),
   SECRET: z.string(),
   PORT: z.coerce.number().default(3000),
+  EMAILS: z.string().transform((val) => val.split(',')),
+  PASSWORDS: z.string().transform((val) => val.split(',')),
 });
 
 export const env = envSchema.parse(process.env);

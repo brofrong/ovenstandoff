@@ -54,6 +54,16 @@ export const registerClientsSchema = z.object({
   count: z.number(),
 });
 
+export const registerClientsResponseSchema = z.array(z.object({
+  name: z.string(),
+  nameIsChanged: z.boolean(),
+  lowSettings: z.boolean(),
+  email: z.string(),
+  password: z.string(),
+}));
+
+export type RegisterClientsResponse = z.infer<typeof registerClientsResponseSchema>;
+
 export type SendMessageFromClient =
   | {
     type: "registerRunners";

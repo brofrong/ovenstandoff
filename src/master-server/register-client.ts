@@ -1,7 +1,6 @@
 import { z } from "zod";
-import { sendMessageToClient } from './master-ws';
-import { runners } from './index';
-import { registerClientsSchema } from './messages.schema';
+import { registerClientsSchema, RegisterClientsResponse } from './messages.schema';
+import { env } from "./env";
 
 const dbSchema = z.object({
     currentID: z.number().default(0),
@@ -50,7 +49,24 @@ export async function handleRegisterClients(req: Request) {
 
     const resData = await registerClients(count);
 
-    return new Response(JSON.stringify(resData), { status: 200 });
+    const returnData: RegisterClientsResponse = [];
+
+    const emails = env.EMAILS;
+    const emailsLength = emails.length;
+    const passwords = env.PASSWORDS;
+    const passwordsLength = passwords.length;
+
+    for (let i = resData.startID; i < resData.endID; i++) {
+        returnData.push({
+            name: `CH auto ${i + 1}`,
+            nameIsChanged: false,
+            lowSettings: false,
+            email: env.EMAILS[i % emailsLength],
+            password: env.PASSWORDS[i % passwordsLength],
+        });
+    }
+
+    return new Response(JSON.stringify(returnData), { status: 200 });
 }
 
 

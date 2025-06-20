@@ -19,7 +19,6 @@ export function setRunners(
   runners = newRunners;
 }
 
-
 initDB();
 
 const server = Bun.serve({

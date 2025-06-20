@@ -10,6 +10,8 @@ export const configSchema = z.object({
       name: z.string(),
       nameIsChanged: z.boolean().default(false),
       lowSettings: z.boolean().default(false),
+      email: z.string(),
+      password: z.string(),
     })
   ),
 });
