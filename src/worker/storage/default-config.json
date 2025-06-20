@@ -7,12 +7,16 @@
     {
       "name": "CH auto 1",
       "nameIsChanged": false,
-      "lowSettings": false
+      "lowSettings": false,
+      "email": "test@test.com",
+      "password": "test"
     },
     {
       "name": "CH auto 2",
       "nameIsChanged": false,
-      "lowSettings": false
+      "lowSettings": false,
+      "email": "test@test.com",
+      "password": "test"
     }
   ]
 }
