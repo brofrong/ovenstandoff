@@ -136,7 +136,7 @@ async function startMatch(req: Request) {
     (it) => it.state === "readyForCreateLobby"
   );
   if (!freeManager) {
-    return new Response("No free manager", { status: 400 });
+    return new Response("No free manager", { status: 503 });
   }
   freeManager.state = "createLobby";
 
