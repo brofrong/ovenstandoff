@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { AllStates } from "../worker/state-manager/states";
 
-const availableMessagesTypesMaster = ["startMatch"] as const;
+const availableMessagesTypesMaster = ["startMatch", "matchEnded"] as const;
 const availableMessagesTypesClient = [
   "registerRunners",
   "lobbyCode",
@@ -82,7 +82,12 @@ export type SendMessageFromClient =
     data: z.infer<typeof matchEndedSchema>;
   };
 
-export type SendMessageFromMaster = {
-  type: "startMatch";
-  data: z.infer<typeof startMatchSchema>;
-};
+export type SendMessageFromMaster =
+  | {
+    type: "startMatch";
+    data: z.infer<typeof startMatchSchema>;
+  }
+  | {
+    type: "matchEnded";
+    data: z.infer<typeof matchEndedSchema>;
+  };

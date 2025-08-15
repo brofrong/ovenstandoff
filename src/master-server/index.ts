@@ -4,6 +4,8 @@ import { message, close, open, sendMessageToClient } from "./master-ws";
 import { initDB, handleRegisterClients } from './register-client';
 import { guard } from "./guard";
 import { env } from "./env";
+import { readFileSync } from "fs";
+import { join } from "path";
 
 export const openConnections: Set<Bun.ServerWebSocket<unknown>> = new Set();
 export let runners: {
@@ -19,20 +21,59 @@ export function setRunners(
   runners = newRunners;
 }
 
+if (env.MOCK) {
+  runners.push(
+    {
+      name: "mock", ws: {
+        send: () => 0,
+        close: () => { },
+        ping: () => 0,
+        pong: () => 0,
+        sendText: () => 0,
+        sendBinary: () => 0,
+        terminate: () => { },
+        publish: () => 0,
+        publishText: () => 0,
+        publishBinary: () => 0,
+        subscribe: () => 0,
+        unsubscribe: () => 0,
+        isSubscribed: () => false,
+        cork: (a) => a as any,
+        remoteAddress: "127.0.0.1",
+        readyState: 1,
+        data: null,
+        getBufferedAmount: () => 0,
+      }, state: "readyForCreateLobby", matchID: null
+    },
+  );
+}
+
 initDB();
 
 const server = Bun.serve({
   port: env.PORT,
   fetch: async (req, server) => {
-    if (!guard(req)) {
-      console.log(`Unauthorized request ${req.url}`);
-      return new Response("Unauthorized", { status: 401 });
-    }
 
     const url = new URL(req.url);
 
     if (url.pathname === "/") {
-      return new Response("hello world");
+      try {
+        const htmlPath = join(import.meta.dir, "html", "index.html");
+        const htmlContent = readFileSync(htmlPath, "utf-8");
+        return new Response(htmlContent, {
+          headers: {
+            "Content-Type": "text/html; charset=utf-8",
+          },
+        });
+      } catch (error) {
+        console.error("Error reading HTML file:", error);
+        return new Response("Error loading page", { status: 500 });
+      }
+    }
+
+    if (!guard(req)) {
+      console.log(`Unauthorized request ${req.url}`);
+      return new Response("Unauthorized", { status: 401 });
     }
 
     if (url.pathname === "/start-match") {
@@ -41,6 +82,18 @@ const server = Bun.serve({
 
     if (url.pathname === "/register-clients") {
       return handleRegisterClients(req);
+    }
+
+    if (url.pathname === "/api/runners") {
+      return new Response(JSON.stringify(runners), {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    }
+
+    if (url.pathname === "/api/end-match") {
+      return handleEndMatch(req);
     }
 
     if (url.pathname === "/ws") {
@@ -63,6 +116,7 @@ console.log(`WebSocket server listening on port ${server.port}`);
 
 const reqMatchStartSchema = z.object({
   matchID: z.string(),
+  map: z.string().optional(),
   teams: z.object({
     ct: z.array(z.string()),
     t: z.array(z.string()),
@@ -73,7 +127,7 @@ async function startMatch(req: Request) {
   const body = await req.json();
   const parsedBody = reqMatchStartSchema.safeParse(body);
   if (!parsedBody.success) {
-    return new Response("Invalid request", { status: 400 });
+    return new Response(`Invalid request ${JSON.stringify(parsedBody.error)}`, { status: 400 });
   }
 
   const { teams } = parsedBody.data;
@@ -95,4 +149,47 @@ async function startMatch(req: Request) {
   freeManager.matchID = parsedBody.data.matchID;
 
   return new Response("Match started", { status: 200 });
+}
+
+const endMatchSchema = z.object({
+  runner: z.string(),
+  winner: z.enum(["ct", "t", "error"]),
+});
+
+async function handleEndMatch(req: Request) {
+  try {
+    const body = await req.json();
+    const parsedBody = endMatchSchema.safeParse(body);
+
+    if (!parsedBody.success) {
+      return new Response("Invalid request", { status: 400 });
+    }
+
+    const { runner: runnerName, winner } = parsedBody.data;
+
+    // Находим runner по имени
+    const runner = runners.find(r => r.name === runnerName);
+    if (!runner) {
+      return new Response("Runner not found", { status: 404 });
+    }
+
+    if (!runner.matchID) {
+      return new Response("Runner is not in a match", { status: 400 });
+    }
+
+    // Отправляем сообщение о завершении матча через WebSocket
+    sendMessageToClient(runner.ws, {
+      type: "matchEnded",
+      data: { winner }
+    });
+
+    // Сбрасываем matchID
+    runner.matchID = null;
+    runner.state = "readyForCreateLobby";
+
+    return new Response("Match ended successfully", { status: 200 });
+  } catch (error) {
+    console.error("Error ending match:", error);
+    return new Response("Internal server error", { status: 500 });
+  }
 }

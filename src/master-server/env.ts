@@ -7,6 +7,7 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(3000),
   EMAILS: z.string().transform((val) => val.split(',')),
   PASSWORDS: z.string().transform((val) => val.split(',')),
+  MOCK: z.coerce.boolean().default(false),
 });
 
 export const env = envSchema.parse(process.env);
