@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { State } from "../worker/state-manager/states";
-import { message, close, open, sendMessageToClient } from "./master-ws";
+import { message, close, open, sendMessageToClient, broadcastRunnersUpdate } from "./master-ws";
 import { initDB, handleRegisterClients } from './register-client';
 import { guard } from "./guard";
 import { env } from "./env";
@@ -156,6 +156,8 @@ async function startMatch(req: Request) {
     data: { teams, runner: freeManager.name },
   });
 
+  broadcastRunnersUpdate();
+
   return new Response("Match started", { status: 200 });
 }
 
@@ -210,6 +212,8 @@ async function handleEndMatch(req: Request) {
     runner.callbackUrl = null;
     runner.state = "readyForCreateLobby";
 
+    broadcastRunnersUpdate();
+
     return new Response("Match ended successfully", { status: 200 });
   } catch (error) {
     console.error("Error ending match:", error);
@@ -248,6 +252,8 @@ async function handleSendMatchCode(req: Request) {
 
     // Обновляем статус runner на inGame (матч запущен)
     runner.state = "inGame";
+
+    broadcastRunnersUpdate();
 
     return new Response("Match code sent successfully", { status: 200 });
   } catch (error) {

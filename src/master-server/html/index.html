@@ -547,7 +547,15 @@
 
         ws.onmessage = function (event) {
           console.log('Получено сообщение:', event.data);
-          // Можно добавить обработку сообщений от сервера
+          try {
+            const message = JSON.parse(event.data);
+            if (message.type === 'runnersUpdate') {
+              runners = message.data.runners;
+              updateUI();
+            }
+          } catch (error) {
+            console.error('Ошибка парсинга сообщения:', error);
+          }
         };
 
         ws.onclose = function () {
@@ -754,8 +762,8 @@
         }
       }
 
-      // Автообновление каждые 10 секунд
-      setInterval(loadRunners, 10000);
+      // Первоначальная загрузка данных
+      loadRunners();
 
       // Инициализация при загрузке страницы
       document.addEventListener('DOMContentLoaded', function () {

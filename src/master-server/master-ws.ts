@@ -7,6 +7,7 @@ import {
   matchEndedSchema,
   messagesClientSchema,
   registerRunnersSchema,
+  runnersUpdateSchema,
   type MessageTypeClient,
   type SendMessageFromMaster,
 } from "./messages.schema";
@@ -34,6 +35,9 @@ export function close(ws: Bun.ServerWebSocket<unknown>) {
   setRunners(newRunnersList);
 
   openConnections.delete(ws);
+
+  // Уведомляем клиентов об изменении списка runners
+  broadcastRunnersUpdate();
 }
 
 const messageHandlers: Record<
@@ -58,8 +62,9 @@ async function handleRegisterRunners(
     return { error: parsedData.error.message };
   }
   parsedData.data.runners.forEach((it) => {
-    runners.push({ name: it.runner, ws, state: it.state, matchID: null });
+    runners.push({ name: it.runner, ws, state: it.state, matchID: null, callbackUrl: null });
   });
+  broadcastRunnersUpdate();
   return { error: null };
 }
 
@@ -77,6 +82,7 @@ async function handleChangeState(
     return { error: `Runner ${runner} not found` };
   }
   runnerToChange.state = state;
+  broadcastRunnersUpdate();
   return { error: null };
 }
 
@@ -131,6 +137,28 @@ export async function sendMessageToClient(
   ws.send(JSON.stringify(message));
 }
 
+export function broadcastRunnersUpdate() {
+  const runnersData = runners.map(runner => ({
+    name: runner.name,
+    state: runner.state,
+    matchID: runner.matchID,
+    callbackUrl: runner.callbackUrl,
+  }));
+
+  const message: SendMessageFromMaster = {
+    type: "runnersUpdate",
+    data: { runners: runnersData }
+  };
+
+  openConnections.forEach(ws => {
+    try {
+      ws.send(JSON.stringify(message));
+    } catch (error) {
+      console.error("Error sending runners update:", error);
+    }
+  });
+}
+
 async function handleMatchEnded(
   ws: Bun.ServerWebSocket<unknown>,
   data: unknown
@@ -161,6 +189,9 @@ async function handleMatchEnded(
   await reportMatchEnded(runner.matchID, parsedData.data.winner === "ct" ? "ct" : "t", null, runner.callbackUrl);
 
   runner.matchID = null;
+  runner.callbackUrl = null;
+  runner.state = "readyForCreateLobby";
 
+  broadcastRunnersUpdate();
   return { error: null };
 }

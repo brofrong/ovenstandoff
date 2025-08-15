@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { AllStates } from "../worker/state-manager/states";
 
-const availableMessagesTypesMaster = ["startMatch", "matchEnded"] as const;
+const availableMessagesTypesMaster = ["startMatch", "matchEnded", "runnersUpdate"] as const;
 const availableMessagesTypesClient = [
   "registerRunners",
   "lobbyCode",
@@ -50,6 +50,15 @@ export const matchEndedSchema = z.object({
   winner: z.enum(["ct", "t", "error", "player dont connect to the lobby"]),
 });
 
+export const runnersUpdateSchema = z.object({
+  runners: z.array(z.object({
+    name: z.string(),
+    state: z.enum(AllStates),
+    matchID: z.string().nullable(),
+    callbackUrl: z.string().nullable(),
+  })),
+});
+
 export const registerClientsSchema = z.object({
   count: z.number(),
 });
@@ -90,4 +99,8 @@ export type SendMessageFromMaster =
   | {
     type: "matchEnded";
     data: z.infer<typeof matchEndedSchema>;
+  }
+  | {
+    type: "runnersUpdate";
+    data: z.infer<typeof runnersUpdateSchema>;
   };
