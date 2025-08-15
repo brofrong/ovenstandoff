@@ -6,6 +6,7 @@ import { guard } from "./guard";
 import { env } from "./env";
 import { readFileSync } from "fs";
 import { join } from "path";
+import { reportMatchEnded } from "./ch-server";
 
 export const openConnections: Set<Bun.ServerWebSocket<unknown>> = new Set();
 export let runners: {
@@ -13,10 +14,11 @@ export let runners: {
   ws: Bun.ServerWebSocket<unknown>;
   state: State;
   matchID: string | null;
+  callbackUrl: string | null;
 }[] = [];
 
 export function setRunners(
-  newRunners: { name: string; ws: Bun.ServerWebSocket<unknown>; state: State; matchID: string | null }[]
+  newRunners: { name: string; ws: Bun.ServerWebSocket<unknown>; state: State; matchID: string | null; callbackUrl: string | null }[]
 ) {
   runners = newRunners;
 }
@@ -43,7 +45,7 @@ if (env.MOCK) {
         readyState: 1,
         data: null,
         getBufferedAmount: () => 0,
-      }, state: "readyForCreateLobby", matchID: null
+      }, state: "readyForCreateLobby", matchID: null, callbackUrl: null
     },
   );
 }
@@ -117,6 +119,7 @@ console.log(`WebSocket server listening on port ${server.port}`);
 const reqMatchStartSchema = z.object({
   matchID: z.string(),
   map: z.string().optional(),
+  callbackUrl: z.string(),
   teams: z.object({
     ct: z.array(z.string()),
     t: z.array(z.string()),
@@ -139,14 +142,13 @@ async function startMatch(req: Request) {
     return new Response("No free manager", { status: 503 });
   }
   freeManager.state = "createLobby";
-
+  freeManager.callbackUrl = parsedBody.data.callbackUrl;
+  freeManager.matchID = parsedBody.data.matchID;
 
   sendMessageToClient(freeManager.ws, {
     type: "startMatch",
     data: { teams, runner: freeManager.name },
   });
-
-  freeManager.matchID = parsedBody.data.matchID;
 
   return new Response("Match started", { status: 200 });
 }
@@ -183,8 +185,19 @@ async function handleEndMatch(req: Request) {
       data: { winner }
     });
 
+    // Отправляем уведомление через callback URL
+    const matchID = runner.matchID;
+    const callbackUrl = runner.callbackUrl;
+
+    if (winner === "error") {
+      await reportMatchEnded(matchID, null, "Match ended with error", callbackUrl);
+    } else {
+      await reportMatchEnded(matchID, winner as "ct" | "t", null, callbackUrl);
+    }
+
     // Сбрасываем matchID
     runner.matchID = null;
+    runner.callbackUrl = null;
     runner.state = "readyForCreateLobby";
 
     return new Response("Match ended successfully", { status: 200 });

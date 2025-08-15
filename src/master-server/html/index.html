@@ -150,6 +150,23 @@
       font-size: 0.9rem;
     }
 
+    .callback-url {
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 5px;
+      margin-top: 10px;
+    }
+
+    .callback-url-value {
+      font-family: 'Courier New', monospace;
+      background: #f8f9fa;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      word-break: break-all;
+      color: #6c757d;
+    }
+
     .match-actions {
       display: flex;
       gap: 10px;
@@ -606,6 +623,11 @@
                                 <div class="match-id">
                                     Match ID: <span class="match-id-value">${runner.matchID}</span>
                                 </div>
+                                ${runner.callbackUrl ? `
+                                    <div class="callback-url">
+                                        Callback URL: <span class="callback-url-value">${runner.callbackUrl}</span>
+                                    </div>
+                                ` : ''}
                                 <div class="match-actions">
                                     <button class="btn btn-ct" onclick="endMatch('${runner.name}', 'ct')">
                                         Победили CT

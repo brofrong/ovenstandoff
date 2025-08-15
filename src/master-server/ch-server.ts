@@ -1,8 +1,16 @@
+import { z } from "zod";
 import { env } from "./env";
 
+const matchEndedSchema = z.object({
+  type: z.enum(["matchEnded"]),
+  matchID: z.string(),
+  winner: z.enum(["ct", "t"]).nullable(),
+  error: z.string().nullable(),
+});
 
-export function reportMatchEnded(matchID: string, winner: number | null, error: string | null) {
-  return sendToCH({
+
+export function reportMatchEnded(matchID: string, winner: "ct" | "t" | null, error: string | null, callbackUrl: string | null) {
+  return sendToCH(callbackUrl, {
     type: "matchEnded",
     matchID,
     winner,
@@ -10,8 +18,11 @@ export function reportMatchEnded(matchID: string, winner: number | null, error: 
   });
 }
 
-async function sendToCH(body: Record<string, unknown>) {
-  const response = await fetch(env.CH_SERVER_HOST, {
+async function sendToCH(callbackUrl: string | null, body: Record<string, unknown>) {
+  if (!callbackUrl) {
+    return;
+  }
+  const response = await fetch(callbackUrl, {
     method: "POST",
     body: JSON.stringify(body),
     headers: {

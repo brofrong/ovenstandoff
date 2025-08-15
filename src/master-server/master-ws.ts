@@ -141,14 +141,14 @@ async function handleMatchEnded(
   console.log(`match ${runner.name} ended for ${parsedData.data.winner} with matchID ${runner.matchID}`);
 
   if (parsedData.data.winner === "error") {
-    await reportMatchEnded(runner.matchID, null, "error");
+    await reportMatchEnded(runner.matchID, null, "error", runner.callbackUrl);
   }
 
   if (parsedData.data.winner === "player dont connect to the lobby") {
-    await reportMatchEnded(runner.matchID, null, "player dont connect to the lobby");
+    await reportMatchEnded(runner.matchID, null, "player dont connect to the lobby", runner.callbackUrl);
   }
 
-  await reportMatchEnded(runner.matchID, parsedData.data.winner === "ct" ? 0 : 1, null);
+  await reportMatchEnded(runner.matchID, parsedData.data.winner === "ct" ? "ct" : "t", null, runner.callbackUrl);
 
   runner.matchID = null;
 
