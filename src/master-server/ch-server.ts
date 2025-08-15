@@ -8,6 +8,19 @@ const matchEndedSchema = z.object({
   error: z.string().nullable(),
 });
 
+const matchCodeSchema = z.object({
+  type: z.enum(["matchCode"]),
+  matchID: z.string(),
+  code: z.string(),
+});
+
+export function reportMatchCode(matchID: string, code: string, callbackUrl: string | null) {
+  return sendToCH(callbackUrl, {
+    type: "matchCode",
+    matchID,
+    code,
+  });
+}
 
 export function reportMatchEnded(matchID: string, winner: "ct" | "t" | null, error: string | null, callbackUrl: string | null) {
   return sendToCH(callbackUrl, {

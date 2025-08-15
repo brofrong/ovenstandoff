@@ -6,7 +6,7 @@ import { guard } from "./guard";
 import { env } from "./env";
 import { readFileSync } from "fs";
 import { join } from "path";
-import { reportMatchEnded } from "./ch-server";
+import { reportMatchEnded, reportMatchCode } from './ch-server';
 
 export const openConnections: Set<Bun.ServerWebSocket<unknown>> = new Set();
 export let runners: {
@@ -100,6 +100,10 @@ const server = Bun.serve({
       return handleEndMatch(req);
     }
 
+    if (url.pathname === "/api/send-match-code") {
+      return handleSendMatchCode(req);
+    }
+
     if (url.pathname === "/ws") {
       if (server.upgrade(req)) {
         return;
@@ -160,6 +164,10 @@ const endMatchSchema = z.object({
   winner: z.enum(["ct", "t", "error"]),
 });
 
+const sendMatchCodeSchema = z.object({
+  runner: z.string(),
+});
+
 async function handleEndMatch(req: Request) {
   try {
     const body = await req.json();
@@ -205,6 +213,45 @@ async function handleEndMatch(req: Request) {
     return new Response("Match ended successfully", { status: 200 });
   } catch (error) {
     console.error("Error ending match:", error);
+    return new Response("Internal server error", { status: 500 });
+  }
+}
+
+async function handleSendMatchCode(req: Request) {
+  try {
+    const body = await req.json();
+    const parsedBody = sendMatchCodeSchema.safeParse(body);
+
+    if (!parsedBody.success) {
+      return new Response("Invalid request", { status: 400 });
+    }
+
+    const { runner: runnerName } = parsedBody.data;
+
+    // Находим runner по имени
+    const runner = runners.find(r => r.name === runnerName);
+    if (!runner) {
+      return new Response("Runner not found", { status: 404 });
+    }
+
+    if (!runner.matchID) {
+      return new Response("Runner is not in a match", { status: 400 });
+    }
+
+    // Отправляем код матча через callback URL
+    const matchCode = `https://ovenstandoff.brofrong.ru/`;
+    const callbackUrl = runner.callbackUrl;
+
+    if (callbackUrl) {
+      await reportMatchCode(runner.matchID, matchCode, callbackUrl);
+    }
+
+    // Обновляем статус runner на inGame (матч запущен)
+    runner.state = "inGame";
+
+    return new Response("Match code sent successfully", { status: 200 });
+  } catch (error) {
+    console.error("Error sending match code:", error);
     return new Response("Internal server error", { status: 500 });
   }
 }

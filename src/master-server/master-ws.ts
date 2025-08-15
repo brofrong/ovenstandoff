@@ -1,5 +1,5 @@
 import { openConnections, runners } from ".";
-import { reportMatchEnded } from './ch-server';
+import { reportMatchEnded, reportMatchCode } from './ch-server';
 import { setRunners } from "./index";
 import {
   changeStateSchema,
@@ -84,8 +84,8 @@ async function handleLobbyCode(
   ws: Bun.ServerWebSocket<unknown>,
   data: unknown
 ): Promise<{ error: string | null }> {
-  const runnerName = runners.find((it) => it.ws === ws)?.name;
-  if (!runnerName) {
+  const runner = runners.find((it) => it.ws === ws);
+  if (!runner) {
     return { error: `Runner not found` };
   }
   const parsedData = lobbyCodeSchema.safeParse(data);
@@ -93,7 +93,17 @@ async function handleLobbyCode(
     return { error: parsedData.error.message };
   }
 
-  console.log(`lobby code for ${runnerName} is ${parsedData.data.code}`);
+  console.log(`lobby code for ${runner.name} is ${parsedData.data.code}`);
+
+  if (!runner.matchID) {
+    return { error: `Match ID not found` };
+  }
+
+  try {
+    await reportMatchCode(runner.matchID, parsedData.data.code, runner.callbackUrl);
+  } catch (error) {
+    console.error(`error reporting match code for ${runner.name}: ${error}`);
+  }
 
   return { error: null };
 }

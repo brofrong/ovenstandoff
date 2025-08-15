@@ -221,6 +221,15 @@
       background: #545b62;
     }
 
+    .btn-primary {
+      background: #007bff;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #0056b3;
+    }
+
     .btn:disabled {
       opacity: 0.6;
       cursor: not-allowed;
@@ -625,6 +634,15 @@
                                     </div>
                                 ` : ''}
                                 <div class="match-actions">
+                                    ${runner.state === 'inGame' ? `
+                                        <div style="color: #28a745; font-weight: 600; margin-bottom: 10px;">
+                                            ✅ Матч запущен
+                                        </div>
+                                    ` : `
+                                        <button class="btn btn-primary" onclick="sendMatchCode('${runner.name}')">
+                                            Отправить код
+                                        </button>
+                                    `}
                                     <button class="btn btn-ct" onclick="endMatch('${runner.name}', 'ct')">
                                         Победили CT
                                     </button>
@@ -698,6 +716,41 @@
         } catch (error) {
           console.error('Ошибка завершения матча:', error);
           alert('Ошибка при завершении матча');
+        }
+      }
+
+      // Отправка кода матча
+      async function sendMatchCode(runnerName) {
+        if (!authToken) return;
+
+        try {
+          const response = await fetch('/api/send-match-code', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({
+              runner: runnerName
+            })
+          });
+
+          if (response.status === 401) {
+            // Токен истек или неверный
+            logout();
+            return;
+          }
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          // Обновляем данные после успешной отправки кода
+          await loadRunners();
+
+        } catch (error) {
+          console.error('Ошибка отправки кода матча:', error);
+          alert('Ошибка при отправке кода матча');
         }
       }
 
