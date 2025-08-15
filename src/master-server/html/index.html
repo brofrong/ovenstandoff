@@ -51,8 +51,8 @@
     }
 
     .runners-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      display: flex;
+      flex-direction: column;
       gap: 20px;
       margin-bottom: 30px;
     }
@@ -382,10 +382,6 @@
     }
 
     @media (max-width: 768px) {
-      .runners-grid {
-        grid-template-columns: 1fr;
-      }
-
       .match-actions {
         flex-direction: column;
       }
