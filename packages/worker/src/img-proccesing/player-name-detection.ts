@@ -1,7 +1,6 @@
 import { loadBuffer } from "./memo-img";
 import { createWorker } from "tesseract.js";
 import sharp from "sharp";
-import { config } from "../../../../src/config";
 
 const playerNameBoxSizes = {
   width: 83,
@@ -52,7 +51,8 @@ const playerNameCoords: Record<string, { x: number; y: number }> = {
 
 export async function getPlayerName(
   slotName: string,
-  img: string | Buffer | null
+  img: string | Buffer | null,
+  config: { debug: boolean } = { debug: false }
 ) {
   const coord = playerNameCoords[slotName];
   if (!coord) {
