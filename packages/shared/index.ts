@@ -29,13 +29,15 @@ export const getConfig = async (): Promise<ConfigWithRunners> => {
   if (!config) {
     const newConfigArray = await configDB.insert(configTable).values({
       ldPath: 'C:\\Program Files (x86)\\ldplayer\\ldconsole.exe',
-      masterServerHost: 'localhost',
+      masterServerRestHost: 'localhost',
+      masterServerWsHost: 'localhost',
       secret: 'secret',
       debug: 0,
     }).returning({
       id: configTable.id,
       ldPath: configTable.ldPath,
-      masterServerHost: configTable.masterServerHost,
+      masterServerRestHost: configTable.masterServerRestHost,
+      masterServerWsHost: configTable.masterServerWsHost,
       secret: configTable.secret,
       debug: configTable.debug,
     });

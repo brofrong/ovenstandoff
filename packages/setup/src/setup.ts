@@ -17,7 +17,8 @@ export async function setup() {
   const group = await p.group(
     {
       LDPath: () => p.text({ message: 'путь до ldplayer?', initialValue: config.ldPath }),
-      host: () => p.text({ message: 'host где размещён мастер сервер?', initialValue: config.masterServerHost }),
+      restHost: () => p.text({ message: 'host где размещён REST мастер сервер?', initialValue: config.masterServerRestHost }),
+      wsHost: () => p.text({ message: 'host где размещён WS мастер сервер?', initialValue: config.masterServerWsHost }),
       secret: () => p.text({ message: 'секретный ключ для мастер сервера?', initialValue: config.secret }),
       count: () => p.text({ message: 'количество инстансов', initialValue: config.runners.length.toString() }),
     },
@@ -32,7 +33,8 @@ export async function setup() {
   );
   const currentConfig = config;
   currentConfig.ldPath = group.LDPath;
-  currentConfig.masterServerHost = group.host;
+  currentConfig.masterServerRestHost = group.restHost;
+  currentConfig.masterServerWsHost = group.wsHost;
   currentConfig.secret = group.secret;
   if (currentConfig.runners.length !== parseInt(group.count)) {
     currentConfig.runners = await getRunnersId(currentConfig, Number(group.count));
@@ -50,7 +52,7 @@ export async function setup() {
 
 
 async function getRunnersId(config: Config, count: number,) {
-  const host = new URL(config.masterServerHost);
+  const host = new URL(config.masterServerRestHost);
 
   const client = initClient(masterContract, {
     baseUrl: `https://${host.host}`,

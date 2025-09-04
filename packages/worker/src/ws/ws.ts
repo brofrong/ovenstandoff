@@ -8,8 +8,8 @@ let ws: WebSocket | null = null;
 export let client: ReturnType<typeof createClientSocket<typeof wsContract, typeof ws>> | null = null;
 
 export async function connectToMasterServer(config: ConfigWithRunners) {
-  console.log(`connect to master server ${config.masterServerHost}/ws?auth=${config.secret}`);
-  ws = new WebSocket(`${config.masterServerHost}/ws?auth=${config.secret}`);
+  console.log(`connect to master server ${config.masterServerWsHost}/ws?auth=${config.secret}`);
+  ws = new WebSocket(`${config.masterServerWsHost}/ws?auth=${config.secret}`);
 
   ws.addEventListener("open", async () => {
     console.log("Connected to master server");

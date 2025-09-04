@@ -180,3 +180,5 @@ tmp/
 *.traineddata
 
 db.json
+
+db/
