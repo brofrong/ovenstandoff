@@ -1,0 +1,5 @@
+
+
+> @repo/type-safe-socket@ check-types /Users/dmitiigorshkov/work/molvis/packages/type-safe-socket
+> tsc --noEmit
+

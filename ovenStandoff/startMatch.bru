@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: http://localhost:3000/start-match
+  url: https://ovenstandoff.brofrong.ru/start-match
   body: json
   auth: bearer
 }
@@ -22,6 +22,7 @@ body:json {
   {
     "matchID": "1",
     "map": "cool",
+    "callbackUrl": "https://webhook.site/40253811-155c-46c9-9f4a-66454cb65cc9",
     "teams": {
       "ct": ["CH auto 1"],
       "t": ["CH auto 2"]

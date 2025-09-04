@@ -1,0 +1,17 @@
+{
+  "name": "@ovenstandoff/contract",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@ovenstandoff/type-safe-socket": "workspace:*",
+    "@ts-rest/core": "^3.53.0-rc.1",
+    "zod": "^4.1.5"
+  }
+}

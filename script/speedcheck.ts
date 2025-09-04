@@ -1,8 +1,8 @@
 import { $ } from 'bun';
 import sharp from "sharp";
 import { config } from '../src/config';
-import { LDPlayer } from "../src/worker/ldconnector/ld";
-import { initStorage } from '../src/worker/storage/init-storage';
+import { LDPlayer } from "../packages/worker/src/ldconnector/ld";
+import { initStorage } from '../packages/worker/src/storage/init-storage';
 
 const LD_PLAYER_NAME = 'imt-1';
 const TIME_TO_CHECK = 20;

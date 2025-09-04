@@ -1,0 +1,23 @@
+{
+  "name": "@ovenstandoff/master-server",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "bun run src/index-ws.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@ovenstandoff/contract": "workspace:*",
+    "@ovenstandoff/shared": "workspace:*",
+    "@ovenstandoff/type-safe-socket": "workspace:*",
+    "@ts-rest/core": "^3.53.0-rc.1",
+    "@ts-rest/fastify": "^3.53.0-rc.1",
+    "fastify": "^5.5.0"
+  }
+}

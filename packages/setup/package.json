@@ -1,0 +1,17 @@
+{
+  "name": "@ovenstandoff/setup",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@ovenstandoff/shared": "workspace:*",
+    "@ovenstandoff/contract": "workspace:*",
+    "@ts-rest/core": "^3.53.0-rc.1",
+    "adm-zip": "^0.5.16"
+  }
+}

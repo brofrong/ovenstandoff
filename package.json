@@ -1,15 +1,21 @@
 {
   "name": "ovenstandoff",
   "module": "index.ts",
+  "private": true,
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "peerDependencies": {
     "typescript": "^5.8.3"
   },
   "scripts": {
-    "start": "bun ./index.ts",
     "script": "bun ./script/create-anchors.ts",
-    "setup": "bun ./src/setup/setup.ts",
-    "wsServer": "bun ./src/master-server/index.ts",
+    "worker": "bun ./packages/worker/index.ts",
+    "setup": "bun ./packages/setup/index.ts",
+    "db:push": "drizzle-kit push --config=./packages/shared/drizzle.config.ts",
+    "db:studio": "drizzle-kit studio --config=./packages/shared/drizzle.config.ts",
+    "wsServer": "bun ./packages/master-server/index.ts",
     "build": "bun build ./index.ts --compile --outfile ./dist/ovenstandoff",
     "build:windows": "bun build ./index.ts --compile --target=bun-windows-x64 --outfile ./dist/ovenstandoff.exe"
   },
