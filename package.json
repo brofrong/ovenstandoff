@@ -14,6 +14,7 @@
     "worker": "bun ./packages/worker/index.ts",
     "setup": "bun ./packages/setup/index.ts",
     "db:push": "drizzle-kit push --config=./packages/shared/drizzle.config.ts",
+    "db:pushW": "drizzle-kit push --dialect=sqlite --schema=./packages/shared/src/config.schema.ts --url=./db/main.sqlite",
     "db:studio": "drizzle-kit studio --config=./packages/shared/drizzle.config.ts",
     "wsServer": "bun ./packages/master-server/index.ts",
     "build": "bun build ./index.ts --compile --outfile ./dist/ovenstandoff",
