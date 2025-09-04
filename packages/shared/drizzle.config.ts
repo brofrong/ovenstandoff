@@ -11,7 +11,7 @@ if (!fs.existsSync(dbDir)) {
 }
 
 
-let schemaPath = path.join(__dirname, './src/*.schema.ts');
+let schemaPath = path.join(__dirname, './**/*.schema.ts');
 
 // if (__dirname.includes('packages/shared')) {
 //   schemaPath = path.join(__dirname, 'packages/shared/src/*.schema.ts');
