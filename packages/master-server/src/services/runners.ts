@@ -11,9 +11,15 @@ export let runners: {
   state: State;
   matchID: string | null;
   callbackUrl: string | null;
+  team: {
+    ct: string[];
+    t: string[];
+  } | null;
 }[] = [];
 
 
-export function setRunners(newRunners: { name: string; ws: Bun.ServerWebSocket<unknown>; state: State; matchID: string | null; callbackUrl: string | null }[]) {
+export function setRunners(newRunners: { name: string; ws: Bun.ServerWebSocket<unknown>; state: State; matchID: string | null; callbackUrl: string | null; team: { ct: string[]; t: string[]; } | null }[]) {
   runners = newRunners;
 }
+
+export let viewers: Set<ReturnType<typeof createServerSocket<typeof wsContract, unknown>>> = new Set();

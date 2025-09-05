@@ -44,3 +44,5 @@ async function startEmulators() {
     await newLD.start();
   }
 }
+
+startWorker();

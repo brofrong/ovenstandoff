@@ -1,7 +1,7 @@
 import { wsContract } from '@ovenstandoff/contract';
 import { createServerSocket } from '@ovenstandoff/type-safe-socket';
 import { reportMatchCode, reportMatchEnded } from './ch-server';
-import { openConnections, runners, setRunners } from './services/runners';
+import { openConnections, runners, setRunners, viewers } from './services/runners';
 
 
 
@@ -13,11 +13,23 @@ export async function message(
   if (ret?.error) {
     console.error(ret.error);
   }
-  // // Echo the message back
-  // const { error } = await processMessage(ws, message.toString());
-  // if (error) {
-  //   ws.send(JSON.stringify({ error: error }));
-  // }
+
+  // Handle screen frame messages from runners
+  try {
+    const data = JSON.parse(message.toString());
+    if (data.type === "screenFrame") {
+      // Broadcast screen frame to all viewers using type-safe-socket
+      viewers.forEach((viewerSocket) => {
+        viewerSocket.send.screenFrame({
+          runner: data.runner,
+          frame: data.frame,
+          timestamp: Date.now()
+        });
+      });
+    }
+  } catch (error) {
+    // Ignore JSON parse errors for non-JSON messages
+  }
 }
 
 export function open(ws: Bun.ServerWebSocket<unknown>) {
@@ -40,7 +52,7 @@ export function close(ws: Bun.ServerWebSocket<unknown>) {
 const applyMessageHandlers = (ws: Bun.ServerWebSocket<unknown>, server: ReturnType<typeof createServerSocket<typeof wsContract, unknown>>) => {
   server.on.registerRunners((data) => {
     data.runners.forEach((it) => {
-      runners.push({ name: it.runner, ws, state: it.state, matchID: null, callbackUrl: null });
+      runners.push({ name: it.runner, ws, state: it.state, matchID: null, callbackUrl: null, team: null });
     });
     broadcastRunnersUpdate();
     return { error: null };
@@ -107,6 +119,101 @@ const applyMessageHandlers = (ws: Bun.ServerWebSocket<unknown>, server: ReturnTy
     return { error: null };
   });
 
+  // Handle commands from master-server to runners
+  server.on.startScreenStreamCommand((data) => {
+    console.log(`Received startScreenStreamCommand for runner: ${data.runner}`);
+    // Here the runner would start screen streaming
+    // This is just a placeholder - the actual implementation would be in the runner
+    return { error: null };
+  });
+
+  server.on.stopScreenStreamCommand((data) => {
+    console.log(`Received stopScreenStreamCommand for runner: ${data.runner}`);
+    // Here the runner would stop screen streaming
+    // This is just a placeholder - the actual implementation would be in the runner
+    return { error: null };
+  });
+
+  server.on.changeStateCommand((data) => {
+    console.log(`Received changeStateCommand for runner: ${data.runner}, new state: ${data.state}`);
+    // Here the runner would change its state
+    // This is just a placeholder - the actual implementation would be in the runner
+    return { error: null };
+  });
+
+
+  // front-end
+  server.requestHandler.registerView((data, accept, reject) => {
+    viewers.add(server);
+
+    accept({ runners: runners.map(runner => ({ name: runner.name, state: runner.state, matchID: runner.matchID, callbackUrl: runner.callbackUrl, team: runner.team })) });
+    return { error: null };
+  });
+
+  // Screen streaming handlers
+  server.requestHandler.startScreenStream((data, accept, reject) => {
+    const runner = runners.find(r => r.name === data.runner);
+    if (!runner) {
+      reject("Runner not found");
+      return { error: null };
+    }
+
+    // Send start streaming command to runner using type-safe-socket
+    const runnerSocket = openConnections.get(runner.ws);
+    if (runnerSocket) {
+      runnerSocket.send.startScreenStreamCommand({
+        runner: data.runner
+      });
+    }
+
+    accept({ success: true, message: "Screen stream started" });
+    return { error: null };
+  });
+
+  server.requestHandler.stopScreenStream((data, accept, reject) => {
+    const runner = runners.find(r => r.name === data.runner);
+    if (!runner) {
+      reject("Runner not found");
+      return { error: null };
+    }
+
+    // Send stop streaming command to runner using type-safe-socket
+    const runnerSocket = openConnections.get(runner.ws);
+    if (runnerSocket) {
+      runnerSocket.send.stopScreenStreamCommand({
+        runner: data.runner
+      });
+    }
+
+    accept({ success: true, message: "Screen stream stopped" });
+    return { error: null };
+  });
+
+  // State management handler
+  server.requestHandler.changeRunnerState((data, accept, reject) => {
+    const runner = runners.find(r => r.name === data.runner);
+    if (!runner) {
+      reject("Runner not found");
+      return { error: null };
+    }
+
+    // Update runner state
+    runner.state = data.state;
+    broadcastRunnersUpdate();
+
+    // Send state change command to runner using type-safe-socket
+    const runnerSocket = openConnections.get(runner.ws);
+    if (runnerSocket) {
+      runnerSocket.send.changeStateCommand({
+        runner: data.runner,
+        state: data.state
+      });
+    }
+
+    accept({ success: true, message: "Runner state changed" });
+    return { error: null };
+  });
+
 }
 
 export function broadcastRunnersUpdate() {
@@ -115,5 +222,11 @@ export function broadcastRunnersUpdate() {
     state: runner.state,
     matchID: runner.matchID,
     callbackUrl: runner.callbackUrl,
+    team: runner.team
   }));
+
+
+  viewers.forEach((socket) => {
+    socket.send.updateRunners({ runners: runnersData });
+  });
 }

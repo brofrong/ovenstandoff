@@ -4,11 +4,13 @@ import { masterContract } from '@ovenstandoff/contract';
 import { initDB } from './register-client';
 import { env } from './utils/env';
 import { startMatchHandler, registerClientsHandler } from './services/match';
+import { enableMockWorkers } from './mock';
 const app = Fastify();
 const s = initServer();
 
 
 initDB();
+enableMockWorkers();
 
 const router = s.router(masterContract, {
   startMatch: async (req) => await startMatchHandler(req),

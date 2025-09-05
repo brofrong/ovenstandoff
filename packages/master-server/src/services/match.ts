@@ -19,6 +19,7 @@ export async function startMatchHandler(request: ServerInferRequest<typeof maste
   freeManager.state = "createLobby";
   freeManager.callbackUrl = body.callbackUrl;
   freeManager.matchID = body.matchID;
+  freeManager.team = body.teams;
 
   const socket = openConnections.get(freeManager.ws);
 

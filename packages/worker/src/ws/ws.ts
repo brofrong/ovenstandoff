@@ -40,6 +40,12 @@ export async function connectToMasterServer(config: ConfigWithRunners) {
 
   ws.addEventListener("close", () => {
     console.log("Disconnected from master server");
+
+    // Stop all screen streaming when disconnected
+    activeStateManagers.forEach(manager => {
+      manager.stopScreenStream();
+    });
+
     client = null;
     // Attempt to reconnect after delay
     setTimeout(() => connectToMasterServer(config), 5000);
@@ -69,6 +75,58 @@ function addEventListenerHandlers(client: ReturnType<typeof createClientSocket<t
     const result = await runnerToStartMatch.startCreatingLobby(teams);
     if (result?.error) {
       console.error("Error starting match:", result.error);
+    }
+  });
+
+  // Handle screen streaming commands
+  client.on.startScreenStreamCommand(async (data) => {
+    const { runner } = data;
+    const stateManager = activeStateManagers.find(
+      (it) => it.ldPlayer.name === runner
+    );
+    if (!stateManager) {
+      console.error("Runner not found for screen streaming:", runner);
+      return;
+    }
+
+    console.log(`Starting screen stream for runner: ${runner}`);
+    await stateManager.startScreenStream();
+  });
+
+  client.on.stopScreenStreamCommand(async (data) => {
+    const { runner } = data;
+    const stateManager = activeStateManagers.find(
+      (it) => it.ldPlayer.name === runner
+    );
+    if (!stateManager) {
+      console.error("Runner not found for stopping screen stream:", runner);
+      return;
+    }
+
+    console.log(`Stopping screen stream for runner: ${runner}`);
+    await stateManager.stopScreenStream();
+  });
+
+  // Handle state change commands
+  client.on.changeStateCommand(async (data) => {
+    const { runner, state } = data;
+    const stateManager = activeStateManagers.find(
+      (it) => it.ldPlayer.name === runner
+    );
+    if (!stateManager) {
+      console.error("Runner not found for state change:", runner);
+      return;
+    }
+
+    console.log(`Changing state for runner: ${runner} to: ${state}`);
+    stateManager.state = state;
+
+    // Notify master server about state change
+    if (client) {
+      client.send.changeState({
+        runner: runner,
+        state: state
+      });
     }
   });
 }

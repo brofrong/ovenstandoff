@@ -26,6 +26,11 @@ export class StateManager {
   public matchStartedTimestamp: number | null = null;
   public config: ConfigWithRunners;
 
+  // Screen streaming properties
+  private isStreaming: boolean = false;
+  private streamingInterval: NodeJS.Timeout | null = null;
+  private readonly STREAMING_FPS = 10; // Frames per second for streaming
+
   constructor(ldPlayer: LDPlayer, config: ConfigWithRunners) {
     this.ldPlayer = ldPlayer;
     this.config = config;
@@ -448,5 +453,78 @@ export class StateManager {
     client?.send.lobbyCode({
       code,
     });
+  }
+
+  // Screen streaming methods
+  public async startScreenStream(): Promise<void> {
+    if (this.isStreaming) {
+      console.log(`Screen streaming already active for ${this.ldPlayer.name}`);
+      return;
+    }
+
+    console.log(`Starting screen stream for ${this.ldPlayer.name}`);
+    this.isStreaming = true;
+
+    // Start streaming loop
+    this.streamingInterval = setInterval(async () => {
+      if (!this.isStreaming) return;
+
+      try {
+        await this.sendScreenFrame();
+      } catch (error) {
+        console.error(`Error sending screen frame for ${this.ldPlayer.name}:`, error);
+      }
+    }, 1000 / this.STREAMING_FPS); // Convert FPS to interval in milliseconds
+  }
+
+  public async stopScreenStream(): Promise<void> {
+    if (!this.isStreaming) {
+      console.log(`Screen streaming not active for ${this.ldPlayer.name}`);
+      return;
+    }
+
+    console.log(`Stopping screen stream for ${this.ldPlayer.name}`);
+    this.isStreaming = false;
+
+    if (this.streamingInterval) {
+      clearInterval(this.streamingInterval);
+      this.streamingInterval = null;
+    }
+  }
+
+  private async sendScreenFrame(): Promise<void> {
+    try {
+      // Take screenshot
+      const screenshot = await this.ldPlayer.screenShot();
+
+      if (screenshot && Buffer.isBuffer(screenshot)) {
+        // Convert screenshot to base64
+        const base64Frame = screenshot.toString('base64');
+
+        // Send frame to master server
+        if (client) {
+          // Send as raw JSON message since screenFrame is server-only
+          const message = JSON.stringify({
+            type: "screenFrame",
+            runner: this.ldPlayer.name,
+            frame: base64Frame,
+            timestamp: Date.now()
+          });
+
+          // Send through WebSocket directly
+          const ws = (client as any).ws;
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(message);
+          }
+        }
+      }
+    } catch (error) {
+      console.error(`Error taking screenshot for ${this.ldPlayer.name}:`, error);
+    }
+  }
+
+  // Cleanup method to stop streaming when StateManager is destroyed
+  public destroy(): void {
+    this.stopScreenStream();
   }
 }
