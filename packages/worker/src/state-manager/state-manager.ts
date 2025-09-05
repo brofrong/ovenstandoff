@@ -7,6 +7,7 @@ import { updateRunnerInfo } from "../storage/update-storage";
 import { client } from "../ws/ws";
 import { runSteps } from "./steps";
 import { waitForPlayers } from "./waiting-for-players";
+import sharp from "sharp";
 
 export type Teams = {
   ct: string[];
@@ -56,19 +57,35 @@ export class StateManager {
 
     // If streaming is active, send the screenshot frame
     if (this.isStreaming) {
-      this.sendScreenFrameIfStreaming();
+      // Don't await to avoid blocking the main screenshot flow
+      this.sendScreenFrameIfStreaming().catch(error => {
+        console.error(`Error in background screen frame sending for ${this.ldPlayer.name}:`, error);
+      });
     }
 
     return this.currentImg;
   }
 
-  private sendScreenFrameIfStreaming(): void {
+  private async sendScreenFrameIfStreaming(): Promise<void> {
     if (!this.currentImg || !Buffer.isBuffer(this.currentImg)) {
       return;
     }
 
     try {
-      const base64Frame = this.currentImg.toString('base64');
+      // Compress the image before sending
+      const compressedBuffer = await sharp(this.currentImg)
+        .resize(800, 600, {
+          fit: 'inside',
+          withoutEnlargement: true
+        })
+        .jpeg({
+          quality: 50,
+          progressive: true
+        })
+        .toBuffer();
+
+      const base64Frame = compressedBuffer.toString('base64');
+
       if (client) {
         client.send.sendScreenFrame({
           runner: this.ldPlayer.name,
