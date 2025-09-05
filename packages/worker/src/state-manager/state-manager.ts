@@ -24,6 +24,8 @@ export class StateManager {
   public lobbyCode: string | null = null;
   public teams: Teams = { ct: [], t: [] };
   public matchStartedTimestamp: number | null = null;
+  public matchID: string | null = null;
+  public callbackUrl: string | null = null;
   public config: ConfigWithRunners;
 
   // Screen streaming properties
@@ -87,12 +89,14 @@ export class StateManager {
     return keyToRunners[this.state].bind(this)();
   }
 
-  public async startCreatingLobby(teams: Teams) {
+  public async startCreatingLobby(teams: Teams, matchID?: string, callbackUrl?: string) {
     if (this.state !== "readyForCreateLobby") {
       console.warn(`${this.ldPlayer.name} is not ready for create lobby`);
       return { error: "not ready for create lobby" };
     }
     this.teams = teams;
+    this.matchID = matchID || null;
+    this.callbackUrl = callbackUrl || null;
     this.setState("createLobby");
     await this.run();
   }
@@ -441,6 +445,8 @@ export class StateManager {
     this.teams = { ct: [], t: [] };
     this.matchStartedTimestamp = null;
     this.lobbyCode = null;
+    this.matchID = null;
+    this.callbackUrl = null;
     this.setState("launching");
     return { wait: 1000 };
   }

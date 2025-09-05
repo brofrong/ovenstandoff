@@ -162,6 +162,14 @@ export function RunnersList({ runners, onRunnerSelect }: RunnersListProps) {
                             </code>
                           </div>
                         )}
+                        {runner.code && (
+                          <div className="text-sm">
+                            <span className="text-muted-foreground">Код: </span>
+                            <code className="bg-background px-2 py-1 rounded text-xs font-mono">
+                              {runner.code}
+                            </code>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}

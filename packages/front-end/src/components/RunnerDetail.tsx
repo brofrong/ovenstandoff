@@ -307,6 +307,15 @@ export function RunnerDetail({ runner, onBack, serverKey }: RunnerDetailProps) {
                   </div>
                 )}
 
+                {runner.code && (
+                  <div>
+                    <span className="text-sm text-muted-foreground">Код: </span>
+                    <code className="bg-muted px-2 py-1 rounded text-xs font-mono">
+                      {runner.code}
+                    </code>
+                  </div>
+                )}
+
                 {runner.team && (
                   <div>
                     <span className="text-sm text-muted-foreground">Команды: </span>

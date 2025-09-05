@@ -19,6 +19,7 @@ export const runner = z.object({
   state: z.enum(AllStates),
   matchID: z.string().nullable(),
   callbackUrl: z.string().nullable(),
+  code: z.string().nullable(),
   team: z.object({
     ct: z.array(z.string()),
     t: z.array(z.string()),
@@ -29,7 +30,7 @@ export type Runner = z.infer<typeof runner>;
 export const wsContract = createContract({
   registerRunners: {
     client: z.object({
-      runners: z.array(z.object({ runner: z.string(), state: z.enum(AllStates) })),
+      runners: z.array(runner),
     }),
   },
   changeState: {
@@ -45,6 +46,8 @@ export const wsContract = createContract({
         t: z.array(z.string()),
       }),
       runner: z.string(),
+      matchID: z.string().optional(),
+      callbackUrl: z.string().optional(),
     }),
   },
   lobbyCode: {

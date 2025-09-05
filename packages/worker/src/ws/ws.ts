@@ -19,8 +19,12 @@ export async function connectToMasterServer(config: ConfigWithRunners) {
 
     client.send.registerRunners({
       runners: activeStateManagers.map((manager) => ({
-        runner: manager.ldPlayer.name,
+        name: manager.ldPlayer.name,
         state: manager.state,
+        matchID: manager.matchID,
+        callbackUrl: manager.callbackUrl,
+        code: manager.lobbyCode,
+        team: manager.teams.ct.length > 0 || manager.teams.t.length > 0 ? manager.teams : null,
       })),
     });
   });
@@ -64,7 +68,7 @@ export async function connectToMasterServer(config: ConfigWithRunners) {
 
 function addEventListenerHandlers(client: ReturnType<typeof createClientSocket<typeof wsContract, typeof ws>>) {
   client.on.startMatch(async (data) => {
-    const { teams, runner } = data;
+    const { teams, runner, matchID, callbackUrl } = data;
     const runnerToStartMatch = activeStateManagers.find(
       (it) => it.ldPlayer.name === runner
     );
@@ -72,7 +76,7 @@ function addEventListenerHandlers(client: ReturnType<typeof createClientSocket<t
       console.error("Runner to start match not found:", runner);
       return;
     }
-    const result = await runnerToStartMatch.startCreatingLobby(teams);
+    const result = await runnerToStartMatch.startCreatingLobby(teams, matchID, callbackUrl);
     if (result?.error) {
       console.error("Error starting match:", result.error);
     }
