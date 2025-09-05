@@ -85,7 +85,7 @@ export class StateManager {
         .toBuffer();
 
       const base64Frame = compressedBuffer.toString('base64');
-
+      console.log(`Sending screen frame for ${this.ldPlayer.name}, size: ${base64Frame.length} bytes`);
       if (client) {
         client.send.sendScreenFrame({
           runner: this.ldPlayer.name,
