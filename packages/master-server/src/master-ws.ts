@@ -65,11 +65,15 @@ const applyMessageHandlers = (ws: Bun.ServerWebSocket<unknown>, server: ReturnTy
       return { error: `Match ID not found` };
     }
 
+    runner.code = data.code;
+
     try {
       await reportMatchCode(runner.matchID, data.code, runner.callbackUrl);
     } catch (error) {
       console.error(`error reporting match code for ${runner.name}: ${error}`);
     }
+
+    broadcastRunnersUpdate();
 
     return { error: null };
   });

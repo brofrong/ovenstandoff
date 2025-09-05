@@ -30,8 +30,6 @@ export class StateManager {
 
   // Screen streaming properties
   private isStreaming: boolean = false;
-  private streamingInterval: NodeJS.Timeout | null = null;
-  private readonly STREAMING_FPS = 1; // Frames per second for streaming
 
   constructor(ldPlayer: LDPlayer, config: ConfigWithRunners) {
     this.ldPlayer = ldPlayer;
@@ -55,7 +53,32 @@ export class StateManager {
       console.warn(`${this.ldPlayer.name} img timeout`);
       this.currentImg = "";
     }
+
+    // If streaming is active, send the screenshot frame
+    if (this.isStreaming) {
+      this.sendScreenFrameIfStreaming();
+    }
+
     return this.currentImg;
+  }
+
+  private sendScreenFrameIfStreaming(): void {
+    if (!this.currentImg || !Buffer.isBuffer(this.currentImg)) {
+      return;
+    }
+
+    try {
+      const base64Frame = this.currentImg.toString('base64');
+      if (client) {
+        client.send.sendScreenFrame({
+          runner: this.ldPlayer.name,
+          frame: base64Frame,
+          timestamp: Date.now()
+        });
+      }
+    } catch (error) {
+      console.error(`Error sending screen frame for ${this.ldPlayer.name}:`, error);
+    }
   }
 
   private setState(newState: State) {
@@ -470,17 +493,7 @@ export class StateManager {
 
     console.log(`Starting screen stream for ${this.ldPlayer.name}`);
     this.isStreaming = true;
-
-    // Start streaming loop
-    this.streamingInterval = setInterval(async () => {
-      if (!this.isStreaming) return;
-
-      try {
-        await this.sendScreenFrame();
-      } catch (error) {
-        console.error(`Error sending screen frame for ${this.ldPlayer.name}:`, error);
-      }
-    }, 1000 / this.STREAMING_FPS); // Convert FPS to interval in milliseconds
+    // No need for interval - screenshots will be sent automatically via takeScreenshot()
   }
 
   public async stopScreenStream(): Promise<void> {
@@ -491,35 +504,8 @@ export class StateManager {
 
     console.log(`Stopping screen stream for ${this.ldPlayer.name}`);
     this.isStreaming = false;
-
-    if (this.streamingInterval) {
-      clearInterval(this.streamingInterval);
-      this.streamingInterval = null;
-    }
   }
 
-  private async sendScreenFrame(): Promise<void> {
-    try {
-      // Take screenshot
-      const screenshot = await this.ldPlayer.screenShot();
-
-      if (screenshot && Buffer.isBuffer(screenshot)) {
-        // Convert screenshot to base64
-        const base64Frame = screenshot.toString('base64');
-
-        // Send frame to master server using type-safe-socket
-        if (client) {
-          client.send.sendScreenFrame({
-            runner: this.ldPlayer.name,
-            frame: base64Frame,
-            timestamp: Date.now()
-          });
-        }
-      }
-    } catch (error) {
-      console.error(`Error taking screenshot for ${this.ldPlayer.name}:`, error);
-    }
-  }
 
   // Cleanup method to stop streaming when StateManager is destroyed
   public destroy(): void {

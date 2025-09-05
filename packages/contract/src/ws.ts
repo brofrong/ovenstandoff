@@ -46,8 +46,8 @@ export const wsContract = createContract({
         t: z.array(z.string()),
       }),
       runner: z.string(),
-      matchID: z.string().optional(),
-      callbackUrl: z.string().optional(),
+      matchID: z.string().nullable(),
+      callbackUrl: z.string().nullable(),
     }),
   },
   lobbyCode: {

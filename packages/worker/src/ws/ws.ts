@@ -76,7 +76,7 @@ function addEventListenerHandlers(client: ReturnType<typeof createClientSocket<t
       console.error("Runner to start match not found:", runner);
       return;
     }
-    const result = await runnerToStartMatch.startCreatingLobby(teams, matchID, callbackUrl);
+    const result = await runnerToStartMatch.startCreatingLobby(teams, matchID || undefined, callbackUrl || undefined);
     if (result?.error) {
       console.error("Error starting match:", result.error);
     }

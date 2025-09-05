@@ -322,11 +322,31 @@ export function RunnerDetail({ runner, onBack, serverKey }: RunnerDetailProps) {
                     <div className="mt-2 space-y-2">
                       <div>
                         <span className="text-xs font-medium text-blue-600">CT: </span>
-                        <span className="text-xs">{runner.team.ct.length} игроков</span>
+                        <div className="text-xs mt-1">
+                          {runner.team.ct.length > 0 ? (
+                            runner.team.ct.map((player, index) => (
+                              <span key={index} className="block">
+                                {player}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-muted-foreground">Пусто</span>
+                          )}
+                        </div>
                       </div>
                       <div>
                         <span className="text-xs font-medium text-orange-600">T: </span>
-                        <span className="text-xs">{runner.team.t.length} игроков</span>
+                        <div className="text-xs mt-1">
+                          {runner.team.t.length > 0 ? (
+                            runner.team.t.map((player, index) => (
+                              <span key={index} className="block">
+                                {player}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-muted-foreground">Пусто</span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>

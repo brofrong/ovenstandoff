@@ -27,7 +27,7 @@ export async function startMatchHandler(request: ServerInferRequest<typeof maste
     return { status: 503, body: "No free manager" };
   }
 
-  socket.send.startMatch({ teams, runner: freeManager.name });
+  socket.send.startMatch({ teams, runner: freeManager.name, matchID: freeManager.matchID, callbackUrl: freeManager.callbackUrl });
 
   broadcastRunnersUpdate();
 
