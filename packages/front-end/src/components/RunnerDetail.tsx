@@ -89,7 +89,6 @@ export function RunnerDetail({ runner, onBack, serverKey }: RunnerDetailProps) {
 
   const { socket, sendMessage } = useWebSocket({
     serverKey,
-    onConnectionChange: () => { },
   });
 
   useEffect(() => {
