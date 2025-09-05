@@ -14,22 +14,7 @@ export async function message(
     console.error(ret.error);
   }
 
-  // Handle screen frame messages from runners
-  try {
-    const data = JSON.parse(message.toString());
-    if (data.type === "screenFrame") {
-      // Broadcast screen frame to all viewers using type-safe-socket
-      viewers.forEach((viewerSocket) => {
-        viewerSocket.send.screenFrame({
-          runner: data.runner,
-          frame: data.frame,
-          timestamp: Date.now()
-        });
-      });
-    }
-  } catch (error) {
-    // Ignore JSON parse errors for non-JSON messages
-  }
+  // Screen frames are now handled through type-safe-socket in applyMessageHandlers
 }
 
 export function open(ws: Bun.ServerWebSocket<unknown>) {
@@ -138,6 +123,22 @@ const applyMessageHandlers = (ws: Bun.ServerWebSocket<unknown>, server: ReturnTy
     console.log(`Received changeStateCommand for runner: ${data.runner}, new state: ${data.state}`);
     // Here the runner would change its state
     // This is just a placeholder - the actual implementation would be in the runner
+    return { error: null };
+  });
+
+  // Handle screen frames from workers
+  server.on.sendScreenFrame((data) => {
+    console.log(`Received screen frame from runner: ${data.runner}`);
+
+    // Broadcast screen frame to all viewers using type-safe-socket
+    viewers.forEach((viewerSocket) => {
+      viewerSocket.send.screenFrame({
+        runner: data.runner,
+        frame: data.frame,
+        timestamp: data.timestamp
+      });
+    });
+
     return { error: null };
   });
 

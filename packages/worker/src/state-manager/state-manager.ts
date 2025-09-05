@@ -29,7 +29,7 @@ export class StateManager {
   // Screen streaming properties
   private isStreaming: boolean = false;
   private streamingInterval: NodeJS.Timeout | null = null;
-  private readonly STREAMING_FPS = 10; // Frames per second for streaming
+  private readonly STREAMING_FPS = 1; // Frames per second for streaming
 
   constructor(ldPlayer: LDPlayer, config: ConfigWithRunners) {
     this.ldPlayer = ldPlayer;
@@ -501,21 +501,13 @@ export class StateManager {
         // Convert screenshot to base64
         const base64Frame = screenshot.toString('base64');
 
-        // Send frame to master server
+        // Send frame to master server using type-safe-socket
         if (client) {
-          // Send as raw JSON message since screenFrame is server-only
-          const message = JSON.stringify({
-            type: "screenFrame",
+          client.send.sendScreenFrame({
             runner: this.ldPlayer.name,
             frame: base64Frame,
             timestamp: Date.now()
           });
-
-          // Send through WebSocket directly
-          const ws = (client as any).ws;
-          if (ws && ws.readyState === WebSocket.OPEN) {
-            ws.send(message);
-          }
         }
       }
     } catch (error) {

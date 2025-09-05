@@ -138,4 +138,12 @@ export const wsContract = createContract({
       state: z.enum(AllStates),
     }),
   },
+  // Worker to Master-server screen frame
+  sendScreenFrame: {
+    client: z.object({
+      runner: z.string(),
+      frame: z.string(), // base64 encoded image
+      timestamp: z.number(),
+    }),
+  },
 });
