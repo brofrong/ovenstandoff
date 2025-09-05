@@ -7,5 +7,5 @@ const envSchema = z.object({
 console.log(import.meta.env);
 
 export const env = envSchema.parse({
-  BUN_PUBLIC_WS_HOST: 'localhost:3001',
+  BUN_PUBLIC_WS_HOST: 'wss://ovenstandoff.brofrong.ru',
 });
