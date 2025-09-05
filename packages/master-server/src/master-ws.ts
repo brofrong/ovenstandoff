@@ -219,6 +219,34 @@ const applyMessageHandlers = (ws: Bun.ServerWebSocket<unknown>, server: ReturnTy
     return { error: null };
   });
 
+  // Click command handler
+  server.requestHandler.clickCommand((data, accept, reject) => {
+    const runner = runners.find(r => r.name === data.runner);
+    if (!runner) {
+      reject("Runner not found");
+      return { error: null };
+    }
+
+    // Check if runner is in debug state
+    if (runner.state !== "debug") {
+      reject("Runner is not in debug state");
+      return { error: null };
+    }
+
+    // Send click command to runner using type-safe-socket
+    const runnerSocket = openConnections.get(runner.ws);
+    if (runnerSocket) {
+      runnerSocket.send.clickCommandToRunner({
+        runner: data.runner,
+        x: data.x,
+        y: data.y
+      });
+    }
+
+    accept({ success: true, message: "Click command sent to runner" });
+    return { error: null };
+  });
+
 }
 
 export function broadcastRunnersUpdate() {

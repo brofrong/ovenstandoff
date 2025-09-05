@@ -141,4 +141,26 @@ function addEventListenerHandlers(client: ReturnType<typeof createClientSocket<t
       });
     }
   });
+
+  // Handle click commands
+  client.on.clickCommandToRunner(async (data) => {
+    const { runner, x, y } = data;
+    const stateManager = activeStateManagers.find(
+      (it) => it.ldPlayer.name === runner
+    );
+    if (!stateManager) {
+      console.error("Runner not found for click command:", runner);
+      return;
+    }
+
+    console.log(`Click command for runner: ${runner} at coordinates: (${x}, ${y})`);
+
+    // Execute click on the runner
+    try {
+      await stateManager.ldPlayer.click(x, y);
+      console.log(`Click executed successfully at (${x}, ${y}) for runner: ${runner}`);
+    } catch (error) {
+      console.error(`Error executing click for runner ${runner}:`, error);
+    }
+  });
 }

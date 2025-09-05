@@ -156,6 +156,54 @@ export function RunnerDetail({ runner, onBack, serverKey }: RunnerDetailProps) {
     }
   };
 
+  const handleImageClick = async (event: React.MouseEvent<HTMLImageElement>) => {
+    // Only allow clicks when runner is in debug state
+    if (runner.state !== "debug") {
+      console.log("Click ignored: Runner is not in debug state");
+      return;
+    }
+
+    if (!socket) {
+      console.error("Socket not available");
+      return;
+    }
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    // Convert screen coordinates to phone coordinates
+    // Assuming the image is scaled to fit the container
+    const imageWidth = event.currentTarget.naturalWidth;
+    const imageHeight = event.currentTarget.naturalHeight;
+    const displayWidth = rect.width;
+    const displayHeight = rect.height;
+
+    const scaleX = imageWidth / displayWidth;
+    const scaleY = imageHeight / displayHeight;
+
+    const phoneX = Math.round(x * scaleX);
+    const phoneY = Math.round(y * scaleY);
+
+    console.log(`Click at screen coordinates: (${x}, ${y}), phone coordinates: (${phoneX}, ${phoneY})`);
+
+    try {
+      const result = await socket.request.clickCommand({
+        runner: runner.name,
+        x: phoneX,
+        y: phoneY,
+      });
+
+      if (result.success) {
+        console.log("Click command sent successfully");
+      } else {
+        console.error("Failed to send click command:", result.error);
+      }
+    } catch (error) {
+      console.error("Error sending click command:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="container mx-auto max-w-7xl">
@@ -215,13 +263,24 @@ export function RunnerDetail({ runner, onBack, serverKey }: RunnerDetailProps) {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
+                <div className="aspect-video bg-muted rounded-lg flex items-center justify-center relative">
                   {currentFrame ? (
-                    <img
-                      src={`data:image/png;base64,${currentFrame}`}
-                      alt="Runner screen"
-                      className="max-w-full max-h-full object-contain rounded"
-                    />
+                    <>
+                      <img
+                        src={`data:image/png;base64,${currentFrame}`}
+                        alt="Runner screen"
+                        className={`max-w-full max-h-full object-contain rounded ${runner.state === "debug"
+                          ? "cursor-crosshair hover:opacity-90 transition-opacity"
+                          : "cursor-default"
+                          }`}
+                        onClick={handleImageClick}
+                      />
+                      {runner.state === "debug" && (
+                        <div className="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded text-xs font-medium">
+                          Режим отладки: кликните на экран
+                        </div>
+                      )}
+                    </>
                   ) : (
                     <div className="text-center text-muted-foreground">
                       <Monitor className="h-12 w-12 mx-auto mb-2" />

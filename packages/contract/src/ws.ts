@@ -149,4 +149,29 @@ export const wsContract = createContract({
       timestamp: z.number(),
     }),
   },
+  // Click command from front-end to worker
+  clickCommand: {
+    client: z.object({
+      runner: z.string(),
+      x: z.number(),
+      y: z.number(),
+    }),
+    server: z.object({
+      success: z.boolean(),
+      message: z.string(),
+    }),
+  },
+  // Click command from master-server to worker
+  clickCommandToRunner: {
+    server: z.object({
+      runner: z.string(),
+      x: z.number(),
+      y: z.number(),
+    }),
+    client: z.object({
+      runner: z.string(),
+      x: z.number(),
+      y: z.number(),
+    }),
+  },
 });
