@@ -123,7 +123,15 @@ function addEventListenerHandlers(client: ReturnType<typeof createClientSocket<t
     }
 
     console.log(`Changing state for runner: ${runner} to: ${state}`);
+
+    const oldState = stateManager.state;
+
+
     stateManager.state = state;
+
+    if (oldState === 'readyForCreateLobby') {
+      stateManager.run();
+    }
 
     // Notify master server about state change
     if (client) {
