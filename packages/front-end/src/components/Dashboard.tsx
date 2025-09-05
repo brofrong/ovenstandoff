@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import { LogOut, RefreshCw, Wifi, WifiOff } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import type { Runner } from "@ovenstandoff/contract";
 import { env } from "@/lib/env";
 
@@ -32,7 +32,15 @@ export function Dashboard({ serverKey, onLogout }: DashboardProps) {
     onConnectionChange: onConnectionChange,
   });
 
-
+  // Update selectedRunner when runners data changes
+  useEffect(() => {
+    if (selectedRunner && runners.length > 0) {
+      const updatedRunner = runners.find(r => r.name === selectedRunner.name);
+      if (updatedRunner) {
+        setSelectedRunner(updatedRunner);
+      }
+    }
+  }, [runners, selectedRunner]);
 
   const handleLogout = () => {
     localStorage.removeItem("serverKey");
