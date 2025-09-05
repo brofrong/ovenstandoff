@@ -261,26 +261,24 @@ export function RunnerDetail({ runner, onBack, serverKey }: RunnerDetailProps) {
                     )}
                   </div>
                 </div>
+                {runner.state === "debug" && currentFrame && (
+                  <div className="bg-blue-500 text-white px-3 py-2 rounded text-sm font-medium mt-2">
+                    Режим отладки: кликните на экран
+                  </div>
+                )}
               </CardHeader>
               <CardContent>
                 <div className="aspect-video bg-muted rounded-lg flex items-center justify-center relative">
                   {currentFrame ? (
-                    <>
-                      <img
-                        src={`data:image/png;base64,${currentFrame}`}
-                        alt="Runner screen"
-                        className={`max-w-full max-h-full object-contain rounded ${runner.state === "debug"
-                          ? "cursor-crosshair hover:opacity-90 transition-opacity"
-                          : "cursor-default"
-                          }`}
-                        onClick={handleImageClick}
-                      />
-                      {runner.state === "debug" && (
-                        <div className="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded text-xs font-medium">
-                          Режим отладки: кликните на экран
-                        </div>
-                      )}
-                    </>
+                    <img
+                      src={`data:image/png;base64,${currentFrame}`}
+                      alt="Runner screen"
+                      className={`max-w-full max-h-full object-contain rounded ${runner.state === "debug"
+                        ? "cursor-crosshair hover:opacity-90 transition-opacity"
+                        : "cursor-default"
+                        }`}
+                      onClick={handleImageClick}
+                    />
                   ) : (
                     <div className="text-center text-muted-foreground">
                       <Monitor className="h-12 w-12 mx-auto mb-2" />

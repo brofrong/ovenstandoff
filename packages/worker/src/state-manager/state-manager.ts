@@ -75,12 +75,8 @@ export class StateManager {
     try {
       // Compress the image before sending
       const compressedBuffer = await sharp(this.currentImg)
-        .resize(800, 600, {
-          fit: 'inside',
-          withoutEnlargement: true
-        })
         .jpeg({
-          quality: 50,
+          quality: 30,
           progressive: true
         })
         .toBuffer();
