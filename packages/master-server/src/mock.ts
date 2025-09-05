@@ -26,7 +26,7 @@ export function enableMockWorkers() {
             readyState: 1,
             data: null,
             getBufferedAmount: () => 0,
-          }, state: "readyForCreateLobby", matchID: null, callbackUrl: null, team: null
+          }, state: "readyForCreateLobby", code: null, matchID: null, callbackUrl: null, team: null
         },
       );
     }

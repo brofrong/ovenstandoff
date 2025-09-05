@@ -9,6 +9,7 @@ export let runners: {
   name: string;
   ws: Bun.ServerWebSocket<unknown>;
   state: State;
+  code: string | null;
   matchID: string | null;
   callbackUrl: string | null;
   team: {
@@ -18,7 +19,7 @@ export let runners: {
 }[] = [];
 
 
-export function setRunners(newRunners: { name: string; ws: Bun.ServerWebSocket<unknown>; state: State; matchID: string | null; callbackUrl: string | null; team: { ct: string[]; t: string[]; } | null }[]) {
+export function setRunners(newRunners: { name: string; ws: Bun.ServerWebSocket<unknown>; state: State; code: string | null; matchID: string | null; callbackUrl: string | null; team: { ct: string[]; t: string[]; } | null }[]) {
   runners = newRunners;
 }
 

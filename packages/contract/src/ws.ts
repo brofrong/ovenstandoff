@@ -17,13 +17,13 @@ export const AllStates = [
 export const runner = z.object({
   name: z.string(),
   state: z.enum(AllStates),
-  matchID: z.string().optional().nullable(),
-  callbackUrl: z.string().optional().nullable(),
-  code: z.string().optional().nullable(),
+  matchID: z.string().nullable(),
+  callbackUrl: z.string().nullable(),
+  code: z.string().nullable(),
   team: z.object({
     ct: z.array(z.string()),
     t: z.array(z.string()),
-  }).optional().nullable(),
+  }).nullable(),
 });
 export type Runner = z.infer<typeof runner>;
 
