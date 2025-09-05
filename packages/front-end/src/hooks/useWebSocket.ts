@@ -28,7 +28,7 @@ export function useWebSocket({
 
     try {
       // Подключаемся к WebSocket серверу на порту 3001 с аутентификацией
-      const ws = new WebSocket(`ws://${env.BUN_PUBLIC_WS_HOST}/ws?auth=${serverKey}&view=true`);
+      const ws = new WebSocket(`${env.BUN_PUBLIC_WS_HOST}/ws?auth=${serverKey}&view=true`);
       let localSocket: Socket | null = null;
 
       ws.onopen = () => {

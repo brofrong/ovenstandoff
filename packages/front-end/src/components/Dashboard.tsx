@@ -7,6 +7,7 @@ import { useWebSocket } from "@/hooks/useWebSocket";
 import { LogOut, RefreshCw, Wifi, WifiOff } from "lucide-react";
 import { useCallback, useState } from "react";
 import type { Runner } from "@ovenstandoff/contract";
+import { env } from "@/lib/env";
 
 interface DashboardProps {
   serverKey: string;
@@ -113,7 +114,7 @@ export function Dashboard({ serverKey, onLogout }: DashboardProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2 text-sm text-muted-foreground">
-              <div>WebSocket: ws://localhost:3001/ws</div>
+              <div>WebSocket:{env.BUN_PUBLIC_WS_HOST}/ws</div>
               <div>Статус: {isConnected ? "Активен" : "Неактивен"}</div>
             </div>
 
