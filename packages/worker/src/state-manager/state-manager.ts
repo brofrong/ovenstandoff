@@ -68,6 +68,7 @@ export class StateManager {
 
   private async sendScreenFrameIfStreaming(): Promise<void> {
     if (!this.currentImg || !Buffer.isBuffer(this.currentImg)) {
+      console.log(`No valid screenshot to send for ${this.ldPlayer.name} (currentImg type: ${typeof this.currentImg})`);
       return;
     }
 
@@ -92,6 +93,8 @@ export class StateManager {
           frame: base64Frame,
           timestamp: Date.now()
         });
+      } else {
+        console.warn(`Client not available for sending screen frame for ${this.ldPlayer.name}`);
       }
     } catch (error) {
       console.error(`Error sending screen frame for ${this.ldPlayer.name}:`, error);
@@ -510,6 +513,17 @@ export class StateManager {
 
     console.log(`Starting screen stream for ${this.ldPlayer.name}`);
     this.isStreaming = true;
+
+    // Send current screenshot immediately if available
+    if (this.currentImg && Buffer.isBuffer(this.currentImg)) {
+      console.log(`Sending current screenshot for ${this.ldPlayer.name} immediately`);
+      await this.sendScreenFrameIfStreaming();
+    } else {
+      // If no current screenshot or it's a string (timeout/empty), take one immediately
+      console.log(`No valid current screenshot available, taking new one for ${this.ldPlayer.name}`);
+      await this.takeScreenshot();
+    }
+
     // No need for interval - screenshots will be sent automatically via takeScreenshot()
   }
 
