@@ -102,6 +102,8 @@ const applyMessageHandlers = (ws: Bun.ServerWebSocket<unknown>, server: ReturnTy
 
     runner.matchID = null;
     runner.callbackUrl = null;
+    runner.code = null;
+
     runner.state = "readyForCreateLobby";
 
     broadcastRunnersUpdate();

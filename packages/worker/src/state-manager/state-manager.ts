@@ -348,6 +348,11 @@ export class StateManager {
     await this.takeScreenshot();
 
     if (await waitForPlayers.isMatchExpired(this)) {
+      this.matchStartedTimestamp = null;
+      this.matchID = null;
+      this.callbackUrl = null;
+      this.lobbyCode = null;
+      this.teams = { ct: [], t: [] };
       this.setState("launching");
       return { wait: 0 };
     }
