@@ -52,6 +52,7 @@ const playerNameCoords: Record<string, { x: number; y: number }> = {
 export async function getPlayerName(
   slotName: string,
   img: string | Buffer | null,
+  lang: "eng" | "ru" = "eng",
   config: { debug: boolean } = { debug: false }
 ) {
   const coord = playerNameCoords[slotName];
@@ -80,7 +81,7 @@ export async function getPlayerName(
     await Bun.write(`./tmp/names/name${Date.now()}img.png`, upscaledImgBuffer);
   }
 
-  const worker = await createWorker(["eng"]);
+  const worker = await createWorker([lang]);
   const ret = await worker.recognize(upscaledImgBuffer);
   await worker.terminate();
   const unfilteredName = ret.data.text;

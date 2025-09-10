@@ -162,12 +162,22 @@ async function getJoinedPlayersCountKickPlayersNotInList(
       stateManager.currentImg
     );
 
-    if (!imgPlayerName) {
+    const imgPlayerNameRU = await getPlayerName(
+      slotName,
+      stateManager.currentImg,
+      "ru"
+    );
+
+    if (!imgPlayerName || !imgPlayerNameRU) {
       console.log(`slot: name in ${slot.slot} is not found`);
       continue;
     }
 
-    const playerName = fuzzySearchNames(imgPlayerName, allPlayers);
+    let playerName = fuzzySearchNames(imgPlayerName, allPlayers);
+
+    if (!playerName) {
+      playerName = fuzzySearchNames(imgPlayerNameRU, allPlayers);
+    }
 
     if (!playerName) {
       //kick player
