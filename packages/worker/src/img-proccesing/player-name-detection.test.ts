@@ -1,14 +1,11 @@
 import { expect, test } from "bun:test";
-import { findAnchor } from "./img-proccesing";
+import {
+  slotsNames,
+  waitForPlayers
+} from "../state-manager/waiting-for-players";
+import { fuzzySearchNames } from "../utils/utils";
 import { loadBuffer } from "./memo-img";
 import { getPlayerName } from "./player-name-detection";
-import sharp from "sharp";
-import { fuzzySearchNames } from "../utils/utils";
-import {
-  TEAM_COLORS_COORDS,
-  slotsNames,
-  waitForPlayers,
-} from "../state-manager/waiting-for-players";
 
 test("find player names", async () => {
   const slotsNames = [
@@ -46,7 +43,7 @@ test("find player names", async () => {
     if (!expectedName) {
       console.log(`${name} not found in ${allPlayers}`);
     }
-    expect(expectedName).toBe(allPlayers[index]);
+    expect(expectedName).toBe(allPlayers[index] ?? null);
   }
 
   expect(true).toBe(true);
@@ -77,7 +74,7 @@ test("find player names 2", async () => {
     if (!expectedName) {
       console.log(`${name} not found in ${allPlayers}`);
     }
-    expect(expectedName).toBe(allPlayers[index]);
+    expect(expectedName).toBe(allPlayers[index] ?? null);
   }
 
   expect(true).toBe(true);
@@ -102,8 +99,8 @@ test("get team color", async () => {
   for (let i = 0; i < slotsNames.length; i++) {
     const slot = slotsNames[i];
     const team = slotsTeams[i];
-    const teamColor = await waitForPlayers.isPlayerInTeam(slot, img);
-    expect(teamColor).toBe(team);
+    const teamColor = await waitForPlayers.isPlayerInTeam(slot ?? 'free_slot_1', img);
+    expect(teamColor).toBe(team ?? false);
   }
 
   expect(true).toBe(true);
