@@ -80,6 +80,38 @@ test("find player names 2", async () => {
   expect(true).toBe(true);
 });
 
+test("find player names 3", async () => {
+  const slotsNames = ["free_slot_1", "free_slot_2"];
+
+  const teams = {
+    teams: {
+      ct: ["CH Auto 1"],
+      t: ["CH Auto 2"],
+    },
+  };
+
+  const allPlayers = [...teams.teams.ct, ...teams.teams.t];
+  const img = await loadBuffer("./test-img/img-names-3.png");
+
+  for (const slot of slotsNames) {
+    const index = slotsNames.indexOf(slot);
+    const name = await getPlayerName(slot, img);
+    console.log(name);
+
+    if (!name) {
+      throw new Error(`${slot} not found`);
+    }
+    const expectedName = fuzzySearchNames(name, allPlayers);
+    if (!expectedName) {
+      console.log(`${name} not found in ${allPlayers}`);
+    }
+    expect(expectedName).toBe(allPlayers[index] ?? null);
+  }
+
+  expect(true).toBe(true);
+});
+
+
 const slotsTeams = [
   "ct",
   "ct",

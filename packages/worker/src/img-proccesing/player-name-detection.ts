@@ -52,7 +52,7 @@ const playerNameCoords: Record<string, { x: number; y: number }> = {
 export async function getPlayerName(
   slotName: string,
   img: string | Buffer | null,
-  lang: "eng" | "ru" = "eng",
+  lang: "eng" | "rus" = "eng",
   config: { debug: boolean } = { debug: false }
 ) {
   const coord = playerNameCoords[slotName];

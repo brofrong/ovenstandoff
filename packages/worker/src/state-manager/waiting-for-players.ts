@@ -165,7 +165,7 @@ async function getJoinedPlayersCountKickPlayersNotInList(
     const imgPlayerNameRU = await getPlayerName(
       slotName,
       stateManager.currentImg,
-      "ru"
+      "rus"
     );
 
     if (!imgPlayerName || !imgPlayerNameRU) {
