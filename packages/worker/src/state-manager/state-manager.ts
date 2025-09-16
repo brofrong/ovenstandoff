@@ -20,7 +20,7 @@ export const activeStateManagers: StateManager[] = [];
 
 export class StateManager {
   public ldPlayer: LDPlayer;
-  public state: State = "android";
+  public state: State = "booting";
   public currentImg: string | Buffer | null = "";
   public lobbyCode: string | null = null;
   public teams: Teams = { ct: [], t: [] };
@@ -164,13 +164,21 @@ export class StateManager {
 
   private async booting(): Promise<ActionRet> {
     const activity = await this.ldPlayer.adb("shell dumpsys activity");
+
     if (!activity) return { wait: 5000 };
     this.setState("android");
     return { wait: 0 };
   }
 
   private async android(): Promise<ActionRet> {
-    await this.ldPlayer.runapp("com.axlebolt.standoff2");
+    const activity = await this.ldPlayer.adb("shell dumpsys activity");
+    const runningActivitiesRegex = /Running activities[\s\S]*?A=com\.axlebolt\.standoff2/;
+    const hasStandoff = runningActivitiesRegex.test(activity);
+
+    if (!hasStandoff) {
+      await this.ldPlayer.runapp("com.axlebolt.standoff2");
+      return { wait: 5000 };
+    }
     this.setState("launching");
     return { wait: 0 };
   }

@@ -85,8 +85,8 @@ test("find player names 3", async () => {
 
   const teams = {
     teams: {
-      ct: ["CH Auto 1"],
-      t: ["CH Auto 2"],
+      ct: ["Андикон"],
+      t: ["1234"],
     },
   };
 

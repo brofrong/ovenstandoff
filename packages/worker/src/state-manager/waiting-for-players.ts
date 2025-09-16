@@ -144,40 +144,23 @@ async function getJoinedPlayersCountKickPlayersNotInList(
   const playersJoined: string[] = [];
 
   // get occupied slots to check
-  const occupiedSlots = (
-    await Promise.all(
-      slotsNames.map(async (slot) => ({
-        fined: !(await findAnchor(stateManager.currentImg, slot)),
-        slot,
-      }))
-    )
-  ).filter((it) => it.fined);
+  const occupiedSlots = slotsNames;
 
   for (const slot of occupiedSlots) {
-    console.log(`slot: ${slot.slot} is cheking`);
+    console.log(`slot: ${slot} is cheking`);
     await stateManager.takeScreenshot();
-    const slotName = slot.slot;
+    const slotName = slot;
     const imgPlayerName = await getPlayerName(
       slotName,
       stateManager.currentImg
     );
 
-    const imgPlayerNameRU = await getPlayerName(
-      slotName,
-      stateManager.currentImg,
-      "rus"
-    );
-
-    if (!imgPlayerName || !imgPlayerNameRU) {
-      console.log(`slot: name in ${slot.slot} is not found`);
+    if (!imgPlayerName) {
+      console.log(`slot: name in ${slot} is not found`);
       continue;
     }
 
     let playerName = fuzzySearchNames(imgPlayerName, allPlayers);
-
-    if (!playerName) {
-      playerName = fuzzySearchNames(imgPlayerNameRU, allPlayers);
-    }
 
     if (!playerName) {
       //kick player
