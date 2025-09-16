@@ -3,6 +3,9 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "create-anchors": "bun ./script/create-anchors.ts"
+  },
   "dependencies": {
     "@ovenstandoff/contract": "workspace:*",
     "@ovenstandoff/shared": "workspace:*",

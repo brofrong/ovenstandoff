@@ -15,7 +15,7 @@ for (let file of jsonsFIles) {
 let fileString = "";
 
 for (let i of imports) {
-    fileString += `import ${i.name}PNG from '../../../anchors/${i.imgPath}' with { type: "file" };\nimport ${i.name}JSON from '../../../anchors/${i.path}';\n`
+    fileString += `import ${i.name}PNG from '../../anchors/${i.imgPath}' with { type: "file" };\nimport ${i.name}JSON from '../../anchors/${i.path}';\n`
 }
 
 fileString += `\n\nexport const anchors = {\n`;
@@ -28,4 +28,4 @@ for (let i of imports) {
 fileString += `} as const;\n`;
 
 
-await Bun.file('./src/worker/img-proccesing/anchors.ts').write(fileString);
+await Bun.file('./src/img-proccesing/anchors.ts').write(fileString);

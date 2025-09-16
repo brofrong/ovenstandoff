@@ -10,7 +10,6 @@
     "typescript": "^5.8.3"
   },
   "scripts": {
-    "script": "bun ./script/create-anchors.ts",
     "worker": "bun ./packages/worker/index.ts",
     "setup": "bun ./packages/setup/index.ts",
     "db:push": "drizzle-kit push --config=./packages/shared/drizzle.config.ts",

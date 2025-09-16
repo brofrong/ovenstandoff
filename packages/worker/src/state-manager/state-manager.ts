@@ -190,7 +190,7 @@ export class StateManager {
     if (this.currentImg) {
       await Bun.write(`./tmp/debug-${Date.now()}.png`, this.currentImg);
     }
-    return { wait: 2000 };
+    return { wait: 1000 };
   }
 
   private async launching(): Promise<ActionRet> {
