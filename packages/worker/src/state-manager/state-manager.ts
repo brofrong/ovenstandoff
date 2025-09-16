@@ -468,6 +468,14 @@ export class StateManager {
       return this.matchEnded();
     }
 
+    if (await findAnchor(this.currentImg, "in_game_return_match")) {
+      await runSteps(
+        [{ step: "click", data: { anchorKey: "in_game_return_match" } }],
+        this
+      );
+      return { wait: 1000 };
+    }
+
     if (await findAnchor(this.currentImg, "in_game_in_menu")) {
       console.log("match ended with error");
       client?.send.matchEnded({
