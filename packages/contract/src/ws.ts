@@ -1,5 +1,6 @@
 import { createContract } from "@ovenstandoff/type-safe-socket";
 import { z } from "zod";
+import { gameMaps } from './rest';
 
 export const AllStates = [
   "booting",
@@ -20,6 +21,7 @@ export const runner = z.object({
   matchID: z.string().nullable(),
   callbackUrl: z.string().nullable(),
   code: z.string().nullable(),
+  map: z.enum(gameMaps).nullable(),
   team: z.object({
     ct: z.array(z.string()),
     t: z.array(z.string()),
@@ -48,6 +50,7 @@ export const wsContract = createContract({
       runner: z.string(),
       matchID: z.string().nullable(),
       callbackUrl: z.string().nullable(),
+      map: z.enum(gameMaps).nullable(),
     }),
   },
   lobbyCode: {

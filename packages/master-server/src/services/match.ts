@@ -20,6 +20,7 @@ export async function startMatchHandler(request: ServerInferRequest<typeof maste
   freeManager.callbackUrl = body.callbackUrl;
   freeManager.matchID = body.matchID;
   freeManager.team = body.teams;
+  freeManager.map = body.map;
 
   const socket = openConnections.get(freeManager.ws);
 

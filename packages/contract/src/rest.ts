@@ -3,10 +3,22 @@ import { z } from 'zod';
 
 const c = initContract();
 
+export const gameMaps = [
+  "Province",
+  "Sandstone",
+  "Rust",
+  "Sakura",
+  "Hanami",
+  "Dune",
+  "Breeze",
+  "Zone 7",
+] as const;
+
+export type GameMap = (typeof gameMaps)[number];
 
 const reqMatchStartSchema = z.object({
   matchID: z.string(),
-  map: z.string().optional(),
+  map: z.enum(gameMaps),
   callbackUrl: z.string(),
   teams: z.object({
     ct: z.array(z.string()),

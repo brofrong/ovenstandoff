@@ -1,5 +1,7 @@
+import type { GameMap } from "@ovenstandoff/contract";
 import type { State } from "@ovenstandoff/shared";
 import { type ConfigWithRunners } from '@ovenstandoff/shared/src/config.type';
+import sharp from "sharp";
 import { findAnchor } from "../img-proccesing/img-proccesing";
 import type { LDPlayer } from "../ldconnector/ld";
 import { getRunnerAuthInfo } from "../storage/get-runner-info";
@@ -7,7 +9,7 @@ import { updateRunnerInfo } from "../storage/update-storage";
 import { client } from "../ws/ws";
 import { runSteps } from "./steps";
 import { waitForPlayers } from "./waiting-for-players";
-import sharp from "sharp";
+import { getCoordinatesByMap } from "../data/coordinates";
 
 export type Teams = {
   ct: string[];
@@ -24,6 +26,7 @@ export class StateManager {
   public currentImg: string | Buffer | null = "";
   public lobbyCode: string | null = null;
   public teams: Teams = { ct: [], t: [] };
+  public map: GameMap | null = null;
   public matchStartedTimestamp: number | null = null;
   public matchID: string | null = null;
   public callbackUrl: string | null = null;
@@ -128,7 +131,7 @@ export class StateManager {
     return keyToRunners[this.state].bind(this)();
   }
 
-  public async startCreatingLobby(teams: Teams, matchID?: string, callbackUrl?: string) {
+  public async startCreatingLobby(teams: Teams, map: GameMap, matchID?: string, callbackUrl?: string) {
     if (this.state !== "readyForCreateLobby") {
       console.warn(`${this.ldPlayer.name} is not ready for create lobby`);
       return { error: "not ready for create lobby" };
@@ -136,6 +139,7 @@ export class StateManager {
     this.teams = teams;
     this.matchID = matchID || null;
     this.callbackUrl = callbackUrl || null;
+    this.map = map;
     this.setState("createLobby");
     await this.run();
   }
@@ -318,6 +322,7 @@ export class StateManager {
         //setup lobby
         { step: "click", data: { anchorKey: "to_change_mode" } },
         { step: "click", data: { anchorKey: "competitive_mode" } },
+        { step: "click", data: getCoordinatesByMap(this.map) },
         { step: "click", data: { anchorKey: "change_mode" } },
 
         // lobby setting
@@ -356,13 +361,7 @@ export class StateManager {
     await this.takeScreenshot();
 
     if (await waitForPlayers.isMatchExpired(this)) {
-      this.matchStartedTimestamp = null;
-      this.matchID = null;
-      this.callbackUrl = null;
-      this.lobbyCode = null;
-      this.teams = { ct: [], t: [] };
-      this.setState("launching");
-      return { wait: 0 };
+      return this.matchEnded();
     }
 
     //kick player from spectator
@@ -507,6 +506,7 @@ export class StateManager {
     this.lobbyCode = null;
     this.matchID = null;
     this.callbackUrl = null;
+    this.map = null;
     this.setState("launching");
     return { wait: 1000 };
   }

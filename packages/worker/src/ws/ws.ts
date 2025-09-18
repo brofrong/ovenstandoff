@@ -21,6 +21,7 @@ export async function connectToMasterServer(config: ConfigWithRunners) {
       runners: activeStateManagers.map((manager) => ({
         name: manager.ldPlayer.name,
         state: manager.state,
+        map: manager.map,
         matchID: manager.matchID,
         callbackUrl: manager.callbackUrl,
         code: manager.lobbyCode,
@@ -68,7 +69,7 @@ export async function connectToMasterServer(config: ConfigWithRunners) {
 
 function addEventListenerHandlers(client: ReturnType<typeof createClientSocket<typeof wsContract, typeof ws>>) {
   client.on.startMatch(async (data) => {
-    const { teams, runner, matchID, callbackUrl } = data;
+    const { teams, runner, matchID, callbackUrl, map } = data;
     const runnerToStartMatch = activeStateManagers.find(
       (it) => it.ldPlayer.name === runner
     );
@@ -76,7 +77,7 @@ function addEventListenerHandlers(client: ReturnType<typeof createClientSocket<t
       console.error("Runner to start match not found:", runner);
       return;
     }
-    const result = await runnerToStartMatch.startCreatingLobby(teams, matchID || undefined, callbackUrl || undefined);
+    const result = await runnerToStartMatch.startCreatingLobby(teams, map, matchID || undefined, callbackUrl || undefined);
     if (result?.error) {
       console.error("Error starting match:", result.error);
     }

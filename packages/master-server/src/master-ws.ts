@@ -37,7 +37,7 @@ export function close(ws: Bun.ServerWebSocket<unknown>) {
 const applyMessageHandlers = (ws: Bun.ServerWebSocket<unknown>, server: ReturnType<typeof createServerSocket<typeof wsContract, unknown>>) => {
   server.on.registerRunners((data) => {
     data.runners.forEach((it) => {
-      runners.push({ name: it.name, ws, state: it.state, code: it.code, matchID: it.matchID, callbackUrl: it.callbackUrl, team: it.team, });
+      runners.push({ name: it.name, ws, state: it.state, map: it.map, code: it.code, matchID: it.matchID, callbackUrl: it.callbackUrl, team: it.team, });
     });
     broadcastRunnersUpdate();
     return { error: null };
@@ -153,7 +153,7 @@ const applyMessageHandlers = (ws: Bun.ServerWebSocket<unknown>, server: ReturnTy
   server.requestHandler.registerView((data, accept, reject) => {
     viewers.add(server);
 
-    accept({ runners: runners.map(runner => ({ name: runner.name, state: runner.state, code: runner.code, matchID: runner.matchID, callbackUrl: runner.callbackUrl, team: runner.team })) });
+    accept({ runners: runners.map(runner => ({ name: runner.name, state: runner.state, map: runner.map, code: runner.code, matchID: runner.matchID, callbackUrl: runner.callbackUrl, team: runner.team })) });
     return { error: null };
   });
 
@@ -257,6 +257,7 @@ export function broadcastRunnersUpdate() {
     state: runner.state,
     matchID: runner.matchID,
     callbackUrl: runner.callbackUrl,
+    map: runner.map,
     code: runner.code,
     team: runner.team
   }));
