@@ -328,21 +328,32 @@ export class StateManager {
         // lobby setting
         { step: "click", data: { anchorKey: "lobby_setting" } },
 
+        // больше меньше
+        // 927, 586
+        // y coords: 
+        // Ограничить выбор команды 129
+        // длительность разминки 180
+        // длительность раунда 237
+        // длительность подготовки к раунду 292
+        // Количество раундов 346
+
         // prod Settings
-        // { step: "click", data: { anchorKey: "lock_team_setting" } },
-        // { step: "click", data: { anchorKey: "lobby_pripare_time_setting" } },
-        // { step: "click", data: { anchorKey: "lobby_rounds_count_setting" } },
-        // { step: "click", data: { anchorKey: "lobby_time_setting" } },
-        // { step: "click", data: { anchorKey: "apply_setting" } },
+        // { step: "click", data: { x: 927, y: 129 } }, // Ограничить выбор команды
+        // { step: "click", data: { x: 586, y: 180 } }, // длительность разминки уменьшить
+        // { step: "click", data: { x: 927, y: 237 } }, // Длительность раунда увеличить
+        // { step: "click", data: { x: 586, y: 292 } }, // длительность подготовки к раунду увеличить
 
         // debug settings
-        { step: "click", data: { x: 927, y: 69 } }, // lock team
-        { step: "click", data: { x: 927, y: 129 } }, // prepare time
-        { step: "click", data: { x: 585, y: 180 } }, // roundTime time
-        { step: "click", data: { x: 586, y: 235 } }, // prepare time
-        { step: "click", data: { x: 586, y: 292 } }, // roundCount
-        { step: "click", data: { x: 586, y: 292 } }, // roundCount
-        { step: "click", data: { x: 586, y: 292 } }, // roundCount
+        { step: "click", data: { x: 927, y: 129 } }, // Ограничить выбор команды
+        { step: "click", data: { x: 586, y: 180 } }, // длительность разминки уменьшить
+        { step: "click", data: { x: 586, y: 180 } }, // длительность разминки уменьшить
+        { step: "click", data: { x: 586, y: 180 } }, // длительность разминки уменьшить
+        { step: "click", data: { x: 586, y: 237 } }, // Длительность раунда уменьшить
+        { step: "click", data: { x: 586, y: 292 } }, // Длительность подготовки к раунду уменьшить
+        { step: "click", data: { x: 586, y: 346 } }, // Количество раудов уменьшить
+        { step: "click", data: { x: 586, y: 346 } }, // Количество раудов уменьшить
+        { step: "click", data: { x: 586, y: 346 } }, // Количество раудов уменьшить
+
         { step: "click", data: { anchorKey: "apply_setting" } },
 
         //move self to spectator
