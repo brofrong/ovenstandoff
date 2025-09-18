@@ -190,6 +190,7 @@ async function getJoinedPlayersCountKickPlayersNotInList(
         [
           { step: "click", data: { anchorKey: slotName } },
           { step: "clickOccurrence", data: { anchorKey: teamKey } },
+          { step: "click", data: { x: 30, y: 342 } }, // Нейтральный клик, что бы убрать все контекстные окна если они есть по какой либо причине
         ],
         stateManager
       );
