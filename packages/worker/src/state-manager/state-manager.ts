@@ -131,7 +131,7 @@ export class StateManager {
     return keyToRunners[this.state].bind(this)();
   }
 
-  public async startCreatingLobby(teams: Teams, map: GameMap, matchID?: string, callbackUrl?: string) {
+  public async startCreatingLobby(teams: Teams, map: GameMap | null, matchID?: string, callbackUrl?: string) {
     if (this.state !== "readyForCreateLobby") {
       console.warn(`${this.ldPlayer.name} is not ready for create lobby`);
       return { error: "not ready for create lobby" };
