@@ -586,7 +586,7 @@ export class StateManager {
       "com.axlebolt.standoff2"), "/storage/emulated/0/Android/obb/com.axlebolt.standoff2/");
     await wait(5000);
 
-    this.setState('android');
+    this.setState('booting');
     return { wait: 1000 };
   }
 

@@ -7,29 +7,39 @@ export function startCron() {
   new CronJob('0 * * * * *', updateGameJob, null, true, 'Europe/Moscow');
 }
 
+let updateInProgress = false;
+
 
 async function updateGameJob() {
+  if(updateInProgress) {
+    return;
+  }
+  updateInProgress = true;
   console.log(`start updating games ${new Date().toISOString()}`);
 
   console.log("downloading last version of standoff2");
   const lastVersion = await downloadLastVersion(STANDOFF2_DOWNLOAD_URL);
   const unzippedFolder = await unzip(lastVersion);
 
-  activeStateManagers.forEach((manager) => updateGame(manager, unzippedFolder));
+  await Promise.all(activeStateManagers.map((manager) => updateGame(manager, unzippedFolder)));
+  updateInProgress = false;
 }
 
 
 function updateGame(manager: StateManager, unzippedFolder: string, retry: number = 0) {
-  if(manager.state === 'inGame') {
-    return manager.updateGame(unzippedFolder);
-  } 
+  return new Promise(async (resolve, reject) => {
+    if(manager.state === 'inGame' || manager.state === 'android' || manager.state === 'launching' || manager.state === 'booting') {
+      await manager.updateGame(unzippedFolder);
+      return resolve(true);
+    } 
 
-  if(retry > 10) {
-    console.log(`update game failed ${manager.ldPlayer.name} ${new Date().toISOString()}`);
-    return;
-  }
+    if(retry > 10) {
+      console.log(`update game failed ${manager.ldPlayer.name} ${new Date().toISOString()}`);
+      return reject(false);
+    }
 
-  setTimeout(() => {
-    updateGame(manager, unzippedFolder, retry + 1);
-  }, 10000);
+    setTimeout(() => {
+      updateGame(manager, unzippedFolder, retry + 1);
+    }, 10000);
+  });
 }
