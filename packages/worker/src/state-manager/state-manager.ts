@@ -590,6 +590,7 @@ export class StateManager {
     await wait(5000);
 
     this.setState('booting');
+    this.run();
     return { wait: 1000 };
   }
 

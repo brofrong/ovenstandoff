@@ -7,7 +7,7 @@ export function startCron() {
   if(process.env.FORSE_UPDATE === 'true') {
     updateGameJob();
   }
-  new CronJob('0 * * * * *', updateGameJob, null, true, 'Europe/Moscow');
+  new CronJob('0 0 3 * * *', updateGameJob, null, true, 'Europe/Moscow');
 }
 
 let updateInProgress = false;
