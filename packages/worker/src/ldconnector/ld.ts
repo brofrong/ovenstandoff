@@ -1,5 +1,6 @@
+import type { LD } from '@ovenstandoff/shared';
+import { wait } from '../../../setup/src/utils';
 import { anchors } from "../img-proccesing/anchors";
-import type { LD } from "@ovenstandoff/shared";
 
 
 export const activeLdPlayers: LDPlayer[] = [];
@@ -61,5 +62,30 @@ export class LDPlayer {
 
   public async deleteAllText() {
     return this.LD.deleteAllText(this.name);
+  }
+
+  public async quit() {
+    return this.LD.quit(this.name);
+  }
+
+  public async install(path: string) {
+    return this.LD.install(this.name, path);
+  }
+
+  public async push(what: string, where: string) {
+    return this.LD.adb(this.name, `push ${what} ${where}`);
+  }
+
+  public waitForStart() {
+    return new Promise(async (resolve, reject) => {
+      for (let times = 0; times < 60; times++) {
+        const activity = await this.LD.adb(this.name, "shell dumpsys activity");
+        if (activity) {
+          return resolve(true);
+        }
+        await wait(2000);
+      }
+      reject(false);
+    });
   }
 }

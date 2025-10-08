@@ -16,6 +16,7 @@ export const AllStates = [
   "changeName",
   "inGame",
   "debug",
+  "updateGame",
 ] as const;
 
 export type State = (typeof AllStates)[number];

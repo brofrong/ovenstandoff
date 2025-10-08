@@ -13,6 +13,7 @@ export const AllStates = [
   "changeName",
   "inGame",
   "debug",
+  "updateGame",
 ] as const;
 
 export const runner = z.object({

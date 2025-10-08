@@ -9,7 +9,8 @@
   "dependencies": {
     "@ovenstandoff/contract": "workspace:*",
     "@ovenstandoff/shared": "workspace:*",
-    "@ovenstandoff/type-safe-socket": "workspace:*"
+    "@ovenstandoff/type-safe-socket": "workspace:*",
+    "cron": "^4.3.3"
   },
   "devDependencies": {
     "@types/bun": "latest"

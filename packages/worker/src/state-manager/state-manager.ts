@@ -10,6 +10,8 @@ import { client } from "../ws/ws";
 import { runSteps } from "./steps";
 import { waitForPlayers } from "./waiting-for-players";
 import { getCoordinatesByMap } from "../data/coordinates";
+import { wait } from "../utils/utils";
+import path from "path";
 
 export type Teams = {
   ct: string[];
@@ -126,6 +128,7 @@ export class StateManager {
       waitingForPlayers: this.waitingForPlayers,
       debug: this.debug,
       inGame: this.inGame,
+      updateGame: this.waitingForPlayers,
     };
 
     return keyToRunners[this.state].bind(this)();
@@ -563,6 +566,28 @@ export class StateManager {
 
     console.log(`Stopping screen stream for ${this.ldPlayer.name}`);
     this.isStreaming = false;
+  }
+
+  public async updateGame(unzippedFolder: string): Promise<ActionRet> {
+    this.setState("updateGame");
+    this.ldPlayer.killapp('com.axlebolt.standoff2');
+    await wait(5000);
+    this.ldPlayer.quit();
+    await wait(5000);
+    this.ldPlayer.start();
+    await this.ldPlayer.waitForStart();
+    await wait(5000);
+    await this.ldPlayer.install(path.join(unzippedFolder, "com.axlebolt.standoff2.apk"));
+    await wait(5000);
+    await this.ldPlayer.push(path.join(
+      unzippedFolder,
+      "Android",
+      "obb",
+      "com.axlebolt.standoff2"), "/storage/emulated/0/Android/obb/com.axlebolt.standoff2/");
+    await wait(5000);
+
+    this.setState('android');
+    return { wait: 1000 };
   }
 
 

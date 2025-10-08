@@ -5,8 +5,6 @@ import path from "path";
 export const STANDOFF2_DOWNLOAD_URL =
   "https://d.apkpure.com/b/XAPK/com.axlebolt.standoff2?version=latest";
 
-
-
 export const standoffOutputPath = (name: string) =>
   path.join('tmp', "standoff2", name);
 
