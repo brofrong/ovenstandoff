@@ -1,5 +1,5 @@
 import appDirs from "appdirsjs";
-import Fuse from "fuse.js";
+import Fuse, { type FuseResult } from "fuse.js";
 import { readdir } from "node:fs/promises";
 
 export function wait(ms: number): Promise<void> {
@@ -21,22 +21,35 @@ const removeNonLatin = (name: string) =>
   name.replace(/[^a-zA-Z0-9а-яА-ЯёЁ]/g, "");
 
 export function fuzzySearchNames(
-  name: string,
+  name: { ru: string, eng: string },
   allNames: string[]
-): string | null {
-  const cleanName = removeNonLatin(name);
+): string | null {;
   const cleanAllNames = allNames.map(removeNonLatin);
 
-  const fuse = new Fuse(cleanAllNames, { threshold: 0.4 });
+  const fuse = new Fuse(cleanAllNames, { threshold: 0.4, ignoreLocation: true, isCaseSensitive: false, includeScore: true,   });
 
-  const result = fuse.search(cleanName);
+  let bestNames: FuseResult<string>[] = [];
 
-  const bestResult = result[0];
+  if (name.ru) {
+    const result = fuse.search(name.ru);
 
-  console.log({ name, bestResult });
+    const bestResult = result[0];
+    if(bestResult) {
+      bestNames.push(bestResult);
+    }
+  }
+  if (name.eng) {
+    const result = fuse.search(name.eng);
+    const bestResult = result[0];
+    if(bestResult) {
+      bestNames.push(bestResult);
+    }
+  }
+  
+  const bestResult = bestNames.sort((a, b) => (a.score ?? 0) - (b.score ?? 0))[0];
 
   if (bestResult?.refIndex !== undefined) {
-    return allNames[bestResult.refIndex];
+    return allNames[bestResult.refIndex] ?? null;
   }
 
   return null;

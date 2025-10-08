@@ -4,6 +4,9 @@ import {downloadLastVersion, STANDOFF2_DOWNLOAD_URL} from '../../../setup/src/do
 import {unzip} from '../../../setup/src/unzip';
 
 export function startCron() {
+  if(process.env.FORSE_UPDATE === 'true') {
+    updateGameJob();
+  }
   new CronJob('0 * * * * *', updateGameJob, null, true, 'Europe/Moscow');
 }
 

@@ -128,7 +128,7 @@ export class StateManager {
       waitingForPlayers: this.waitingForPlayers,
       debug: this.debug,
       inGame: this.inGame,
-      updateGame: this.waitingForPlayers,
+      updateGame: this.readyForCreateLobby,
     };
 
     return keyToRunners[this.state].bind(this)();
@@ -579,11 +579,14 @@ export class StateManager {
     await wait(5000);
     await this.ldPlayer.install(path.join(unzippedFolder, "com.axlebolt.standoff2.apk"));
     await wait(5000);
-    await this.ldPlayer.push(path.join(
-      unzippedFolder,
-      "Android",
-      "obb",
-      "com.axlebolt.standoff2"), "/storage/emulated/0/Android/obb/com.axlebolt.standoff2/");
+    await this.ldPlayer.adb(`shell rm /storage/emulated/0/Android/obb/com.axlebolt.standoff2/`);
+    await wait(5000);
+    await this.ldPlayer.adb(`push ${path.join(
+        unzippedFolder,
+        "Android",
+        "obb",
+        "com.axlebolt.standoff2"
+      )} /storage/emulated/0/Android/obb/com.axlebolt.standoff2/`);
     await wait(5000);
 
     this.setState('booting');

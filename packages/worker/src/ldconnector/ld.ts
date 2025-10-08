@@ -72,10 +72,6 @@ export class LDPlayer {
     return this.LD.install(this.name, path);
   }
 
-  public async push(what: string, where: string) {
-    return this.LD.adb(this.name, `push ${what} ${where}`);
-  }
-
   public waitForStart() {
     return new Promise(async (resolve, reject) => {
       for (let times = 0; times < 60; times++) {

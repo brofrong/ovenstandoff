@@ -1,5 +1,5 @@
 import { loadBuffer } from "./memo-img";
-import { createWorker } from "tesseract.js";
+import { createWorker, PSM } from "tesseract.js";
 import sharp from "sharp";
 
 const playerNameBoxSizes = {
@@ -49,7 +49,19 @@ const playerNameCoords: Record<string, { x: number; y: number }> = {
   free_slot_10: { x: 691, y: 175 },
 };
 
-const worker = await createWorker(["eng", "rus"], 2);
+const rusWorker = await createWorker(["rus"], 2);
+const engWorker = await createWorker(["eng"], 2);
+
+// Настраиваем параметры Tesseract для лучшего распознавания имен
+// PSM.SINGLE_LINE = Treat image as a single text line (лучше всего для имен игроков)
+await rusWorker.setParameters({
+  tessedit_pageseg_mode: PSM.SINGLE_LINE,
+  tessedit_char_whitelist: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ :_-",
+});
+await engWorker.setParameters({
+  tessedit_pageseg_mode: PSM.SINGLE_LINE,
+  tessedit_char_whitelist: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 :_-",
+});
 
 export async function getPlayerName(
   slotName: string,
@@ -70,24 +82,38 @@ export async function getPlayerName(
     return null;
   }
 
-  const upscaledImgBuffer = await sharp(imgBuffer)
+  // Увеличиваем масштаб до 6x для лучшего распознавания маленького текста
+  // Особенно важно для тонких букв типа i, l, 1
+  const scaleFactor = 3;
+  
+  // Предобработка изображения для улучшения распознавания
+  const processedImgBuffer = await sharp(imgBuffer)
+    // Сначала увеличиваем размер с качественной интерполяцией
     .resize({
-      width: playerNameBoxSizes.width * 2,
-      height: playerNameBoxSizes.height * 2,
+      width: playerNameBoxSizes.width * scaleFactor,
+      height: playerNameBoxSizes.height * scaleFactor,
       kernel: sharp.kernel.lanczos3,
     })
     .toBuffer();
 
   if (config.debug) {
-    await Bun.write(`./tmp/names/name${Date.now()}img.png`, upscaledImgBuffer);
+    await Bun.write(`./tmp/names/original-${Date.now()}.png`, imgBuffer);
+    await Bun.write(`./tmp/names/processed-${Date.now()}.png`, processedImgBuffer);
   }
 
+  // Распознаем с обоими языками параллельно
+  const [ruRet, engRet] = await Promise.all([
+    rusWorker.recognize(processedImgBuffer),
+    engWorker.recognize(processedImgBuffer)
+  ]);
 
-  const ret = await worker.recognize(upscaledImgBuffer);
-  const unfilteredName = ret.data.text;
+  const ruUnfilteredName = ruRet.data.text;
+  const name = ruUnfilteredName.replace(/[^a-zA-Z0-9а-яA-ЯёЁ]/g, "");
+  const ruConfidence = ruRet.data.confidence;
 
-  // remove all non-latin characters
-  const name = unfilteredName.replace(/[^a-zA-Z0-9а-яA-ЯёЁ]/g, "");
+  const engUnfilteredName = engRet.data.text;
+  const engName = engUnfilteredName.replace(/[^a-zA-Z0-9а-яA-ЯёЁ]/g, "");
+  const engConfidence = engRet.data.confidence;
 
-  return name;
+  return { ru: name, eng: engName };
 }
