@@ -463,10 +463,8 @@ export class StateManager {
 
     if (await findAnchor(this.currentImg, "in_game_t_win")) {
       console.log("match ended t win");
-      // send opposite team win because of team swap
-
       client?.send.matchEnded({
-        winner: "ct",
+        winner: "t",
       });
 
       return this.matchEnded();
@@ -474,9 +472,8 @@ export class StateManager {
 
     if (await findAnchor(this.currentImg, "in_game_ct_win")) {
       console.log("match ended ct win");
-      // send opposite team win because of team swap
       client?.send.matchEnded({
-        winner: "t",
+        winner: "ct",
       });
       return this.matchEnded();
     }
