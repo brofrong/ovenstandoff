@@ -579,7 +579,7 @@ export class StateManager {
     await wait(5000);
     await this.ldPlayer.install(path.join(unzippedFolder, "com.axlebolt.standoff2.apk"));
     await wait(5000);
-    await this.ldPlayer.adb(`shell rm /storage/emulated/0/Android/obb/com.axlebolt.standoff2/`);
+    await this.ldPlayer.adb(`shell rm -rf /storage/emulated/0/Android/obb/com.axlebolt.standoff2`);
     await wait(5000);
     await this.ldPlayer.adb(`push ${path.join(
         unzippedFolder,
