@@ -30,6 +30,7 @@ function updateGame(manager: StateManager, unzippedFolder: string, retry: number
   return new Promise(async (resolve, reject) => {
     if(manager.state === 'inGame' || manager.state === 'android' || manager.state === 'launching' || manager.state === 'booting') {
       await manager.updateGame(unzippedFolder);
+      console.log(`update game success ${manager.ldPlayer.name} ${new Date().toISOString()}`);
       return resolve(true);
     } 
 
