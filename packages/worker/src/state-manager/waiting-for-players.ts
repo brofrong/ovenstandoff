@@ -177,7 +177,7 @@ async function getJoinedPlayersCountKickPlayersNotInList(
       continue;
     }
 
-    playersJoined.push(playerName);
+
 
     const playerTeam = stateManager.teams.ct.includes(playerName) ? "ct" : "t";
     const currentTeam = await isPlayerInTeam(slotName, stateManager.currentImg);
@@ -186,6 +186,7 @@ async function getJoinedPlayersCountKickPlayersNotInList(
         playerTeam === "ct"
           ? "wait_for_payers_move_to_ct"
           : "wait_for_payers_move_to_t";
+          try {
       await runSteps(
         [
           { step: "click", data: { anchorKey: slotName } },
@@ -194,7 +195,13 @@ async function getJoinedPlayersCountKickPlayersNotInList(
         ],
         stateManager
       );
+    } catch (error) {
+      console.error('catch error in move to team');
+      continue;
     }
+    } 
+
+    playersJoined.push(playerName);
   }
 
   return allPlayers.length - playersJoined.length;
