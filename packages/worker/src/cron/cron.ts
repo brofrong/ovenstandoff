@@ -11,18 +11,23 @@ let updateInProgress = false;
 
 
 async function updateGameJob() {
-  if(updateInProgress) {
-    return;
+  try{
+    if(updateInProgress) {
+      return;
+    }
+    updateInProgress = true;
+    console.log(`start updating games ${new Date().toISOString()}`);
+  
+    console.log("downloading last version of standoff2");
+    const lastVersion = await downloadLastVersion(STANDOFF2_DOWNLOAD_URL);
+    const unzippedFolder = await unzip(lastVersion);
+  
+    await Promise.all(activeStateManagers.map((manager) => updateGame(manager, unzippedFolder)));
+    updateInProgress = false;
+  } catch(e) {
+    console.log(`update game failed ${new Date().toISOString()}`);
   }
-  updateInProgress = true;
-  console.log(`start updating games ${new Date().toISOString()}`);
 
-  console.log("downloading last version of standoff2");
-  const lastVersion = await downloadLastVersion(STANDOFF2_DOWNLOAD_URL);
-  const unzippedFolder = await unzip(lastVersion);
-
-  await Promise.all(activeStateManagers.map((manager) => updateGame(manager, unzippedFolder)));
-  updateInProgress = false;
 }
 
 
