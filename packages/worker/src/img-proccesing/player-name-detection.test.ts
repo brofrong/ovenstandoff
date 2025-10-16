@@ -137,3 +137,18 @@ test("get team color", async () => {
 
   expect(true).toBe(true);
 });
+
+
+
+// CT:
+// Relax
+// Militriss
+// MiXAЛЫ4
+// Pupo4ek
+// Milichka
+// T:
+// pen1lo
+// Dracula1
+// l1mboo
+// Dracula
+// BalaganSky

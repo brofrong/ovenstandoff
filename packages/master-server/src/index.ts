@@ -6,7 +6,29 @@ import { env } from './utils/env';
 import { startMatchHandler, registerClientsHandler } from './services/match';
 import { enableMockWorkers } from './mock';
 import path from 'path';
-const app = Fastify();
+
+const app = Fastify({
+  logger: {
+    transport: {
+      targets: [
+        {
+          target: 'pino-pretty',
+          options: {
+            colorize: true,
+            ignore: 'pid,hostname',
+          },
+        },
+        {
+          target: 'pino/file',
+          options: {
+            destination: path.join(process.cwd(), 'logs/master-server.log'),
+          },
+        }
+      ]
+    }
+  },
+},
+);
 const s = initServer();
 
 

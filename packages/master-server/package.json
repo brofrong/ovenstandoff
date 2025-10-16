@@ -19,6 +19,8 @@
     "@ovenstandoff/type-safe-socket": "workspace:*",
     "@ts-rest/core": "^3.53.0-rc.1",
     "@ts-rest/fastify": "^3.53.0-rc.1",
-    "fastify": "^5.5.0"
+    "fastify": "^5.5.0",
+    "pino": "^10.0.0",
+    "pino-pretty": "^13.1.2"
   }
 }

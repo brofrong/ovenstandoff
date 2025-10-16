@@ -2,29 +2,49 @@ import { wsContract } from '@ovenstandoff/contract';
 import { createServerSocket } from '@ovenstandoff/type-safe-socket';
 import { reportMatchCode, reportMatchEnded } from './ch-server';
 import { openConnections, runners, setRunners, viewers } from './services/runners';
+import pino from "pino";
+import path from 'path';
 
-
+const log = pino({
+  transport: {
+    targets: [
+      {
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+          ignore: 'pid,hostname',
+        },
+      },
+      {
+        target: 'pino/file',
+        options: {
+          destination: path.join(process.cwd(), 'logs/master-ws.log'),
+        },
+      }
+    ]
+  }
+});
 
 export async function message(
   ws: Bun.ServerWebSocket<unknown>,
   message: string | Buffer
 ) {
+  log.info(`message: ${ws}`);
   const ret = await openConnections.get(ws)?.newEvent(message.toString());
   if (ret?.error) {
     console.error(ret.error);
   }
-
-  // Screen frames are now handled through type-safe-socket in applyMessageHandlers
 }
 
 export function open(ws: Bun.ServerWebSocket<unknown>) {
+  log.info(`open: ${ws}`);
   const server = createServerSocket(wsContract, ws);
   applyMessageHandlers(ws, server);
   openConnections.set(ws, server);
 }
 
 export function close(ws: Bun.ServerWebSocket<unknown>) {
-  console.log("Client disconnected");
+  log.warn(`close: ${ws}`);
   const newRunnersList = runners.filter((it) => it.ws !== ws);
   setRunners(newRunnersList);
 
@@ -252,6 +272,7 @@ const applyMessageHandlers = (ws: Bun.ServerWebSocket<unknown>, server: ReturnTy
 }
 
 export function broadcastRunnersUpdate() {
+
   const runnersData = runners.map(runner => ({
     name: runner.name,
     state: runner.state,
@@ -261,6 +282,8 @@ export function broadcastRunnersUpdate() {
     code: runner.code,
     team: runner.team
   }));
+
+  log.info(`broadcastRunnersUpdate: ${JSON.stringify({ runners: runnersData })}`);
 
 
   viewers.forEach((socket) => {

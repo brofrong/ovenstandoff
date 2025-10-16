@@ -6,9 +6,17 @@ import { env } from "../utils/env";
 import { openConnections, runners } from "./runners";
 
 export async function startMatchHandler(request: ServerInferRequest<typeof masterContract.startMatch>): Promise<ServerInferResponses<typeof masterContract.startMatch>> {
+  const log = (request as any).request?.log!;
+  log.info(`startMatchHandler: ${JSON.stringify(request.body)}`);
   const body = request.body;
 
-  const { teams } = body;
+  const { teams, matchID } = body;
+
+  const runnerWithCurrentMatchID = runners.find(it => it.matchID === matchID);
+  if (runnerWithCurrentMatchID) {
+    log.info(`startMatchHandler: Match already started`);
+    return { status: 200, body: "Match started" };
+  }
 
   const freeManager = Object.values(runners).find(
     (it) => it.state === "readyForCreateLobby"
@@ -32,10 +40,13 @@ export async function startMatchHandler(request: ServerInferRequest<typeof maste
 
   broadcastRunnersUpdate();
 
+  log.info(`startMatchHandler: ${JSON.stringify({ status: 200, body: "Match started" })}`);
   return { status: 200, body: "Match started" };
 }
 
 export async function registerClientsHandler(request: ServerInferRequest<typeof masterContract.registerClients>): Promise<ServerInferResponses<typeof masterContract.registerClients>> {
+  const log = (request as any).request?.log!;
+  log.info(`registerClientsHandler: ${JSON.stringify(request.body)}`);
   const { count } = request.body;
 
   console.log(`register ${count} clients`);
@@ -59,59 +70,6 @@ export async function registerClientsHandler(request: ServerInferRequest<typeof 
       password: env.PASSWORDS[i % passwordsLength]!,
     });
   }
-
+  log.info(`registerClientsHandler: ${JSON.stringify({ status: 200, body: returnData })}`);
   return { status: 200, body: returnData };
 }
-
-
-
-// async function handleEndMatch(req: ServerInferRequest<typeof masterContract.endMatch>) {
-//   try {
-//     const body = await req.json();
-//     const parsedBody = endMatchSchema.safeParse(body);
-
-//     if (!parsedBody.success) {
-//       return new Response("Invalid request", { status: 400 });
-//     }
-
-//     const { runner: runnerName, winner } = parsedBody.data;
-
-//     // Находим runner по имени
-//     const runner = runners.find(r => r.name === runnerName);
-//     if (!runner) {
-//       return new Response("Runner not found", { status: 404 });
-//     }
-
-//     if (!runner.matchID) {
-//       return new Response("Runner is not in a match", { status: 400 });
-//     }
-
-//     // Отправляем сообщение о завершении матча через WebSocket
-//     sendMessageToClient(runner.ws, {
-//       type: "matchEnded",
-//       data: { winner }
-//     });
-
-//     // Отправляем уведомление через callback URL
-//     const matchID = runner.matchID;
-//     const callbackUrl = runner.callbackUrl;
-
-//     if (winner === "error") {
-//       await reportMatchEnded(matchID, null, "Match ended with error", callbackUrl);
-//     } else {
-//       await reportMatchEnded(matchID, winner as "ct" | "t", null, callbackUrl);
-//     }
-
-//     // Сбрасываем matchID
-//     runner.matchID = null;
-//     runner.callbackUrl = null;
-//     runner.state = "readyForCreateLobby";
-
-//     broadcastRunnersUpdate();
-
-//     return new Response("Match ended successfully", { status: 200 });
-//   } catch (error) {
-//     console.error("Error ending match:", error);
-//     return new Response("Internal server error", { status: 500 });
-//   }
-// }
