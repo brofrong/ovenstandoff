@@ -3,16 +3,17 @@ import type { ConfigWithRunners } from "@ovenstandoff/shared/src/config.type";
 import { createClientSocket } from "@ovenstandoff/type-safe-socket";
 import { wsContract } from '@ovenstandoff/contract/src/ws';
 import { activeStateManagers } from "../state-manager/state-manager";
+import { log } from "../utils/log";
 
 let ws: WebSocket | null = null;
 export let client: ReturnType<typeof createClientSocket<typeof wsContract, typeof ws>> | null = null;
 
 export async function connectToMasterServer(config: ConfigWithRunners) {
-  console.log(`connect to master server ${config.masterServerWsHost}/ws?auth=${config.secret}`);
+  log.info(`connect to master server ${config.masterServerWsHost}/ws?auth=${config.secret}`);
   ws = new WebSocket(`${config.masterServerWsHost}/ws?auth=${config.secret}`);
 
   ws.addEventListener("open", async () => {
-    console.log("Connected to master server");
+    log.info("Connected to master server");
     client = createClientSocket(wsContract, ws!);
     addEventListenerHandlers(client);
 
@@ -31,7 +32,7 @@ export async function connectToMasterServer(config: ConfigWithRunners) {
   });
 
   ws.addEventListener("message", async (event) => {
-    console.log("Message from master server:", event.data);
+    log.info("Message from master server:", event.data);
     if (!client) {
       return console.error("Client not found!!!!!!!!");
     }
@@ -44,7 +45,7 @@ export async function connectToMasterServer(config: ConfigWithRunners) {
   });
 
   ws.addEventListener("close", () => {
-    console.log("Disconnected from master server");
+    log.info("Disconnected from master server");
 
     // Stop all screen streaming when disconnected
     activeStateManagers.forEach(manager => {
@@ -94,7 +95,7 @@ function addEventListenerHandlers(client: ReturnType<typeof createClientSocket<t
       return;
     }
 
-    console.log(`Starting screen stream for runner: ${runner}`);
+    log.info(`Starting screen stream for runner: ${runner}`);
     await stateManager.startScreenStream();
   });
 
@@ -108,7 +109,7 @@ function addEventListenerHandlers(client: ReturnType<typeof createClientSocket<t
       return;
     }
 
-    console.log(`Stopping screen stream for runner: ${runner}`);
+    log.info(`Stopping screen stream for runner: ${runner}`);
     await stateManager.stopScreenStream();
   });
 
@@ -123,7 +124,7 @@ function addEventListenerHandlers(client: ReturnType<typeof createClientSocket<t
       return;
     }
 
-    console.log(`Changing state for runner: ${runner} to: ${state}`);
+    log.info(`Changing state for runner: ${runner} to: ${state}`);
 
     const oldState = stateManager.state;
 
@@ -154,12 +155,12 @@ function addEventListenerHandlers(client: ReturnType<typeof createClientSocket<t
       return;
     }
 
-    console.log(`Click command for runner: ${runner} at coordinates: (${x}, ${y})`);
+    log.info(`Click command for runner: ${runner} at coordinates: (${x}, ${y})`);
 
     // Execute click on the runner
     try {
       await stateManager.ldPlayer.click(x, y);
-      console.log(`Click executed successfully at (${x}, ${y}) for runner: ${runner}`);
+      log.info(`Click executed successfully at (${x}, ${y}) for runner: ${runner}`);
     } catch (error) {
       console.error(`Error executing click for runner ${runner}:`, error);
     }

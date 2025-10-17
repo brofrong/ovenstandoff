@@ -44,7 +44,9 @@ export function open(ws: Bun.ServerWebSocket<unknown>) {
 }
 
 export function close(ws: Bun.ServerWebSocket<unknown>) {
-  log.warn(`close: ${ws}`);
+
+
+  log.warn(`close: ${JSON.stringify(ws.data)}, ${JSON.stringify(ws)}`);
   const newRunnersList = runners.filter((it) => it.ws !== ws);
   setRunners(newRunnersList);
 

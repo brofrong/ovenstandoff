@@ -5,6 +5,7 @@ import { anchors } from "../img-proccesing/anchors";
 import { StateManager } from "./state-manager";
 import { getImageOccurrence } from "@appium/opencv";
 import { loadBuffer } from "../img-proccesing/memo-img";
+import { log } from "../utils/log";
 
 type Step =
   | {
@@ -108,7 +109,8 @@ async function clickOccurrence(step: Step, stateManager: StateManager) {
       await stateManager.ldPlayer.click(x, y);
     }
 
-    console.log(
+    log.info(
+      { score, rect },
       `clickOccurrence: score: ${score}, rect: ${JSON.stringify(rect)}`
     );
   } catch (error) {

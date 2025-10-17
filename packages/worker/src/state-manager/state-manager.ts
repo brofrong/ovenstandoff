@@ -11,6 +11,7 @@ import { runSteps } from "./steps";
 import { waitForPlayers } from "./waiting-for-players";
 import { getCoordinatesByMap } from "../data/coordinates";
 import { wait } from "../utils/utils";
+import { log } from "../utils/log";
 import path from "path";
 
 export type Teams = {
@@ -73,7 +74,7 @@ export class StateManager {
 
   private async sendScreenFrameIfStreaming(): Promise<void> {
     if (!this.currentImg || !Buffer.isBuffer(this.currentImg)) {
-      console.log(`No valid screenshot to send for ${this.ldPlayer.name} (currentImg type: ${typeof this.currentImg})`);
+      log.info(`No valid screenshot to send for ${this.ldPlayer.name} (currentImg type: ${typeof this.currentImg})`);
       return;
     }
 
@@ -87,7 +88,7 @@ export class StateManager {
         .toBuffer();
 
       const base64Frame = compressedBuffer.toString('base64');
-      console.log(`Sending screen frame for ${this.ldPlayer.name}, size: ${base64Frame.length} bytes`);
+      log.info(`Sending screen frame for ${this.ldPlayer.name}, size: ${base64Frame.length} bytes`);
       if (client) {
         client.send.sendScreenFrame({
           runner: this.ldPlayer.name,
@@ -104,7 +105,7 @@ export class StateManager {
 
   private setState(newState: State) {
     this.state = newState;
-    console.log(`${this.ldPlayer.name} state changed to ${newState}`);
+    log.info(`${this.ldPlayer.name} state changed to ${newState}`);
     if (!client) {
       console.error("Client not found!!!!!!!!");
     }
@@ -148,7 +149,7 @@ export class StateManager {
   }
 
   public async run() {
-    console.log(`${this.ldPlayer.name} running with state: ${this.state}`);
+    log.info(`${this.ldPlayer.name} running with state: ${this.state}`);
 
     try {
       const neededAction = await this.runState();
@@ -157,7 +158,7 @@ export class StateManager {
         setTimeout(this.run.bind(this), neededAction.wait);
       }
     } catch (e) {
-      console.log(`${this.ldPlayer.name}, error: ${e}`);
+      log.error(`${this.ldPlayer.name}, error: ${e}`);
       this.ldPlayer.killapp("com.axlebolt.standoff2");
       this.setState("android");
     }
@@ -191,7 +192,7 @@ export class StateManager {
   }
 
   private async debug(): Promise<ActionRet> {
-    console.log("run debug", { state: this.state, ts: Date.now() });
+    log.info({ state: this.state, ts: Date.now() }, "run debug");
     await this.takeScreenshot();
 
     if (this.currentImg) {
@@ -301,10 +302,10 @@ export class StateManager {
 
   private async readyForCreateLobby(): Promise<ActionRet> {
     await this.takeScreenshot();
-    console.log("readyForCreateLobby", {
+    log.info({
       name: this.ldPlayer.name,
       ts: Date.now(),
-    });
+    }, "readyForCreateLobby");
     return { wait: null };
   }
 
@@ -386,7 +387,7 @@ export class StateManager {
       await waitForPlayers.getJoinedPlayersCountKickPlayersNotInList(this);
 
     if (WaitingForPlayerCount !== 0) {
-      console.log(
+      log.info(
         `${this.ldPlayer.name} waiting for players, left: ${WaitingForPlayerCount}`
       );
       return { wait: 10000 };
@@ -394,7 +395,7 @@ export class StateManager {
 
     //start game
 
-    console.log("start game");
+    log.info("start game");
     await waitForPlayers.startGame(this);
 
     this.setState("inGame");
@@ -462,7 +463,7 @@ export class StateManager {
     await this.takeScreenshot();
 
     if (await findAnchor(this.currentImg, "in_game_t_win")) {
-      console.log("match ended t win");
+      log.info("match ended t win");
       client?.send.matchEnded({
         winner: "t",
       });
@@ -471,7 +472,7 @@ export class StateManager {
     }
 
     if (await findAnchor(this.currentImg, "in_game_ct_win")) {
-      console.log("match ended ct win");
+      log.info("match ended ct win");
       client?.send.matchEnded({
         winner: "ct",
       });
@@ -487,7 +488,7 @@ export class StateManager {
     }
 
     if (await findAnchor(this.currentImg, "in_game_in_menu") && await findAnchor(this.currentImg, "play")) {
-      console.log("match ended with error");
+      log.info("match ended with error");
       client?.send.matchEnded({
         winner: "error",
       });
@@ -501,7 +502,7 @@ export class StateManager {
       this.matchStartedTimestamp &&
       Date.now() - this.matchStartedTimestamp > 1000 * 60 * 60
     ) {
-      console.log("match expired");
+      log.info("match expired");
       client?.send.matchEnded({
         winner: "error",
       });
@@ -535,20 +536,20 @@ export class StateManager {
   // Screen streaming methods
   public async startScreenStream(): Promise<void> {
     if (this.isStreaming) {
-      console.log(`Screen streaming already active for ${this.ldPlayer.name}`);
+      log.info(`Screen streaming already active for ${this.ldPlayer.name}`);
       return;
     }
 
-    console.log(`Starting screen stream for ${this.ldPlayer.name}`);
+    log.info(`Starting screen stream for ${this.ldPlayer.name}`);
     this.isStreaming = true;
 
     // Send current screenshot immediately if available
     if (this.currentImg && Buffer.isBuffer(this.currentImg)) {
-      console.log(`Sending current screenshot for ${this.ldPlayer.name} immediately`);
+      log.info(`Sending current screenshot for ${this.ldPlayer.name} immediately`);
       await this.sendScreenFrameIfStreaming();
     } else {
       // If no current screenshot or it's a string (timeout/empty), take one immediately
-      console.log(`No valid current screenshot available, taking new one for ${this.ldPlayer.name}`);
+      log.info(`No valid current screenshot available, taking new one for ${this.ldPlayer.name}`);
       await this.takeScreenshot();
     }
 
@@ -557,11 +558,11 @@ export class StateManager {
 
   public async stopScreenStream(): Promise<void> {
     if (!this.isStreaming) {
-      console.log(`Screen streaming not active for ${this.ldPlayer.name}`);
+      log.info(`Screen streaming not active for ${this.ldPlayer.name}`);
       return;
     }
 
-    console.log(`Stopping screen stream for ${this.ldPlayer.name}`);
+    log.info(`Stopping screen stream for ${this.ldPlayer.name}`);
     this.isStreaming = false;
   }
 

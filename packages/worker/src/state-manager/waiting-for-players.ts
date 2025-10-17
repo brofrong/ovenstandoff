@@ -5,6 +5,7 @@ import { fuzzySearchNames } from "../utils/utils";
 import { client } from "../ws/ws";
 import { StateManager, type Teams } from "./state-manager";
 import { runSteps } from "./steps";
+import { log } from "../utils/log";
 
 
 async function isMatchExpired(stateManager: StateManager): Promise<boolean> {
@@ -147,7 +148,7 @@ async function getJoinedPlayersCountKickPlayersNotInList(
   const occupiedSlots = slotsNames;
 
   for (const slot of occupiedSlots) {
-    console.log(`slot: ${slot} is cheking`);
+    log.info(`slot: ${slot} is cheking`);
     await stateManager.takeScreenshot();
     const slotName = slot;
     const imgPlayerName = await getPlayerName(
@@ -158,7 +159,7 @@ async function getJoinedPlayersCountKickPlayersNotInList(
     const imgPlayerNameLength = (imgPlayerName?.ru.length ?? 0) + (imgPlayerName?.eng.length ?? 0);
 
     if (!imgPlayerName || imgPlayerNameLength < 2) {
-      console.log(`slot: name in ${slot} is not found`);
+      log.info(`slot: name in ${slot} is not found`);
       continue;
     }
 

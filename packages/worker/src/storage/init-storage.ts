@@ -1,6 +1,7 @@
 
 import { getConfig, updateConfig, type LD } from "@ovenstandoff/shared";
 import type { ConfigWithRunners, Runner } from "@ovenstandoff/shared/src/config.type";
+import { log } from '../utils/log';
 
 export async function initStorage(LD: LD) {
   //laod config
@@ -9,7 +10,7 @@ export async function initStorage(LD: LD) {
     const LdNames = (await LD.list2()).map((it) => it.name);
     checkLdNamesWithConfig(LdNames, config);
   } catch (error) {
-    console.log("error in path to LD player!!!");
+    log.error("error in path to LD player!!!");
   }
 }
 

@@ -2,6 +2,7 @@ import { CronJob } from 'cron';
 import { activeStateManagers, StateManager } from '../state-manager/state-manager';
 import {downloadLastVersion, STANDOFF2_DOWNLOAD_URL} from '../../../setup/src/download-last-version';
 import {unzip} from '../../../setup/src/unzip';
+import { log } from '../utils/log';
 
 export function startCron() {
   if(process.env.FORSE_UPDATE === 'true') {
@@ -19,16 +20,16 @@ async function updateGameJob() {
       return;
     }
     updateInProgress = true;
-    console.log(`start updating games ${new Date().toISOString()}`);
+    log.info(`start updating games ${new Date().toISOString()}`);
   
-    console.log("downloading last version of standoff2");
+    log.info("downloading last version of standoff2");
     const lastVersion = await downloadLastVersion(STANDOFF2_DOWNLOAD_URL);
     const unzippedFolder = await unzip(lastVersion);
   
     await Promise.all(activeStateManagers.map((manager) => updateGame(manager, unzippedFolder)));
     updateInProgress = false;
   } catch(e) {
-    console.log(`update game failed ${new Date().toISOString()}`);
+    log.error(`update game failed ${new Date().toISOString()}`);
   }
 
 }
@@ -38,12 +39,12 @@ function updateGame(manager: StateManager, unzippedFolder: string, retry: number
   return new Promise(async (resolve, reject) => {
     if(manager.state === 'inGame' || manager.state === 'android' || manager.state === 'launching' || manager.state === 'booting') {
       await manager.updateGame(unzippedFolder);
-      console.log(`update game success ${manager.ldPlayer.name} ${new Date().toISOString()}`);
+      log.info(`update game success ${manager.ldPlayer.name} ${new Date().toISOString()}`);
       return resolve(true);
     } 
 
     if(retry > 10) {
-      console.log(`update game failed ${manager.ldPlayer.name} ${new Date().toISOString()}`);
+      log.error(`update game failed ${manager.ldPlayer.name} ${new Date().toISOString()}`);
       return reject(false);
     }
 
