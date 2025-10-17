@@ -31,6 +31,10 @@ export async function connectToMasterServer(config: ConfigWithRunners) {
     });
   });
 
+  ws.addEventListener("error", (error) => {
+    log.error({ error }, 'WebSocket error');
+  });
+
   ws.addEventListener("message", async (event) => {
     log.info("Message from master server:", event.data);
     if (!client) {
