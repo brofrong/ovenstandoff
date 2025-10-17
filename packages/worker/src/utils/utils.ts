@@ -23,10 +23,11 @@ const removeNonLatin = (name: string) =>
 export function fuzzySearchNames(
   name: { ru: string, eng: string },
   allNames: string[]
-): string | null {;
+): string | null {
+  ;
   const cleanAllNames = allNames.map(removeNonLatin);
 
-  const fuse = new Fuse(cleanAllNames, { threshold: 0.4, ignoreLocation: true, isCaseSensitive: false, includeScore: true,   });
+  const fuse = new Fuse(cleanAllNames, { threshold: 0.4, ignoreLocation: true, isCaseSensitive: false, includeScore: true, });
 
   let bestNames: FuseResult<string>[] = [];
 
@@ -34,18 +35,18 @@ export function fuzzySearchNames(
     const result = fuse.search(name.ru);
 
     const bestResult = result[0];
-    if(bestResult) {
+    if (bestResult) {
       bestNames.push(bestResult);
     }
   }
   if (name.eng) {
     const result = fuse.search(name.eng);
     const bestResult = result[0];
-    if(bestResult) {
+    if (bestResult) {
       bestNames.push(bestResult);
     }
   }
-  
+
   const bestResult = bestNames.sort((a, b) => (a.score ?? 0) - (b.score ?? 0))[0];
 
   if (bestResult?.refIndex !== undefined) {
