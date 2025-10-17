@@ -486,7 +486,7 @@ export class StateManager {
       return { wait: 1000 };
     }
 
-    if (await findAnchor(this.currentImg, "in_game_in_menu")) {
+    if (await findAnchor(this.currentImg, "in_game_in_menu") && await findAnchor(this.currentImg, "play")) {
       console.log("match ended with error");
       client?.send.matchEnded({
         winner: "error",
@@ -579,11 +579,11 @@ export class StateManager {
     await this.ldPlayer.adb(`shell rm -rf /storage/emulated/0/Android/obb/com.axlebolt.standoff2`);
     await wait(5000);
     await this.ldPlayer.adb(`push ${path.join(
-        unzippedFolder,
-        "Android",
-        "obb",
-        "com.axlebolt.standoff2"
-      )} /storage/emulated/0/Android/obb/com.axlebolt.standoff2/`);
+      unzippedFolder,
+      "Android",
+      "obb",
+      "com.axlebolt.standoff2"
+    )} /storage/emulated/0/Android/obb/com.axlebolt.standoff2/`);
     await wait(5000);
 
     this.setState('booting');

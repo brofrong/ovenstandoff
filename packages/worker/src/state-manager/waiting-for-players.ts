@@ -155,7 +155,9 @@ async function getJoinedPlayersCountKickPlayersNotInList(
       stateManager.currentImg
     );
 
-    if (!imgPlayerName) {
+    const imgPlayerNameLength = (imgPlayerName?.ru.length ?? 0) + (imgPlayerName?.eng.length ?? 0);
+
+    if (!imgPlayerName || imgPlayerNameLength < 2) {
       console.log(`slot: name in ${slot} is not found`);
       continue;
     }
@@ -186,20 +188,20 @@ async function getJoinedPlayersCountKickPlayersNotInList(
         playerTeam === "ct"
           ? "wait_for_payers_move_to_ct"
           : "wait_for_payers_move_to_t";
-          try {
-      await runSteps(
-        [
-          { step: "click", data: { anchorKey: slotName } },
-          { step: "clickOccurrence", data: { anchorKey: teamKey } },
-          { step: "click", data: { x: 30, y: 342 } }, // Нейтральный клик, что бы убрать все контекстные окна если они есть по какой либо причине
-        ],
-        stateManager
-      );
-    } catch (error) {
-      console.error('catch error in move to team');
-      continue;
+      try {
+        await runSteps(
+          [
+            { step: "click", data: { anchorKey: slotName } },
+            { step: "clickOccurrence", data: { anchorKey: teamKey } },
+            { step: "click", data: { x: 30, y: 342 } }, // Нейтральный клик, что бы убрать все контекстные окна если они есть по какой либо причине
+          ],
+          stateManager
+        );
+      } catch (error) {
+        console.error('catch error in move to team');
+        continue;
+      }
     }
-    } 
 
     playersJoined.push(playerName);
   }

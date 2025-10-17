@@ -85,7 +85,7 @@ export async function getPlayerName(
   // Увеличиваем масштаб до 6x для лучшего распознавания маленького текста
   // Особенно важно для тонких букв типа i, l, 1
   const scaleFactor = 3;
-  
+
   // Предобработка изображения для улучшения распознавания
   const processedImgBuffer = await sharp(imgBuffer)
     // Сначала увеличиваем размер с качественной интерполяцией
@@ -109,11 +109,9 @@ export async function getPlayerName(
 
   const ruUnfilteredName = ruRet.data.text;
   const name = ruUnfilteredName.replace(/[^a-zA-Z0-9а-яA-ЯёЁ]/g, "");
-  const ruConfidence = ruRet.data.confidence;
 
   const engUnfilteredName = engRet.data.text;
   const engName = engUnfilteredName.replace(/[^a-zA-Z0-9а-яA-ЯёЁ]/g, "");
-  const engConfidence = engRet.data.confidence;
 
   return { ru: name, eng: engName };
 }
