@@ -43,10 +43,10 @@ export function open(ws: Bun.ServerWebSocket<unknown>) {
   openConnections.set(ws, server);
 }
 
-export function close(ws: Bun.ServerWebSocket<unknown>) {
+export function close(ws: Bun.ServerWebSocket<unknown>, code: number, reason: string) {
 
 
-  log.warn(`close: ${JSON.stringify(ws.data)}, ${JSON.stringify(ws)}`);
+  log.warn(`close: code: ${code}, reason: ${reason}`);
   const newRunnersList = runners.filter((it) => it.ws !== ws);
   setRunners(newRunnersList);
 
