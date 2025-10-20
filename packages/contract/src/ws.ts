@@ -178,4 +178,8 @@ export const wsContract = createContract({
       y: z.number(),
     }),
   },
+  ping: {
+    client: z.string(),
+    server: z.string(),
+  },
 });

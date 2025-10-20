@@ -8,6 +8,8 @@ import { log } from "../utils/log";
 let ws: WebSocket | null = null;
 export let client: ReturnType<typeof createClientSocket<typeof wsContract, typeof ws>> | null = null;
 
+let interval: NodeJS.Timeout | null = null;
+
 export async function connectToMasterServer(config: ConfigWithRunners) {
   log.info(`connect to master server ${config.masterServerWsHost}/ws?auth=${config.secret}`);
   ws = new WebSocket(`${config.masterServerWsHost}/ws?auth=${config.secret}`);
@@ -17,6 +19,14 @@ export async function connectToMasterServer(config: ConfigWithRunners) {
     client = createClientSocket(wsContract, ws!);
     addEventListenerHandlers(client);
 
+    if (interval) {
+      clearInterval(interval);
+    }
+    interval = setInterval(() => {
+      if (client) {
+        client?.send.ping("ping");
+      }
+    }, 10000);
 
     client.send.registerRunners({
       runners: activeStateManagers.map((manager) => ({
@@ -51,6 +61,10 @@ export async function connectToMasterServer(config: ConfigWithRunners) {
     activeStateManagers.forEach(manager => {
       manager.stopScreenStream();
     });
+
+    if (interval) {
+      clearInterval(interval);
+    }
 
     client = null;
     // Attempt to reconnect after delay

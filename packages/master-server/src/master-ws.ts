@@ -252,6 +252,10 @@ const applyMessageHandlers = (ws: Bun.ServerWebSocket<unknown>, server: ReturnTy
     return { error: null };
   });
 
+  server.on.ping((data) => {
+    log.info(`ping: ${data}`);
+    return { error: null };
+  });
 }
 
 export function broadcastRunnersUpdate() {
