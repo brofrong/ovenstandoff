@@ -2,6 +2,7 @@ import { createCanvas, registerFont } from 'canvas';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 import { canvasSize } from './coords';
+import sharp from 'sharp';
 
 // Регистрируем шрифт Eurostile
 const fontPath = join(__dirname, '../font/Eurostile-Med.ttf');
@@ -15,6 +16,49 @@ export interface RenderTextOptions {
   padding?: number;
   outputPath?: string;
   letterSpacing?: number; // Интервал после первого символа в пикселях
+}
+
+export async function renderTextToImageFull(options: RenderTextOptions): Promise<Buffer> {
+  const {
+    text,
+    fontSize = 8,
+    fontColor = '#ffffff',
+    backgroundColor = 'transparent',
+    outputPath,
+  } = options;
+
+  const canvas = createCanvas(canvasSize.width, canvasSize.height);
+  const ctx = canvas.getContext('2d');
+
+  // Устанавливаем фон
+  if (backgroundColor !== 'transparent') {
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  // Настраиваем шрифт и цвет текста
+  ctx.font = `${fontSize}px Eurostile`;
+  ctx.fillStyle = fontColor;
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'center';
+
+  ctx.fillText(text, canvas.width / 2 - 1, Math.round(canvas.height / 2));
+
+
+  // Получаем буфер изображения
+  const buffer = canvas.toBuffer('image/png');
+
+  const resided = await sharp(buffer).resize(canvas.width * 20, canvas.height * 20).blur(5).toBuffer();
+  const resized2 = await sharp(resided).resize(canvas.width, canvas.height).modulate({
+    brightness: 1.8,
+  }).toBuffer();
+
+  // Сохраняем файл если указан путь
+  if (outputPath) {
+    writeFileSync(outputPath, resized2);
+  }
+
+  return resized2;
 }
 
 
