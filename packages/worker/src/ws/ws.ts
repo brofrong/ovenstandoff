@@ -31,21 +31,6 @@ export async function connectToMasterServer(config: ConfigWithRunners) {
     });
   });
 
-  ws.addEventListener("error", (error) => {
-    log.error({ error }, 'WebSocket error');
-  });
-
-  ws.addEventListener("close", () => {
-    log.info("Disconnected from master server");
-    // Stop all screen streaming when disconnected
-    activeStateManagers.forEach(manager => {
-      manager.stopScreenStream();
-    });
-    client = null;
-    // Attempt to reconnect after delay
-    setTimeout(() => connectToMasterServer(config), 5000);
-  });
-
   ws.addEventListener("message", async (event) => {
     log.info("Message from master server:", event.data);
     if (!client) {
@@ -73,7 +58,7 @@ export async function connectToMasterServer(config: ConfigWithRunners) {
   });
 
   ws.addEventListener("error", (error) => {
-    console.error("WebSocket error:", error);
+    log.error({ error }, "WebSocket error");
   });
 
   return new Promise<void>((resolve) => {
