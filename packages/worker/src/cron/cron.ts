@@ -3,15 +3,28 @@ import { activeStateManagers, StateManager } from '../state-manager/state-manage
 import { downloadLastVersion, STANDOFF2_DOWNLOAD_URL } from '../../../setup/src/download-last-version';
 import { unzip } from '../../../setup/src/unzip';
 import { log } from '../utils/log';
+import { LDPlayer } from '../ldconnector/ld';
+import { getConfig, LD } from '@ovenstandoff/shared';
+import { getLd } from '../../../shared/src/ld-command';
+import { wait } from '../utils/utils';
+import { startWorker } from '../core/worket';
 
 export function startCron() {
   if (process.env.FORSE_UPDATE === 'true') {
     updateGameJob();
   }
   new CronJob('0 0 3 * * *', updateGameJob, null, true, 'Europe/Moscow');
+  new CronJob('0 0 4 * * *', restartWorkers, null, true, 'Europe/Moscow');
 }
 
 let updateInProgress = false;
+
+async function restartWorkers() {
+  const config = await getConfig();
+  await getLd(config).quitall();
+  await wait(10000);
+  await startWorker();
+}
 
 
 async function updateGameJob() {
