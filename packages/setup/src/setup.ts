@@ -75,7 +75,7 @@ async function downloadAndInstallStandoff2(runners: Runner[], config: Config) {
   console.log("downloading last version of standoff2");
   const lastVersion = await downloadLastVersion(STANDOFF2_DOWNLOAD_URL);
   // const lastVersion = "Standoff_2_0.33.3_APKPure.xapk";
-  const unzippedFolder = await unzip(lastVersion);
+  const unzippedFolder = await unzip(lastVersion.filename);
 
   const LD = getLd(config);
   const list = await LD.list2();
