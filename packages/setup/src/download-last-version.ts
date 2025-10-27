@@ -9,7 +9,7 @@ export const standoffOutputPath = (name: string) =>
   path.join('tmp', "standoff2", name);
 
 // Function to download a file with a progress bar
-export async function downloadLastVersion(url: string) {
+export async function downloadLastVersion(url: string): Promise<{ isNew: boolean; filename: string; }> {
   const response = await fetch(url);
 
   if (!response.ok || !response.body) {
@@ -31,7 +31,7 @@ export async function downloadLastVersion(url: string) {
 
   if (await Bun.file(standoffOutputPath(filename)).exists()) {
     console.log(`Last version ${filename} already downloaded`);
-    return filename;
+    return { isNew: false, filename };
   }
 
   const totalSize = Number(response.headers.get("content-length"));
@@ -66,7 +66,7 @@ export async function downloadLastVersion(url: string) {
 
   await pump();
   console.log(`\nDownloaded to ${standoffOutputPath(filename)}`);
-  return filename;
+  return { isNew: true, filename };
 }
 
 async function createFileIfNotExists(path: string) {
