@@ -4,8 +4,8 @@ import * as path from "path";
 
 const basicSettings = {
   "advancedSettings.resolution": {
-    width: 960,
-    height: 540,
+    width: 1280,
+    height: 720,
   },
   "advancedSettings.resolutionDpi": 160,
   "advancedSettings.cpuCount": 2,

@@ -17,7 +17,7 @@ async function isMatchExpired(stateManager: StateManager): Promise<boolean> {
   // check if match startedTimestamp is more expired in 5 minutes
   if (
     stateManager.matchStartedTimestamp &&
-    stateManager.matchStartedTimestamp + 5 * 60 * 1000 < Date.now()
+    stateManager.matchStartedTimestamp + 7 * 60 * 1000 < Date.now()
   ) {
 
     if (!client) {
