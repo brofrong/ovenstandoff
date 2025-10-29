@@ -70,6 +70,8 @@ export async function calculateSimilarityOpenCV(
   const smallImage = await loadBuffer(smallImagePath);
   const bigImage = await loadBuffer(bigImageBuffer, offset);
 
+
+  log.info("buffer is fine");;
   if (!smallImage || !bigImage) {
     return 0;
   }
