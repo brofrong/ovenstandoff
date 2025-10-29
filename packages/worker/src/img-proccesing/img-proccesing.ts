@@ -4,6 +4,7 @@ import type { Offset, AnchorKey } from "./img.type";
 import { getImagesSimilarity } from "@appium/opencv";
 import { loadBuffer } from "./memo-img";
 import { log } from "../utils/log";
+import type { Anchor } from "../anchors/anchor.type";
 
 const SIMILARITY_GOAL = 0.98;
 
@@ -26,6 +27,27 @@ export async function findAnchor(
 
   if (debug) {
     log.info(`${anchorKey} similarity: ${similarity}`);
+  }
+  return similarity >= SIMILARITY_GOAL;
+}
+
+export async function findAnchorV2(
+  targetImg: Buffer | string | null,
+  anchor: Anchor,
+  debug: boolean = false
+): Promise<boolean> {
+  if (!targetImg) {
+    return false;
+  }
+
+  const similarity = await calculateSimilarityOpenCV(
+    targetImg,
+    anchor.img,
+    { left: anchor.offset.x, top: anchor.offset.y, width: anchor.offset.width, height: anchor.offset.height },
+    debug
+  );
+  if (debug) {
+    log.info(`${anchor.img} similarity: ${similarity}`);
   }
   return similarity >= SIMILARITY_GOAL;
 }

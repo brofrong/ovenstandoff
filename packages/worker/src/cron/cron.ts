@@ -1,13 +1,12 @@
+import { getConfig } from '@ovenstandoff/shared';
 import { CronJob } from 'cron';
-import { activeStateManagers, StateManager } from '../state-manager/state-manager';
 import { downloadLastVersion, STANDOFF2_DOWNLOAD_URL } from '../../../setup/src/download-last-version';
 import { unzip } from '../../../setup/src/unzip';
-import { log } from '../utils/log';
-import { LDPlayer } from '../ldconnector/ld';
-import { getConfig, LD } from '@ovenstandoff/shared';
 import { getLd } from '../../../shared/src/ld-command';
-import { wait } from '../utils/utils';
 import { startWorker } from '../core/worket';
+import { activeStateManagers, StateManager } from '../state-manager/state-manager';
+import { log } from '../utils/log';
+import { wait } from '../utils/utils';
 
 export function startCron() {
   if (process.env.FORSE_UPDATE === 'true') {

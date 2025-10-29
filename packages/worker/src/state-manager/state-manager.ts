@@ -2,7 +2,7 @@ import type { GameMap } from "@ovenstandoff/contract";
 import type { State } from "@ovenstandoff/shared";
 import { type ConfigWithRunners } from '@ovenstandoff/shared/src/config.type';
 import sharp from "sharp";
-import { findAnchor } from "../img-proccesing/img-proccesing";
+import { findAnchor, findAnchorV2 } from '../img-proccesing/img-proccesing';
 import type { LDPlayer } from "../ldconnector/ld";
 import { getRunnerAuthInfo } from "../storage/get-runner-info";
 import { updateRunnerInfo } from "../storage/update-storage";
@@ -13,6 +13,7 @@ import { getCoordinatesByMap } from "../data/coordinates";
 import { wait } from "../utils/utils";
 import { log } from "../utils/log";
 import path from "path";
+import { anchors } from "../anchors";
 
 export type Teams = {
   ct: string[];
@@ -57,6 +58,7 @@ export class StateManager {
     ]);
 
     if (this.currentImg === "timeout") {
+      //TODO: make half check if screen multiple times is empty
       console.warn(`${this.ldPlayer.name} img timeout`);
       this.currentImg = "";
     }
@@ -204,7 +206,7 @@ export class StateManager {
   private async launching(): Promise<ActionRet> {
     await this.takeScreenshot();
 
-    if (await findAnchor(this.currentImg, "play")) {
+    if (await findAnchorV2(this.currentImg, anchors.mainMenuPlay)) {
       if (
         !this.config.runners.find((runner) => runner.name === this.ldPlayer.name)
           ?.lowSettings
