@@ -1,6 +1,7 @@
 import sharp from "sharp";
 import type { Offset } from "./img.type";
 import { anchors } from "./anchors";
+import { log } from "../utils/log";
 
 const imgMemo: { path: string; buffer: Buffer<ArrayBufferLike> }[] = [];
 const anchorsMemo: Map<string, Buffer<ArrayBufferLike>> = new Map();
@@ -59,6 +60,9 @@ export async function loadBuffer(
   if (!imgPath) {
     return null;
   }
+
+  const meta = await sharp(imgPath).metadata();
+  log.info(`loadBuffer: imgPath: ${imgPath} offset: ${JSON.stringify(offset)} width: ${meta.width} height: ${meta.height}`);
 
   if (typeof imgPath === "string") {
     const memo = getFromMemo(imgPath, offset);
