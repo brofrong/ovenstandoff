@@ -61,9 +61,6 @@ export async function loadBuffer(
     return null;
   }
 
-  const meta = await sharp(imgPath).metadata();
-  log.info(`offset: ${JSON.stringify(offset)} width: ${meta.width} height: ${meta.height}`);
-
   if (typeof imgPath === "string") {
     const memo = getFromMemo(imgPath, offset);
     if (memo) {

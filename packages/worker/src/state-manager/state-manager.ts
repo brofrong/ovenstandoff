@@ -414,32 +414,32 @@ export class StateManager {
     await runSteps(
       [
         { step: "click", data: { x: 29, y: 560 } }, // settings main menu
-        { step: "click", data: { x: 652, y: 28 } }, // video settings
+        { step: "click", data: { x: 528, y: 24 } }, // video settings
 
         // set low settings
-        { step: "click", data: { x: 808, y: 122 } },
-        { step: "click", data: { x: 808, y: 225 } },
-        { step: "click", data: { x: 808, y: 328 } },
-        { step: "click", data: { x: 808, y: 436 } },
-        { step: "click", data: { x: 1440, y: 545 } },
+        { step: "click", data: { x: 635, y: 97 } },
+        { step: "click", data: { x: 635, y: 184 } },
+        { step: "click", data: { x: 635, y: 269 } },
+        { step: "click", data: { x: 635, y: 344 } },
+        { step: "click", data: { x: 1115, y: 441 } },
 
         // apply settings
-        { step: "click", data: { x: 1491, y: 861 } },
+        { step: "click", data: { x: 1206, y: 687 } },
         { step: "wait", data: { amount: 5000 } },
 
         // set audio
-        { step: "click", data: { x: 1408, y: 43 } }, // audio settings
-        { step: "click", data: { x: 818, y: 126 } },
-        { step: "click", data: { x: 818, y: 230 } },
-        { step: "click", data: { x: 818, y: 334 } },
-        { step: "click", data: { x: 818, y: 447 } },
+        { step: "click", data: { x: 1132, y: 32 } }, // audio settings
+        { step: "click", data: { x: 661, y: 102 } },
+        { step: "click", data: { x: 661, y: 186 } },
+        { step: "click", data: { x: 661, y: 270 } },
+        { step: "click", data: { x: 661, y: 359 } },
 
         // apply audio settings
-        { step: "click", data: { x: 1491, y: 861 } },
+        { step: "click", data: { x: 1206, y: 687 } },
         { step: "wait", data: { amount: 5000 } },
 
         // back to main menu
-        { step: "click", data: { x: 33, y: 62 } },
+        { step: "click", data: { x: 33, y: 49 } },
       ],
       this
     );
@@ -453,11 +453,11 @@ export class StateManager {
     const runnerName = this.ldPlayer.name;
     await runSteps(
       [
-        { step: "click", data: { x: 377, y: 116 } },
-        { step: "click", data: { x: 546, y: 392 } },
+        { step: "click", data: { x: 377, y: 97 } },
+        { step: "click", data: { x: 433, y: 314 } },
         { step: "deleteAllText" },
         { step: "write", data: { text: runnerName } },
-        { step: "click", data: { x: 958, y: 584 } },
+        { step: "click", data: { x: 748, y: 466 } },
       ],
       this
     );
