@@ -4,7 +4,7 @@ import sharp from "sharp";
 import { getLd } from '../../shared/src/ld-command';
 import { LDPlayer } from '../src/ldconnector/ld';
 
-const LD_PLAYER_NAME = 'CH auto 5';
+const LD_PLAYER_NAME = 'CH auto 6';
 
 const config = await getConfig();
 const LD = getLd(config);
