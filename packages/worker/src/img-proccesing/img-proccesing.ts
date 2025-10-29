@@ -39,17 +39,23 @@ export async function findAnchorV2(
   if (!targetImg) {
     return false;
   }
+  try {
 
-  const similarity = await calculateSimilarityOpenCV(
-    targetImg,
-    anchor.img,
-    { left: anchor.offset.x, top: anchor.offset.y, width: anchor.offset.width, height: anchor.offset.height },
-    debug
-  );
-  if (debug) {
-    log.info(`${anchor.img} similarity: ${similarity}`);
+
+    const similarity = await calculateSimilarityOpenCV(
+      targetImg,
+      anchor.img,
+      { left: anchor.offset.x, top: anchor.offset.y, width: anchor.offset.width, height: anchor.offset.height },
+      debug
+    );
+    if (debug) {
+      log.info(`${anchor.img} similarity: ${similarity}`);
+    }
+    return similarity >= SIMILARITY_GOAL;
+  } catch (error) {
+    console.error(`findAnchorV2: error: ${error} targetImg: ${targetImg} anchor: ${anchor.img}`);
+    return false;
   }
-  return similarity >= SIMILARITY_GOAL;
 }
 
 export async function calculateSimilarityOpenCV(
