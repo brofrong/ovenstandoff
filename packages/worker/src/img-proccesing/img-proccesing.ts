@@ -67,8 +67,11 @@ export async function calculateSimilarityOpenCV(
   if (!bigImageBuffer || !smallImagePath) {
     return 0;
   }
+  log.info(`anchor: ${smallImagePath} offset: ${JSON.stringify(offset)}`);
   const smallImage = await loadBuffer(smallImagePath);
+  log.info(`smallImage: is ok`);
   const bigImage = await loadBuffer(bigImageBuffer, offset);
+  log.info(`bigImage: is ok`);
 
   if (!smallImage || !bigImage) {
     return 0;
@@ -80,16 +83,6 @@ export async function calculateSimilarityOpenCV(
   // * - `TM_CCORR_NORMED`
   // * - `TM_SQDIFF`
   // * - `TM_SQDIFF_NORMED`
-
-  // INSERT_YOUR_CODE
-  // smallImage
-  const smallMeta = await sharp(smallImage).metadata();
-  // bigImage
-  const bigMeta = await sharp(bigImage).metadata();
-  log.info(`anchor: ${smallImagePath} offset: ${JSON.stringify(offset)}`);
-  log.info(`smallImage: width=${smallMeta.width}, height=${smallMeta.height}`);
-  log.info(`bigImage: width=${bigMeta.width}, height=${bigMeta.height}`);
-
 
   const { score, visualization } = await getImagesSimilarity(
     bigImage,
