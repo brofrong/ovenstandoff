@@ -53,7 +53,7 @@ export async function findAnchorV2(
     }
     return similarity >= SIMILARITY_GOAL;
   } catch (error) {
-    console.error(`findAnchorV2: error: ${error} anchor: ${anchor.img} offset: ${anchor.offset}`);
+    console.error(`findAnchorV2: error: ${error} anchor: ${anchor.img} offset: ${JSON.stringify(anchor.offset)}`);
     return false;
   }
 }
