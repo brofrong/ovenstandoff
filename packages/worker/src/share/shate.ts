@@ -35,11 +35,10 @@ async function shareSteps(name: string) {
 
   await runSteps(
     [
-      { step: "find", data: { anchorKey: "share_room_code" } },
-      { step: "click", data: { anchorKey: "share_room_code" } },
+      // { step: "find", data: { x: "share_room_code" } },
+      { step: "click", data: { x: 1238, y: 94 } },
       { step: "wait", data: { amount: 500 } },
-      { step: "click", data: { anchorKey: "share_room_code" } },
-      { step: "wait", data: { amount: 500 } },
+      { step: "click", data: { x: 99, y: 588 } }, // click away
     ],
     stateManager
   );

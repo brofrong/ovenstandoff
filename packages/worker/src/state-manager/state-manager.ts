@@ -333,19 +333,19 @@ export class StateManager {
         { step: "click", data: { anchor: anchors.lobbyCreateCustomLobby } },
 
         // set lobby to private
-        { step: "click", data: { x: 1352, y: 129 } },
+        { step: "click", data: { x: 1076, y: 97 } },
         { step: "click", data: { x: 804, y: 541 } },
 
         { step: "share", data: { setCode: this.setCode } },
 
         //setup lobby
-        { step: "click", data: { x: 1432, y: 732 } }, // change game mode
-        { step: "click", data: { x: 432, y: 166 } }, // competitive mode
+        { step: "click", data: { x: 1180, y: 592 } }, // change game mode
+        { step: "click", data: { x: 397, y: 157 } }, // competitive mode
         { step: "click", data: getCoordinatesByMap(this.map) },
-        { step: "click", data: { x: 1346, y: 829 } }, // apply
+        { step: "click", data: { x: 1109, y: 665 } }, // apply
 
         // lobby setting
-        { step: "click", data: { x: 1443, y: 121 } }, // lobby setting
+        { step: "click", data: { x: 1151, y: 101 } }, // lobby setting
 
         // prod Settings
         // { step: "click", data: { x: 927, y: 129 } }, // Ограничить выбор команды
@@ -369,7 +369,7 @@ export class StateManager {
 
         //move self to spectator
         { step: "find", data: { anchor: anchors.lobbySettings } },
-        { step: "click", data: { x: 636, y: 136 } },
+        { step: "click", data: { x: 512, y: 102 } },
         { step: "wait", data: { amount: 500 } },
         { step: "click", data: { anchor: anchors.lobbyToSpectator } },
       ],
