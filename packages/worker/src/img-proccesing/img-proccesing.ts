@@ -40,8 +40,6 @@ export async function findAnchorV2(
     return false;
   }
   try {
-
-
     const similarity = await calculateSimilarityOpenCV(
       targetImg,
       anchor.img,
@@ -53,7 +51,7 @@ export async function findAnchorV2(
     }
     return similarity >= SIMILARITY_GOAL;
   } catch (error) {
-    console.error(`findAnchorV2: error: ${error} anchor: ${anchor.img} offset: ${JSON.stringify(anchor.offset)}`);
+    log.error(`findAnchorV2: error: ${error} anchor: ${anchor.img} offset: ${JSON.stringify(anchor.offset)}`);
     return false;
   }
 }
@@ -67,6 +65,7 @@ export async function calculateSimilarityOpenCV(
   if (!bigImageBuffer || !smallImagePath) {
     return 0;
   }
+  console.log(`anchor: ${smallImagePath} offset: ${JSON.stringify(offset)}`);
   log.info(`anchor: ${smallImagePath} offset: ${JSON.stringify(offset)}`);
   const smallImage = await loadBuffer(smallImagePath);
   log.info(`smallImage: is ok`);
