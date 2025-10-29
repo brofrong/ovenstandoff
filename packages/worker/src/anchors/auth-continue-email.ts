@@ -1,0 +1,11 @@
+import continueEmailPNG from '../../anchors-v2/auth/continue-email.png' with { type: "file" };
+import continueEmailJSON from '../../anchors-v2/auth/continue-email.json';
+
+
+/**	* auth - continue-email
+	* @preview ![img](data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAEsAAAAYCAYAAACyVACzAAAACXBIWXMAAAsTAAALEwEAmpwYAAAC5klEQVR4nO2W20sUcRTH/Tv2LYIiopciqIcoohejoKKHbhT1Ej0VTJDZxVAyUyrZjPIe2Z2U0tYtyzCsNBDLTEVQ8NLF3Z2ddWfc3dm5feP8xtl1zV18kHbN+cEXZub85nI+fM85k+XgJmBrYl7KSvcHOBaRbFicDQs2LO4/gLXT6Uey5WydSnuSGQnrTZ+MklcSU8X7kA3LkQIWQbKuZZea12xYXKL23BIYmCJ3aljHagPoGVcQVQ2IEQOfhqLYXuqPxdfl+5KW88ZCH9uzuZhH64AMSTYQUQx0jSjYVRZ/xvIcD+o6wvBJOhTNwJBXxemnwcyBdbg6wBK61CimhEWgBn6r4J4EcdUtsYQHJ9S/YL3siSC3QWRyfZNjsFad92KE1+Cf0nHFJeFsvYgxvwavqGNtvpc9o7lXhqoDVe0hnHocRMdwFJoOHKkOZAasnPogS+hE3WRKWARjfYHpEFLNB7OvbbjsS4B1oyV+D91vwcp7IbJjgmTF996ednWzhK0lPHQDaOiOxOIrcj3gJR0tfXJmwKpqN5PeVMSnhHXxuYjeHypzxs+AxlxFi/bOhHU9CazaabhhxUAoGheth5/DOH5vkh1Tmc+Mk7P6f6mZAevLmIJRv5ZwbTYscoBhAO8GojhYKbDSfdsvJ8DaUsyz84ImaU5Y+U2ms04+CrKhYmlfucDi267x7B13P4YS4vvLBRZLK6zdZQLK20LsA7tHFVY+lqqn3dY2GMXRmgAOVZp9jRKh3nOgQsC4oMVgkSsth1JsLlirL3hZjyJX0jsKXRIbEuS0HU4TOJUbnVOJU9k+64pA1cCO0wqryC1hPutBZ5jtv9MWYolSMlSCr7/HnUUlSuXT+DXeb2bDstxH05CmKe2ngUFOs/avPOfB/c4wa/oEid53c4F+XxYEVvaM8T9b9MEWrMUuGxb3j2AtO+PBmjzz/yaZqM/Q+HYsdViOJSYbFmfDgg2Ls2FhsciGxc0f1h9/Vkud2paNLAAAAABJRU5ErkJggg==)
+*/
+export const authContinueEmail = {
+	img: continueEmailPNG,
+	offset: continueEmailJSON,
+};

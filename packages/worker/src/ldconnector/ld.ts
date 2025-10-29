@@ -1,6 +1,6 @@
 import type { LD } from '@ovenstandoff/shared';
 import { wait } from '../../../setup/src/utils';
-import { anchors } from "../img-proccesing/anchors";
+import type { Anchor } from '../anchors/anchor.type';
 
 
 export const activeLdPlayers: LDPlayer[] = [];
@@ -30,10 +30,9 @@ export class LDPlayer {
   public async click(x: number, y: number) {
     return this.LD.click(this.name, x, y);
   }
-  public async clickAnchor(anchorKey: keyof typeof anchors) {
-    const anchor = anchors[anchorKey];
-    const centerX = anchor.offset.left + Math.round(anchor.offset.width / 2);
-    const centerY = anchor.offset.top + Math.round(anchor.offset.height / 2);
+  public async clickAnchor(anchor: Anchor) {
+    const centerX = anchor.offset.x + Math.round(anchor.offset.width / 2);
+    const centerY = anchor.offset.y + Math.round(anchor.offset.height / 2);
 
     return this.LD.click(this.name, centerX, centerY);
   }
@@ -83,5 +82,9 @@ export class LDPlayer {
       }
       reject(false);
     });
+  }
+
+  public async swipe(x1: number, y1: number, x2: number, y2: number, duration: number) {
+    return this.LD.adb(this.name, `shell input swipe ${x1} ${y1} ${x2} ${y2} ${duration}`);
   }
 }

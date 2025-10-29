@@ -14,6 +14,7 @@ import { wait } from "../utils/utils";
 import { log } from "../utils/log";
 import path from "path";
 import { anchors } from "../anchors";
+import { getLobbySettingsCoordinates } from "../data/lobby-settings";
 
 export type Teams = {
   ct: string[];
@@ -227,77 +228,90 @@ export class StateManager {
       return { wait: 0 };
     }
 
-    if (await findAnchor(this.currentImg, "launch_storage_apply")) {
+    if (await findAnchorV2(this.currentImg, anchors.launchStorageAllow)) {
       await runSteps(
-        [{ step: "click", data: { anchorKey: "launch_storage_apply" } }],
+        [{ step: "click", data: { anchor: anchors.launchStorageAllow } }],
         this
       );
     }
 
-    if (await findAnchor(this.currentImg, "launch_info_apply")) {
+    if (await findAnchorV2(this.currentImg, anchors.launchInformApply)) {
       await runSteps(
-        [{ step: "click", data: { anchorKey: "launch_info_apply" } }],
+        [{ step: "click", data: { anchor: anchors.launchInformApply } }],
         this
       );
     }
 
-    if (await findAnchor(this.currentImg, "launch_is_in_lobby")) {
+    if (await findAnchorV2(this.currentImg, anchors.lobbyExitFromLobby)) {
       await runSteps(
         [
-          { step: "click", data: { anchorKey: "launch_is_in_lobby" } },
-          { step: "click", data: { x: 371, y: 349 } },
-          { step: "click", data: { x: 25, y: 36 } },
+          { step: "click", data: { anchor: anchors.lobbyExitFromLobby } },
+          { step: "click", data: { x: 526, y: 464 } },
+          { step: "click", data: { x: 30, y: 48 } },
         ],
         this
       );
       return { wait: 0 };
     }
 
-    if (await findAnchor(this.currentImg, "launch_ad_close")) {
+    if (await findAnchorV2(this.currentImg, anchors.eventHalloweenClose)) {
       await runSteps(
-        [{ step: "click", data: { anchorKey: "launch_ad_close" } }],
+        [{ step: "click", data: { anchor: anchors.eventHalloweenClose } }],
         this
       );
     }
 
-    if (await findAnchor(this.currentImg, "launch_with_google")) {
+    if (await findAnchorV2(this.currentImg, anchors.authGoogleAuth)) {
       const runnerInfo = getRunnerAuthInfo(this.ldPlayer.name, this.config);
       await runSteps(
         [
-          { step: "click", data: { anchorKey: "launch_with_google" } },
+          { step: "click", data: { anchor: anchors.authGoogleAuth } },
           { step: "wait", data: { amount: 5000 } },
-          { step: "click", data: { anchorKey: "launch_login_email" } },
+          { step: "click", data: { anchor: anchors.authEnterEmail } },
           { step: "wait", data: { amount: 1000 } },
           { step: "write", data: { text: runnerInfo.email } },
-          { step: "click", data: { anchorKey: "launch_login_continue" } },
+          { step: "click", data: { anchor: anchors.authContinueEmail } },
           { step: "wait", data: { amount: 1000 } },
-          { step: "click", data: { anchorKey: "launch_login_password" } },
+          { step: "click", data: { anchor: anchors.authEnterPassword } },
           { step: "wait", data: { amount: 1000 } },
           { step: "write", data: { text: runnerInfo.password } },
-          { step: "click", data: { anchorKey: "launch_login_continue" } },
+          { step: "click", data: { anchor: anchors.authContinuePassword } },
+          { step: "wait", data: { amount: 1000 } },
+          { step: "click", data: { anchor: anchors.authBackupImg } },
+          { step: "swipe", data: { x1: 629, y1: 500, x2: 621, y2: 500, duration: 200 } },
+          { step: "wait", data: { amount: 2000 } },
+          { step: "click", data: { anchor: anchors.authBackupOff } },
+          { step: "wait", data: { amount: 1000 } },
+          { step: "click", data: { anchor: anchors.authWelcomeApply } },
+          { step: "wait", data: { amount: 1000 } },
+          { step: "click", data: { anchor: anchors.authServicesMore } },
+          { step: "wait", data: { amount: 1000 } },
+          { step: "click", data: { anchor: anchors.authServicesMore } },
+          { step: "wait", data: { amount: 1000 } },
         ],
         this
       );
     }
 
-    if (await findAnchor(this.currentImg, "launch_in_match_pause")) {
-      await runSteps(
-        [
-          { step: "click", data: { anchorKey: "launch_in_match_pause" } },
-          { step: "wait", data: { amount: 500 } },
-          { step: "click", data: { x: 838, y: 479 } },
-          { step: "click", data: { x: 397, y: 348 } },
-        ],
-        this
-      );
-    }
+    //TODO: add back
+    // if (await findAnchor(this.currentImg, "launch_in_match_pause")) {
+    //   await runSteps(
+    //     [
+    //       { step: "click", data: { anchorKey: "launch_in_match_pause" } },
+    //       { step: "wait", data: { amount: 500 } },
+    //       { step: "click", data: { x: 838, y: 479 } },
+    //       { step: "click", data: { x: 397, y: 348 } },
+    //     ],
+    //     this
+    //   );
+    // }
 
-    if (await findAnchor(this.currentImg, "launch_close_bp")) {
-      await runSteps(
-        [{ step: "click", data: { anchorKey: "launch_close_bp" } }],
-        this
-      );
-    }
+    // if (await findAnchor(this.currentImg, "launch_close_bp")) {
+    //   await runSteps(
+    //     [{ step: "click", data: { anchorKey: "launch_close_bp" } }],
+    //     this
+    //   );
+    // }
 
     return { wait: 5000 };
   }
@@ -315,33 +329,23 @@ export class StateManager {
     await runSteps(
       [
         // create lobby
-        { step: "click", data: { anchorKey: "menu_group" } },
-        { step: "click", data: { anchorKey: "custom_lobby" } },
-        // { step: 'click', data: { anchorKey: 'create_custom_lobby' } },
+        { step: "click", data: { anchor: anchors.mainMenuLobby } },
+        { step: "click", data: { anchor: anchors.lobbyCreateCustomLobby } },
 
         // set lobby to private
-        { step: "click", data: { x: 810, y: 76 } },
-        { step: "click", data: { x: 608, y: 399 } },
+        { step: "click", data: { x: 1352, y: 129 } },
+        { step: "click", data: { x: 804, y: 541 } },
 
         { step: "share", data: { setCode: this.setCode } },
 
         //setup lobby
-        { step: "click", data: { anchorKey: "to_change_mode" } },
-        { step: "click", data: { anchorKey: "competitive_mode" } },
+        { step: "click", data: { x: 1432, y: 732 } }, // change game mode
+        { step: "click", data: { x: 432, y: 166 } }, // competitive mode
         { step: "click", data: getCoordinatesByMap(this.map) },
-        { step: "click", data: { anchorKey: "change_mode" } },
+        { step: "click", data: { x: 1346, y: 829 } }, // apply
 
         // lobby setting
-        { step: "click", data: { anchorKey: "lobby_setting" } },
-
-        // больше меньше
-        // 927, 586
-        // y coords: 
-        // Ограничить выбор команды 129
-        // длительность разминки 180
-        // длительность раунда 237
-        // длительность подготовки к раунду 292
-        // Количество раундов 346
+        { step: "click", data: { x: 1443, y: 121 } }, // lobby setting
 
         // prod Settings
         // { step: "click", data: { x: 927, y: 129 } }, // Ограничить выбор команды
@@ -349,30 +353,32 @@ export class StateManager {
         // { step: "click", data: { x: 927, y: 237 } }, // Длительность раунда увеличить
         // { step: "click", data: { x: 586, y: 292 } }, // длительность подготовки к раунду увеличить
 
-        // debug settings
-        { step: "click", data: { x: 927, y: 129 } }, // Ограничить выбор команды
-        { step: "click", data: { x: 586, y: 180 } }, // длительность разминки уменьшить
-        { step: "click", data: { x: 586, y: 180 } }, // длительность разминки уменьшить
-        { step: "click", data: { x: 586, y: 180 } }, // длительность разминки уменьшить
-        { step: "click", data: { x: 586, y: 237 } }, // Длительность раунда уменьшить
-        { step: "click", data: { x: 586, y: 292 } }, // Длительность подготовки к раунду уменьшить
-        { step: "click", data: { x: 586, y: 346 } }, // Количество раудов уменьшить
-        { step: "click", data: { x: 586, y: 346 } }, // Количество раудов уменьшить
-        { step: "click", data: { x: 586, y: 346 } }, // Количество раудов уменьшить
 
-        { step: "click", data: { anchorKey: "apply_setting" } },
+        // debug settings
+        { step: "click", data: getLobbySettingsCoordinates('limit_team_selection', 'increase') },
+        { step: "click", data: getLobbySettingsCoordinates('warmup_time', 'decrease') },
+        { step: "click", data: getLobbySettingsCoordinates('warmup_time', 'decrease') },
+        { step: "click", data: getLobbySettingsCoordinates('warmup_time', 'decrease') },
+        { step: "click", data: getLobbySettingsCoordinates('round_time', 'decrease') },
+        { step: "click", data: getLobbySettingsCoordinates('prep_time', 'decrease') },
+        { step: "click", data: getLobbySettingsCoordinates('rounds_count', 'decrease') },
+        { step: "click", data: getLobbySettingsCoordinates('rounds_count', 'decrease') },
+        { step: "click", data: getLobbySettingsCoordinates('rounds_count', 'decrease') },
+
+        { step: "click", data: { x: 1206, y: 689 } }, // apply
 
         //move self to spectator
-        { step: "find", data: { anchorKey: "lobby_setting" } },
-        { step: "click", data: { x: 383, y: 75 } },
+        { step: "find", data: { anchor: anchors.lobbySettings } },
+        { step: "click", data: { x: 636, y: 136 } },
         { step: "wait", data: { amount: 500 } },
-        { step: "click", data: { anchorKey: "to_spectators" } },
+        { step: "click", data: { anchor: anchors.lobbyToSpectator } },
       ],
       this
     );
     this.setState("waitingForPlayers");
     return { wait: 1000 };
   }
+
 
   private async waitingForPlayers(): Promise<ActionRet> {
     await this.takeScreenshot();
@@ -407,33 +413,33 @@ export class StateManager {
   private async lowSettings(): Promise<ActionRet> {
     await runSteps(
       [
-        { step: "click", data: { anchorKey: "settings_main_menu" } },
-        { step: "click", data: { anchorKey: "settings_to_video" } },
+        { step: "click", data: { x: 29, y: 560 } }, // settings main menu
+        { step: "click", data: { x: 652, y: 28 } }, // video settings
 
         // set low settings
-        { step: "click", data: { x: 476, y: 84 } },
-        { step: "click", data: { x: 476, y: 145 } },
-        { step: "click", data: { x: 476, y: 204 } },
-        { step: "click", data: { x: 476, y: 256 } },
-        { step: "click", data: { x: 476, y: 321 } },
+        { step: "click", data: { x: 808, y: 122 } },
+        { step: "click", data: { x: 808, y: 225 } },
+        { step: "click", data: { x: 808, y: 328 } },
+        { step: "click", data: { x: 808, y: 436 } },
+        { step: "click", data: { x: 1440, y: 545 } },
 
         // apply settings
-        { step: "click", data: { x: 879, y: 513 } },
+        { step: "click", data: { x: 1491, y: 861 } },
         { step: "wait", data: { amount: 5000 } },
 
         // set audio
-        { step: "click", data: { anchorKey: "settings_to_audio" } },
-        { step: "click", data: { x: 498, y: 78 } },
-        { step: "click", data: { x: 498, y: 139 } },
-        { step: "click", data: { x: 498, y: 202 } },
-        { step: "click", data: { x: 498, y: 270 } },
+        { step: "click", data: { x: 1408, y: 43 } }, // audio settings
+        { step: "click", data: { x: 818, y: 126 } },
+        { step: "click", data: { x: 818, y: 230 } },
+        { step: "click", data: { x: 818, y: 334 } },
+        { step: "click", data: { x: 818, y: 447 } },
 
         // apply audio settings
-        { step: "click", data: { x: 879, y: 513 } },
+        { step: "click", data: { x: 1491, y: 861 } },
         { step: "wait", data: { amount: 5000 } },
 
         // back to main menu
-        { step: "click", data: { x: 22, y: 38 } },
+        { step: "click", data: { x: 33, y: 62 } },
       ],
       this
     );
@@ -447,11 +453,11 @@ export class StateManager {
     const runnerName = this.ldPlayer.name;
     await runSteps(
       [
-        { step: "click", data: { x: 222, y: 73 } },
-        { step: "click", data: { x: 330, y: 236 } },
+        { step: "click", data: { x: 377, y: 116 } },
+        { step: "click", data: { x: 546, y: 392 } },
         { step: "deleteAllText" },
         { step: "write", data: { text: runnerName } },
-        { step: "click", data: { x: 544, y: 353 } },
+        { step: "click", data: { x: 958, y: 584 } },
       ],
       this
     );

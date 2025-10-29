@@ -12,4 +12,6 @@ To run:
 bun run index.ts
 ```
 
+[Инстумент для кропа картонок](https://www.imageonlinetools.com/crop-image)
+
 This project was created using `bun init` in bun v1.1.30. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
