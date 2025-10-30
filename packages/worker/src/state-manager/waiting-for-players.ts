@@ -1,11 +1,12 @@
 import sharp from 'sharp'
-import { findAnchor } from '../img-proccesing/img-proccesing'
+import { findAnchor, findAnchorV2 } from '../img-proccesing/img-proccesing'
 import { getPlayerName } from '../img-proccesing/player-name-detection'
 import { log } from '../utils/log'
 import { fuzzySearchNames } from '../utils/utils'
 import { client } from '../ws/ws'
 import type { StateManager, Teams } from './state-manager'
 import { runSteps } from './steps'
+import { anchors } from '../anchors'
 
 async function isMatchExpired(stateManager: StateManager): Promise<boolean> {
   // check if match startedTimestamp is set
@@ -43,23 +44,23 @@ async function isMatchExpired(stateManager: StateManager): Promise<boolean> {
 }
 
 const spectatorSlots = [
-  'wait_for_payers_spectator_slot_2',
-  'wait_for_payers_spectator_slot_3',
-  'wait_for_payers_spectator_slot_4',
-  'wait_for_payers_spectator_slot_5',
-  'wait_for_payers_spectator_slot_6',
+  anchors.spectatorSlot2,
+  anchors.spectatorSlot3,
+  anchors.spectatorSlot4,
+  anchors.spectatorSlot5,
+  anchors.spectatorSlot6,
 ] as const
 
 async function kickSpectators(stateManager: StateManager) {
   for (const slot of spectatorSlots) {
-    if (!(await findAnchor(stateManager.currentImg, slot))) {
+    if (!(await findAnchorV2(stateManager.currentImg, slot))) {
       // kick player
       await runSteps(
         [
-          { step: 'click', data: { anchorKey: slot } },
+          { step: 'click', data: { anchor: slot } },
           {
             step: 'clickOccurrence',
-            data: { anchorKey: 'wait_for_payers_spectator_kick' },
+            data: { anchor:  },
           },
         ],
         stateManager

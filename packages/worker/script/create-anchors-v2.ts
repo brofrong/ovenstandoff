@@ -45,7 +45,9 @@ async function createAnchor() {
 }
 
 function dashToCamel(str: string) {
-  return str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
+  const result = str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+  // удаляем все "-" если они остались
+  return result.replace(/-/g, '');
 }
 
 function _capitalizeFirstLetter(str: string) {

@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import './ImageUploader.css'
 
 interface ImageUploaderProps {
-  onImageLoad: (src: string) => void
+  onImageLoad: (src: string, fileName: string) => void
 }
 
 function ImageUploader({ onImageLoad }: ImageUploaderProps) {
@@ -14,7 +14,7 @@ function ImageUploader({ onImageLoad }: ImageUploaderProps) {
       const reader = new FileReader()
       reader.onload = (event) => {
         const src = event.target?.result as string
-        onImageLoad(src)
+        onImageLoad(src, file.name)
       }
       reader.readAsDataURL(file)
     }

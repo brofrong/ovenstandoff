@@ -10,6 +10,7 @@ interface ImageCropperProps {
   onAnchorNameChange: (name: string) => void
   onSave: (crop: CropArea, name: string) => void
   onReset: () => void
+  fileName?: string
 }
 
 function ImageCropper({
@@ -20,6 +21,7 @@ function ImageCropper({
   onAnchorNameChange,
   onSave,
   onReset,
+  fileName,
 }: ImageCropperProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
@@ -28,6 +30,7 @@ function ImageCropper({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 })
   const [isImageLoaded, setIsImageLoaded] = useState(false)
+  const [zoom, setZoom] = useState(1)
 
   useEffect(() => {
     const img = imageRef.current
@@ -71,11 +74,31 @@ function ImageCropper({
     const scaleX = img.clientWidth / img.naturalWidth
     const scaleY = img.clientHeight / img.naturalHeight
     return {
-      x: cropArea.x * scaleX,
-      y: cropArea.y * scaleY,
-      width: cropArea.width * scaleX,
-      height: cropArea.height * scaleY,
+      x: cropArea.x * scaleX * zoom,
+      y: cropArea.y * scaleY * zoom,
+      width: cropArea.width * scaleX * zoom,
+      height: cropArea.height * scaleY * zoom,
     }
+  }
+
+  const handleWheel = (e: React.WheelEvent) => {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault()
+      const delta = e.deltaY > 0 ? -0.1 : 0.1
+      setZoom((prev) => Math.max(0.5, Math.min(3, prev + delta)))
+    }
+  }
+
+  const handleZoomIn = () => {
+    setZoom((prev) => Math.min(3, prev + 0.1))
+  }
+
+  const handleZoomOut = () => {
+    setZoom((prev) => Math.max(0.5, prev - 0.1))
+  }
+
+  const handleZoomReset = () => {
+    setZoom(1)
   }
 
   const handleMouseDown = (e: React.MouseEvent, handle: string) => {
@@ -207,7 +230,13 @@ function ImageCropper({
     })
 
     // Save JSON
-    const jsonData = JSON.stringify(cropArea, null, 2)
+    const roundedCrop = {
+      x: Math.round(cropArea.x),
+      y: Math.round(cropArea.y),
+      width: Math.round(cropArea.width),
+      height: Math.round(cropArea.height),
+    }
+    const jsonData = JSON.stringify(roundedCrop, null, 2)
     const jsonBlob = new Blob([jsonData], { type: 'application/json' })
     const jsonUrl = URL.createObjectURL(jsonBlob)
     const jsonLink = document.createElement('a')
@@ -222,34 +251,224 @@ function ImageCropper({
   const displayArea = getDisplayCropArea()
 
   return (
-    <div className="image-cropper">
-      <div className="controls">
-        <div className="input-group">
-          <label htmlFor="anchor-name">Anchor Name:</label>
-          <input
-            id="anchor-name"
-            type="text"
-            value={anchorName}
-            onChange={(e) => onAnchorNameChange(e.target.value)}
-            placeholder="Enter anchor name..."
-            className="name-input"
-          />
-        </div>
-        <div className="crop-info">
-          {cropArea && (
-            <div className="info-item">
-              <strong>Position:</strong> ({Math.round(cropArea.x)}, {Math.round(cropArea.y)})
+    <div className="crop-wrapper">
+      <div className="image-wrapper">
+        <div ref={containerRef} className="image-container" onWheel={handleWheel}>
+          {isImageLoaded && displayArea && (
+            <div
+              className="crop-overlay"
+              style={{
+                left: `${displayArea.x}px`,
+                top: `${displayArea.y}px`,
+                width: `${displayArea.width}px`,
+                height: `${displayArea.height}px`,
+              }}
+            >
+              <div
+                className="crop-handle move"
+                onMouseDown={(e) => handleMouseDown(e, 'move')}
+                role="button"
+                aria-label="Move crop area"
+              />
+              <div
+                className="crop-handle corner nw"
+                onMouseDown={(e) => handleMouseDown(e, 'nw')}
+                role="button"
+                aria-label="Resize crop area northwest"
+              />
+              <div
+                className="crop-handle corner ne"
+                onMouseDown={(e) => handleMouseDown(e, 'ne')}
+                role="button"
+                aria-label="Resize crop area northeast"
+              />
+              <div
+                className="crop-handle corner sw"
+                onMouseDown={(e) => handleMouseDown(e, 'sw')}
+                role="button"
+                aria-label="Resize crop area southwest"
+              />
+              <div
+                className="crop-handle corner se"
+                onMouseDown={(e) => handleMouseDown(e, 'se')}
+                role="button"
+                aria-label="Resize crop area southeast"
+              />
+              <div
+                className="crop-handle edge n"
+                onMouseDown={(e) => handleMouseDown(e, 'n')}
+                role="button"
+                aria-label="Resize crop area north"
+              />
+              <div
+                className="crop-handle edge s"
+                onMouseDown={(e) => handleMouseDown(e, 's')}
+                role="button"
+                aria-label="Resize crop area south"
+              />
+              <div
+                className="crop-handle edge w"
+                onMouseDown={(e) => handleMouseDown(e, 'w')}
+                role="button"
+                aria-label="Resize crop area west"
+              />
+              <div
+                className="crop-handle edge e"
+                onMouseDown={(e) => handleMouseDown(e, 'e')}
+                role="button"
+                aria-label="Resize crop area east"
+              />
             </div>
           )}
-          {cropArea && (
-            <div className="info-item">
-              <strong>Size:</strong> {Math.round(cropArea.width)} × {Math.round(cropArea.height)}
+          <div style={{ transform: `scale(${zoom})`, transformOrigin: 'top left' }}>
+            <img ref={imageRef} src={imageSrc} onLoad={handleImageLoad} alt="Crop source" />
+          </div>
+        </div>
+      </div>
+
+      <div className="crop-sidebar">
+        <div className="sidebar-content">
+          <h1 className="sidebar-title">Anchor Editor</h1>
+
+          <div className="input-group">
+            <label htmlFor="anchor-name">Anchor Name:</label>
+            <input
+              id="anchor-name"
+              type="text"
+              value={anchorName}
+              onChange={(e) => onAnchorNameChange(e.target.value)}
+              placeholder="Enter anchor name..."
+              className="name-input"
+            />
+          </div>
+
+          <div className="crop-controls">
+            {cropArea && (
+              <>
+                <div className="crop-input-column">
+                  <div className="crop-input-group">
+                    <label htmlFor="crop-x">X:</label>
+                    <input
+                      id="crop-x"
+                      type="number"
+                      value={Math.round(cropArea.x)}
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value, 10)
+                        if (!Number.isNaN(value)) {
+                          const newX = Math.max(
+                            0,
+                            Math.min(value, imageSize.width - cropArea.width)
+                          )
+                          onCropAreaChange({ ...cropArea, x: newX })
+                        }
+                      }}
+                      className="crop-input"
+                    />
+                  </div>
+                  <div className="crop-input-group">
+                    <label htmlFor="crop-y">Y:</label>
+                    <input
+                      id="crop-y"
+                      type="number"
+                      value={Math.round(cropArea.y)}
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value, 10)
+                        if (!Number.isNaN(value)) {
+                          const newY = Math.max(
+                            0,
+                            Math.min(value, imageSize.height - cropArea.height)
+                          )
+                          onCropAreaChange({ ...cropArea, y: newY })
+                        }
+                      }}
+                      className="crop-input"
+                    />
+                  </div>
+                </div>
+                <div className="crop-input-column">
+                  <div className="crop-input-group">
+                    <label htmlFor="crop-width">Width:</label>
+                    <input
+                      id="crop-width"
+                      type="number"
+                      value={Math.round(cropArea.width)}
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value, 10)
+                        if (!Number.isNaN(value) && value > 0) {
+                          const maxWidth = imageSize.width - cropArea.x
+                          const newWidth = Math.min(value, maxWidth)
+                          onCropAreaChange({ ...cropArea, width: newWidth })
+                        }
+                      }}
+                      className="crop-input"
+                    />
+                  </div>
+                  <div className="crop-input-group">
+                    <label htmlFor="crop-height">Height:</label>
+                    <input
+                      id="crop-height"
+                      type="number"
+                      value={Math.round(cropArea.height)}
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value, 10)
+                        if (!Number.isNaN(value) && value > 0) {
+                          const maxHeight = imageSize.height - cropArea.y
+                          const newHeight = Math.min(value, maxHeight)
+                          onCropAreaChange({ ...cropArea, height: newHeight })
+                        }
+                      }}
+                      className="crop-input"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="zoom-controls">
+            <button
+              className="btn btn-zoom"
+              onClick={handleZoomOut}
+              type="button"
+              title="Zoom Out (Ctrl+Scroll)"
+            >
+              −
+            </button>
+            <span className="zoom-indicator">{Math.round(zoom * 100)}%</span>
+            <button
+              className="btn btn-zoom"
+              onClick={handleZoomIn}
+              type="button"
+              title="Zoom In (Ctrl+Scroll)"
+            >
+              +
+            </button>
+            <button
+              className="btn btn-zoom-reset"
+              onClick={handleZoomReset}
+              type="button"
+              title="Reset Zoom"
+            >
+              Reset
+            </button>
+          </div>
+
+          {imageSize.width > 0 && (
+            <div className="image-info">
+              <div className="info-label">Source Image:</div>
+              <div className="info-item">
+                <strong>File:</strong> {fileName || 'image.png'}
+              </div>
+              <div className="info-item">
+                <strong>Resolution:</strong> {imageSize.width} × {imageSize.height} px
+              </div>
             </div>
           )}
         </div>
-        <div className="button-group">
+
+        <div className="sidebar-footer">
           <button className="btn btn-reset" onClick={onReset} type="button">
-            Reset Image
+            Upload New
           </button>
           <button
             className="btn btn-save"
@@ -260,76 +479,6 @@ function ImageCropper({
             Save Anchor
           </button>
         </div>
-      </div>
-
-      <div ref={containerRef} className="image-container">
-        {isImageLoaded && displayArea && (
-          <div
-            className="crop-overlay"
-            style={{
-              left: `${displayArea.x}px`,
-              top: `${displayArea.y}px`,
-              width: `${displayArea.width}px`,
-              height: `${displayArea.height}px`,
-            }}
-          >
-            <div
-              className="crop-handle move"
-              onMouseDown={(e) => handleMouseDown(e, 'move')}
-              role="button"
-              aria-label="Move crop area"
-            />
-            <div
-              className="crop-handle corner nw"
-              onMouseDown={(e) => handleMouseDown(e, 'nw')}
-              role="button"
-              aria-label="Resize crop area northwest"
-            />
-            <div
-              className="crop-handle corner ne"
-              onMouseDown={(e) => handleMouseDown(e, 'ne')}
-              role="button"
-              aria-label="Resize crop area northeast"
-            />
-            <div
-              className="crop-handle corner sw"
-              onMouseDown={(e) => handleMouseDown(e, 'sw')}
-              role="button"
-              aria-label="Resize crop area southwest"
-            />
-            <div
-              className="crop-handle corner se"
-              onMouseDown={(e) => handleMouseDown(e, 'se')}
-              role="button"
-              aria-label="Resize crop area southeast"
-            />
-            <div
-              className="crop-handle edge n"
-              onMouseDown={(e) => handleMouseDown(e, 'n')}
-              role="button"
-              aria-label="Resize crop area north"
-            />
-            <div
-              className="crop-handle edge s"
-              onMouseDown={(e) => handleMouseDown(e, 's')}
-              role="button"
-              aria-label="Resize crop area south"
-            />
-            <div
-              className="crop-handle edge w"
-              onMouseDown={(e) => handleMouseDown(e, 'w')}
-              role="button"
-              aria-label="Resize crop area west"
-            />
-            <div
-              className="crop-handle edge e"
-              onMouseDown={(e) => handleMouseDown(e, 'e')}
-              role="button"
-              aria-label="Resize crop area east"
-            />
-          </div>
-        )}
-        <img ref={imageRef} src={imageSrc} onLoad={handleImageLoad} alt="Crop source" />
       </div>
     </div>
   )
