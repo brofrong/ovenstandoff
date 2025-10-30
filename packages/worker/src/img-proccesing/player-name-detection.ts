@@ -1,11 +1,11 @@
-import { loadBuffer } from "./memo-img";
-import { createWorker, PSM } from "tesseract.js";
-import sharp from "sharp";
+import sharp from 'sharp'
+import { createWorker, PSM } from 'tesseract.js'
+import { loadBuffer } from './memo-img'
 
 const playerNameBoxSizes = {
   width: 83,
   height: 14,
-} as const;
+} as const
 
 export const teamCoords = {
   ct: {
@@ -33,7 +33,7 @@ export const teamCoords = {
     free_slot_9: { x: 779, y: 362 },
     free_slot_10: { x: 590, y: 362 },
   },
-} as const;
+} as const
 
 const playerNameCoords: Record<string, { x: number; y: number }> = {
   free_slot_1: { x: 343, y: 105 },
@@ -47,44 +47,45 @@ const playerNameCoords: Record<string, { x: number; y: number }> = {
   free_slot_8: { x: 517, y: 175 },
   free_slot_9: { x: 604, y: 175 },
   free_slot_10: { x: 691, y: 175 },
-};
+}
 
-const rusWorker = await createWorker(["rus"], 2);
-const engWorker = await createWorker(["eng"], 2);
+const rusWorker = await createWorker(['rus'], 2)
+const engWorker = await createWorker(['eng'], 2)
 
 // Настраиваем параметры Tesseract для лучшего распознавания имен
 // PSM.SINGLE_LINE = Treat image as a single text line (лучше всего для имен игроков)
 await rusWorker.setParameters({
   tessedit_pageseg_mode: PSM.SINGLE_LINE,
-  tessedit_char_whitelist: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ :_-",
-});
+  tessedit_char_whitelist:
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ :_-',
+})
 await engWorker.setParameters({
   tessedit_pageseg_mode: PSM.SINGLE_LINE,
-  tessedit_char_whitelist: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 :_-",
-});
+  tessedit_char_whitelist: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 :_-',
+})
 
 export async function getPlayerName(
   slotName: string,
   img: string | Buffer | null,
   config: { debug: boolean } = { debug: false }
 ) {
-  const coord = playerNameCoords[slotName];
+  const coord = playerNameCoords[slotName]
   if (!coord) {
-    return null;
+    return null
   }
   const imgBuffer = await loadBuffer(img, {
     left: coord.x,
     top: coord.y,
     width: playerNameBoxSizes.width,
     height: playerNameBoxSizes.height,
-  });
+  })
   if (!imgBuffer) {
-    return null;
+    return null
   }
 
   // Увеличиваем масштаб до 6x для лучшего распознавания маленького текста
   // Особенно важно для тонких букв типа i, l, 1
-  const scaleFactor = 3;
+  const scaleFactor = 3
 
   // Предобработка изображения для улучшения распознавания
   const processedImgBuffer = await sharp(imgBuffer)
@@ -94,24 +95,24 @@ export async function getPlayerName(
       height: playerNameBoxSizes.height * scaleFactor,
       kernel: sharp.kernel.lanczos3,
     })
-    .toBuffer();
+    .toBuffer()
 
   if (config.debug) {
-    await Bun.write(`./tmp/names/original-${Date.now()}.png`, imgBuffer);
-    await Bun.write(`./tmp/names/processed-${Date.now()}.png`, processedImgBuffer);
+    await Bun.write(`./tmp/names/original-${Date.now()}.png`, imgBuffer)
+    await Bun.write(`./tmp/names/processed-${Date.now()}.png`, processedImgBuffer)
   }
 
   // Распознаем с обоими языками параллельно
   const [ruRet, engRet] = await Promise.all([
     rusWorker.recognize(processedImgBuffer),
-    engWorker.recognize(processedImgBuffer)
-  ]);
+    engWorker.recognize(processedImgBuffer),
+  ])
 
-  const ruUnfilteredName = ruRet.data.text;
-  const name = ruUnfilteredName.replace(/[^a-zA-Z0-9а-яA-ЯёЁ]/g, "");
+  const ruUnfilteredName = ruRet.data.text
+  const name = ruUnfilteredName.replace(/[^a-zA-Z0-9а-яA-ЯёЁ]/g, '')
 
-  const engUnfilteredName = engRet.data.text;
-  const engName = engUnfilteredName.replace(/[^a-zA-Z0-9а-яA-ЯёЁ]/g, "");
+  const engUnfilteredName = engRet.data.text
+  const engName = engUnfilteredName.replace(/[^a-zA-Z0-9а-яA-ЯёЁ]/g, '')
 
-  return { ru: name, eng: engName };
+  return { ru: name, eng: engName }
 }

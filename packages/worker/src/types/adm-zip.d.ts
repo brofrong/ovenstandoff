@@ -1,7 +1,7 @@
-declare module "adm-zip" {
+declare module 'adm-zip' {
   class AdmZip {
-    constructor(path: string);
-    extractAllTo(targetPath: string, overwrite: boolean): void;
+    constructor(path: string)
+    extractAllTo(targetPath: string, overwrite: boolean): void
   }
-  export default AdmZip;
+  export default AdmZip
 }

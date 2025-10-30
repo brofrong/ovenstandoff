@@ -1,22 +1,20 @@
-import { standoffOutputPath } from "./download-last-version";
-import path from "path";
-import AdmZip from "adm-zip";
-import { isFolderExists } from "./utils";
-
-
+import path from 'node:path'
+import AdmZip from 'adm-zip'
+import { standoffOutputPath } from './download-last-version'
+import { isFolderExists } from './utils'
 
 export async function unzip(lastVersion: string) {
-  const filenameWithoutExtension = path.basename(lastVersion, ".xapk");
-  const outputDir = standoffOutputPath(filenameWithoutExtension);
+  const filenameWithoutExtension = path.basename(lastVersion, '.xapk')
+  const outputDir = standoffOutputPath(filenameWithoutExtension)
 
   if (await isFolderExists(outputDir)) {
-    console.log(`${outputDir} already exists`);
-    return outputDir;
+    console.log(`${outputDir} already exists`)
+    return outputDir
   }
 
-  const xapkPath = standoffOutputPath(lastVersion);
-  const zip = new AdmZip(xapkPath);
-  zip.extractAllTo(outputDir, true);
-  console.log(`${outputDir} unzipped successfully`);
-  return outputDir;
+  const xapkPath = standoffOutputPath(lastVersion)
+  const zip = new AdmZip(xapkPath)
+  zip.extractAllTo(outputDir, true)
+  console.log(`${outputDir} unzipped successfully`)
+  return outputDir
 }

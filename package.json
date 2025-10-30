@@ -17,7 +17,9 @@
     "db:studio": "drizzle-kit studio --config=./packages/shared/drizzle.config.ts",
     "wsServer": "bun ./packages/master-server/index.ts",
     "build": "bun build ./index.ts --compile --outfile ./dist/ovenstandoff",
-    "build:windows": "bun build ./index.ts --compile --target=bun-windows-x64 --outfile ./dist/ovenstandoff.exe"
+    "build:windows": "bun build ./index.ts --compile --target=bun-windows-x64 --outfile ./dist/ovenstandoff.exe",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write ."
   },
   "dependencies": {
     "@appium/opencv": "^3.0.8",
@@ -37,6 +39,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.9"
+    "@types/bun": "^1.2.9",
+    "@biomejs/biome": "^2.3.2"
   }
 }

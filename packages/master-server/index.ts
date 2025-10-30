@@ -1,2 +1,2 @@
-import "./src/index-ws";
-import "./src/index";
+import './src/index-ws'
+import './src/index'

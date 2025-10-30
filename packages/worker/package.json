@@ -4,7 +4,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "create-anchors": "bun ./script/create-anchors.ts"
+    "create-anchors": "bun ./script/create-anchors.ts",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write ."
   },
   "dependencies": {
     "@ovenstandoff/contract": "workspace:*",
@@ -15,7 +17,8 @@
     "pino-pretty": "^13.1.2"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@biomejs/biome": "^2.3.2"
   },
   "peerDependencies": {
     "typescript": "^5"

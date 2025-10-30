@@ -1,74 +1,62 @@
-import { RunnersList } from "@/components/RunnersList";
-import { RunnerDetail } from "@/components/RunnerDetail";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useWebSocket } from "@/hooks/useWebSocket";
-import { LogOut, RefreshCw, Wifi, WifiOff } from "lucide-react";
-import { useCallback, useState, useEffect } from "react";
-import type { Runner } from "@ovenstandoff/contract";
-import { env } from "@/lib/env";
+import type { Runner } from '@ovenstandoff/contract'
+import { LogOut, RefreshCw, Wifi, WifiOff } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
+import { RunnerDetail } from '@/components/RunnerDetail'
+import { RunnersList } from '@/components/RunnersList'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useWebSocket } from '@/hooks/useWebSocket'
+import { env } from '@/lib/env'
 
 interface DashboardProps {
-  serverKey: string;
-  onLogout: () => void;
+  serverKey: string
+  onLogout: () => void
 }
 
 export function Dashboard({ serverKey, onLogout }: DashboardProps) {
-  const [selectedRunner, setSelectedRunner] = useState<Runner | null>(null);
+  const [selectedRunner, setSelectedRunner] = useState<Runner | null>(null)
 
   const onConnectionChange = useCallback((connected: boolean) => {
-    console.log("Connection status changed:", connected);
-  }, []);
+    console.log('Connection status changed:', connected)
+  }, [])
 
-  const {
-    isConnected,
-    runners,
-    error,
-    reconnect,
-    disconnect
-  } = useWebSocket({
+  const { isConnected, runners, error, reconnect, disconnect } = useWebSocket({
     serverKey,
     onConnectionChange: onConnectionChange,
-  });
+  })
 
   // Update selectedRunner when runners data changes
   useEffect(() => {
     if (selectedRunner && runners.length > 0) {
-      const updatedRunner = runners.find(r => r.name === selectedRunner.name);
+      const updatedRunner = runners.find((r) => r.name === selectedRunner.name)
       if (updatedRunner) {
-        setSelectedRunner(updatedRunner);
+        setSelectedRunner(updatedRunner)
       }
     }
-  }, [runners, selectedRunner]);
+  }, [runners, selectedRunner])
 
   const handleLogout = () => {
-    localStorage.removeItem("serverKey");
-    disconnect();
-    onLogout();
-  };
+    localStorage.removeItem('serverKey')
+    disconnect()
+    onLogout()
+  }
 
   const handleReconnect = () => {
-    reconnect();
-  };
+    reconnect()
+  }
 
   const handleRunnerSelect = (runner: Runner) => {
-    setSelectedRunner(runner);
-  };
+    setSelectedRunner(runner)
+  }
 
   const handleBackToList = () => {
-    setSelectedRunner(null);
-  };
+    setSelectedRunner(null)
+  }
 
   // If a runner is selected, show the detail view
   if (selectedRunner) {
-    return (
-      <RunnerDetail
-        runner={selectedRunner}
-        onBack={handleBackToList}
-        serverKey={serverKey}
-      />
-    );
+    return <RunnerDetail runner={selectedRunner} onBack={handleBackToList} serverKey={serverKey} />
   }
 
   return (
@@ -89,9 +77,7 @@ export function Dashboard({ serverKey, onLogout }: DashboardProps) {
               ) : (
                 <>
                   <WifiOff className="h-5 w-5 text-red-500" />
-                  <Badge variant="destructive">
-                    Отключено
-                  </Badge>
+                  <Badge variant="destructive">Отключено</Badge>
                 </>
               )}
             </div>
@@ -123,7 +109,7 @@ export function Dashboard({ serverKey, onLogout }: DashboardProps) {
           <CardContent className="space-y-4">
             <div className="space-y-2 text-sm text-muted-foreground">
               <div>WebSocket:{env.BUN_PUBLIC_WS_HOST}/ws</div>
-              <div>Статус: {isConnected ? "Активен" : "Неактивен"}</div>
+              <div>Статус: {isConnected ? 'Активен' : 'Неактивен'}</div>
             </div>
 
             {/* Action Buttons */}
@@ -153,5 +139,5 @@ export function Dashboard({ serverKey, onLogout }: DashboardProps) {
         </Card>
       </div>
     </div>
-  );
+  )
 }

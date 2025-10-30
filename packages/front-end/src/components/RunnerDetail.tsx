@@ -1,208 +1,215 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Play, Square, Monitor, Settings } from "lucide-react";
-import type { Runner } from "@ovenstandoff/contract";
-import { AllStates } from "@ovenstandoff/contract";
-import { useWebSocket } from "@/hooks/useWebSocket";
+import type { AllStates, Runner } from '@ovenstandoff/contract'
+import { ArrowLeft, Monitor, Play, Settings, Square } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { useWebSocket } from '@/hooks/useWebSocket'
 
 interface RunnerDetailProps {
-  runner: Runner;
-  onBack: () => void;
-  serverKey: string;
+  runner: Runner
+  onBack: () => void
+  serverKey: string
 }
 
-const getStateColor = (state: Runner["state"]) => {
+const getStateColor = (state: Runner['state']) => {
   switch (state) {
-    case "booting":
-      return "bg-yellow-500";
-    case "android":
-      return "bg-purple-500";
-    case "launching":
-      return "bg-blue-500";
-    case "readyForCreateLobby":
-      return "bg-green-500";
-    case "createLobby":
-      return "bg-blue-600";
-    case "waitingForPlayers":
-      return "bg-orange-400";
-    case "lowSettings":
-      return "bg-yellow-600";
-    case "changeName":
-      return "bg-indigo-500";
-    case "inGame":
-      return "bg-red-500";
-    case "debug":
-      return "bg-gray-500";
+    case 'booting':
+      return 'bg-yellow-500'
+    case 'android':
+      return 'bg-purple-500'
+    case 'launching':
+      return 'bg-blue-500'
+    case 'readyForCreateLobby':
+      return 'bg-green-500'
+    case 'createLobby':
+      return 'bg-blue-600'
+    case 'waitingForPlayers':
+      return 'bg-orange-400'
+    case 'lowSettings':
+      return 'bg-yellow-600'
+    case 'changeName':
+      return 'bg-indigo-500'
+    case 'inGame':
+      return 'bg-red-500'
+    case 'debug':
+      return 'bg-gray-500'
     default:
-      return "bg-gray-500";
+      return 'bg-gray-500'
   }
-};
+}
 
-const getStateText = (state: Runner["state"]) => {
+const getStateText = (state: Runner['state']) => {
   switch (state) {
-    case "booting":
-      return "Загрузка";
-    case "android":
-      return "Android режим";
-    case "launching":
-      return "Запуск игры";
-    case "readyForCreateLobby":
-      return "Готов к созданию лобби";
-    case "createLobby":
-      return "Создание лобби";
-    case "waitingForPlayers":
-      return "Ожидание игроков";
-    case "lowSettings":
-      return "Низкие настройки";
-    case "changeName":
-      return "Смена имени";
-    case "inGame":
-      return "В игре";
-    case "debug":
-      return "Отладка";
+    case 'booting':
+      return 'Загрузка'
+    case 'android':
+      return 'Android режим'
+    case 'launching':
+      return 'Запуск игры'
+    case 'readyForCreateLobby':
+      return 'Готов к созданию лобби'
+    case 'createLobby':
+      return 'Создание лобби'
+    case 'waitingForPlayers':
+      return 'Ожидание игроков'
+    case 'lowSettings':
+      return 'Низкие настройки'
+    case 'changeName':
+      return 'Смена имени'
+    case 'inGame':
+      return 'В игре'
+    case 'debug':
+      return 'Отладка'
     default:
-      return "Неизвестно";
+      return 'Неизвестно'
   }
-};
+}
 
-const stateOptions: { value: typeof AllStates[number]; label: string }[] = [
-  { value: "booting", label: "Загрузка" },
-  { value: "android", label: "Android режим" },
-  { value: "launching", label: "Запуск игры" },
-  { value: "readyForCreateLobby", label: "Готов к созданию лобби" },
-  { value: "createLobby", label: "Создание лобби" },
-  { value: "waitingForPlayers", label: "Ожидание игроков" },
-  { value: "lowSettings", label: "Низкие настройки" },
-  { value: "changeName", label: "Смена имени" },
-  { value: "inGame", label: "В игре" },
-  { value: "debug", label: "Отладка" },
-];
+const stateOptions: { value: (typeof AllStates)[number]; label: string }[] = [
+  { value: 'booting', label: 'Загрузка' },
+  { value: 'android', label: 'Android режим' },
+  { value: 'launching', label: 'Запуск игры' },
+  { value: 'readyForCreateLobby', label: 'Готов к созданию лобби' },
+  { value: 'createLobby', label: 'Создание лобби' },
+  { value: 'waitingForPlayers', label: 'Ожидание игроков' },
+  { value: 'lowSettings', label: 'Низкие настройки' },
+  { value: 'changeName', label: 'Смена имени' },
+  { value: 'inGame', label: 'В игре' },
+  { value: 'debug', label: 'Отладка' },
+]
 
 export function RunnerDetail({ runner, onBack, serverKey }: RunnerDetailProps) {
-  const [isStreaming, setIsStreaming] = useState(false);
-  const [currentFrame, setCurrentFrame] = useState<string | null>(null);
-  const [isChangingState, setIsChangingState] = useState(false);
-  const [newState, setNewState] = useState<typeof AllStates[number]>(runner.state);
+  const [isStreaming, setIsStreaming] = useState(false)
+  const [currentFrame, setCurrentFrame] = useState<string | null>(null)
+  const [isChangingState, setIsChangingState] = useState(false)
+  const [newState, setNewState] = useState<(typeof AllStates)[number]>(runner.state)
 
-  const { socket, sendMessage } = useWebSocket({
+  const { socket } = useWebSocket({
     serverKey,
-  });
+  })
 
   useEffect(() => {
     if (socket) {
       // Listen for screen frames
       socket.on.screenFrame((data) => {
         if (data.runner === runner.name) {
-          setCurrentFrame(data.frame);
+          setCurrentFrame(data.frame)
         }
-      });
+      })
 
       // Listen for state change responses
       socket.on.changeRunnerState((data) => {
-        setIsChangingState(false);
+        setIsChangingState(false)
         if (data.success) {
-          console.log("State changed successfully");
+          console.log('State changed successfully')
         } else {
-          console.error("Failed to change state:", data.message);
+          console.error('Failed to change state:', data.message)
         }
-      });
+      })
     }
-  }, [socket, runner.name]);
+  }, [socket, runner.name])
 
   const handleStartStream = async () => {
     if (socket) {
-      const result = await socket.request.startScreenStream({ runner: runner.name });
+      const result = await socket.request.startScreenStream({ runner: runner.name })
       if (result.success) {
-        setIsStreaming(true);
-        console.log("Screen stream started");
+        setIsStreaming(true)
+        console.log('Screen stream started')
       } else {
-        console.error("Failed to start stream:", result.error);
+        console.error('Failed to start stream:', result.error)
       }
     }
-  };
+  }
 
   const handleStopStream = async () => {
     if (socket) {
-      const result = await socket.request.stopScreenStream({ runner: runner.name });
+      const result = await socket.request.stopScreenStream({ runner: runner.name })
       if (result.success) {
-        setIsStreaming(false);
-        setCurrentFrame(null);
-        console.log("Screen stream stopped");
+        setIsStreaming(false)
+        setCurrentFrame(null)
+        console.log('Screen stream stopped')
       } else {
-        console.error("Failed to stop stream:", result.error);
+        console.error('Failed to stop stream:', result.error)
       }
     }
-  };
+  }
 
-  const handleStateChange = async (newStateValue: typeof AllStates[number]) => {
-    setNewState(newStateValue);
-    setIsChangingState(true);
+  const handleStateChange = async (newStateValue: (typeof AllStates)[number]) => {
+    setNewState(newStateValue)
+    setIsChangingState(true)
 
     if (socket) {
       const result = await socket.request.changeRunnerState({
         runner: runner.name,
         state: newStateValue,
-      });
+      })
 
       if (result.success) {
-        console.log("State changed successfully");
+        console.log('State changed successfully')
       } else {
-        console.error("Failed to change state:", result.error);
-        setIsChangingState(false);
+        console.error('Failed to change state:', result.error)
+        setIsChangingState(false)
       }
     }
-  };
+  }
 
   const handleImageClick = async (event: React.MouseEvent<HTMLImageElement>) => {
     // Only allow clicks when runner is in debug state
-    if (runner.state !== "debug") {
-      console.log("Click ignored: Runner is not in debug state");
-      return;
+    if (runner.state !== 'debug') {
+      console.log('Click ignored: Runner is not in debug state')
+      return
     }
 
     if (!socket) {
-      console.error("Socket not available");
-      return;
+      console.error('Socket not available')
+      return
     }
 
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+    const rect = event.currentTarget.getBoundingClientRect()
+    const x = event.clientX - rect.left
+    const y = event.clientY - rect.top
 
     // Convert screen coordinates to phone coordinates
     // Assuming the image is scaled to fit the container
-    const imageWidth = event.currentTarget.naturalWidth;
-    const imageHeight = event.currentTarget.naturalHeight;
-    const displayWidth = rect.width;
-    const displayHeight = rect.height;
+    const imageWidth = event.currentTarget.naturalWidth
+    const imageHeight = event.currentTarget.naturalHeight
+    const displayWidth = rect.width
+    const displayHeight = rect.height
 
-    const scaleX = imageWidth / displayWidth;
-    const scaleY = imageHeight / displayHeight;
+    const scaleX = imageWidth / displayWidth
+    const scaleY = imageHeight / displayHeight
 
-    const phoneX = Math.round(x * scaleX);
-    const phoneY = Math.round(y * scaleY);
+    const phoneX = Math.round(x * scaleX)
+    const phoneY = Math.round(y * scaleY)
 
-    console.log(`Click at screen coordinates: (${x}, ${y}), phone coordinates: (${phoneX}, ${phoneY})`);
+    console.log(
+      `Click at screen coordinates: (${x}, ${y}), phone coordinates: (${phoneX}, ${phoneY})`
+    )
 
     try {
       const result = await socket.request.clickCommand({
         runner: runner.name,
         x: phoneX,
         y: phoneY,
-      });
+      })
 
       if (result.success) {
-        console.log("Click command sent successfully");
+        console.log('Click command sent successfully')
       } else {
-        console.error("Failed to send click command:", result.error);
+        console.error('Failed to send click command:', result.error)
       }
     } catch (error) {
-      console.error("Error sending click command:", error);
+      console.error('Error sending click command:', error)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -221,9 +228,7 @@ export function RunnerDetail({ runner, onBack, serverKey }: RunnerDetailProps) {
             </Button>
             <h1 className="text-3xl font-bold text-foreground">{runner.name}</h1>
             <div className={`w-4 h-4 rounded-full ${getStateColor(runner.state)}`} />
-            <Badge variant="secondary">
-              {getStateText(runner.state)}
-            </Badge>
+            <Badge variant="secondary">{getStateText(runner.state)}</Badge>
           </div>
         </div>
 
@@ -261,7 +266,7 @@ export function RunnerDetail({ runner, onBack, serverKey }: RunnerDetailProps) {
                     )}
                   </div>
                 </div>
-                {runner.state === "debug" && currentFrame && (
+                {runner.state === 'debug' && currentFrame && (
                   <div className="bg-blue-500 text-white px-3 py-2 rounded text-sm font-medium mt-2">
                     Режим отладки: кликните на экран
                   </div>
@@ -273,10 +278,11 @@ export function RunnerDetail({ runner, onBack, serverKey }: RunnerDetailProps) {
                     <img
                       src={`data:image/png;base64,${currentFrame}`}
                       alt="Runner screen"
-                      className={`max-w-full max-h-full object-contain rounded ${runner.state === "debug"
-                        ? "cursor-crosshair hover:opacity-90 transition-opacity"
-                        : "cursor-default"
-                        }`}
+                      className={`max-w-full max-h-full object-contain rounded ${
+                        runner.state === 'debug'
+                          ? 'cursor-crosshair hover:opacity-90 transition-opacity'
+                          : 'cursor-default'
+                      }`}
                       onClick={handleImageClick}
                     />
                   ) : (
@@ -332,9 +338,7 @@ export function RunnerDetail({ runner, onBack, serverKey }: RunnerDetailProps) {
                     </SelectContent>
                   </Select>
                   {isChangingState && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Изменение состояния...
-                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">Изменение состояния...</p>
                   )}
                 </div>
               </CardContent>
@@ -414,5 +418,5 @@ export function RunnerDetail({ runner, onBack, serverKey }: RunnerDetailProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }

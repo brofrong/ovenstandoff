@@ -1,11 +1,11 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 const envSchema = z.object({
   BUN_PUBLIC_WS_HOST: z.string(),
-});
+})
 
-console.log(import.meta.env);
+console.log(import.meta.env)
 
 export const env = envSchema.parse({
   BUN_PUBLIC_WS_HOST: 'wss://standoff.charlie.imt.zone',
-});
+})
