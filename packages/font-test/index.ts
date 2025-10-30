@@ -1,24 +1,22 @@
-import sharp from "sharp";
-import path from "path";
-import { coords } from "./src/coords";
-import { renderTextToImage, renderTextToImageFull, slimRenderTextToImage } from './src/generate';
-import { getImageOccurrence, getImagesSimilarity } from "@appium/opencv";
-import { findNameMSE } from "./src/find_name";
+import path from 'node:path'
+import sharp from 'sharp'
+import { findNameMSE } from './src/find_name'
+import { renderTextToImageFull } from './src/generate'
 
 const names = [
-  "Balagan",
-  "Midoria",
-  "Dan1x",
-  "I1mboo",
-  "Militriss",
-  "YT:DEHICUA",
-  "Pishtolet",
-  "Pen1lo",
-  "Sneppy",
-  "Funny",
-] as const;
+  'Balagan',
+  'Midoria',
+  'Dan1x',
+  'I1mboo',
+  'Militriss',
+  'YT:DEHICUA',
+  'Pishtolet',
+  'Pen1lo',
+  'Sneppy',
+  'Funny',
+] as const
 
-const imgPath = path.join(process.cwd(), `./img/img-names.png`);
+const imgPath = path.join(process.cwd(), `./img/img-names.png`)
 
 for (const name of names) {
   const renderedImage = await renderTextToImageFull({
@@ -26,11 +24,12 @@ for (const name of names) {
     fontSize: 12,
     fontColor: '#FFFFFF',
     backgroundColor: '#000000',
-  });
+  })
 
-  await sharp(renderedImage).blur(0.5).toFile(path.join(process.cwd(), `./img/render/${name}.png`));
+  await sharp(renderedImage)
+    .blur(0.5)
+    .toFile(path.join(process.cwd(), `./img/render/${name}.png`))
 }
-
 
 // let index = 0;
 // for (const coord of coords) {
@@ -55,7 +54,6 @@ for (const name of names) {
 //       outputPath: path.join(process.cwd(), `./img/render/${name}.png`),
 //     });
 
-
 //     const { visualization, score } = await getImageOccurrence(croppedImage, renderedImage, {
 //       threshold: 0.0,
 //       // visualize: true,
@@ -73,8 +71,7 @@ for (const name of names) {
 // }
 
 // Пример использования MSE функции
-console.log("Testing MSE function...");
-const testImg = await sharp(imgPath).toBuffer();
-const mseResult = await findNameMSE(testImg, names, 0);
-console.log("MSE Result:", mseResult);
-
+console.log('Testing MSE function...')
+const testImg = await sharp(imgPath).toBuffer()
+const mseResult = await findNameMSE(testImg, names, 0)
+console.log('MSE Result:', mseResult)

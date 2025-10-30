@@ -1,12 +1,12 @@
-import sharp from "sharp";
-import { anchors } from "./anchors";
-import type { Offset, AnchorKey } from "./img.type";
-import { getImagesSimilarity } from "@appium/opencv";
-import { loadBuffer } from "./memo-img";
-import { log } from "../utils/log";
-import type { Anchor } from "../anchors/anchor.type";
+import { getImagesSimilarity } from '@appium/opencv'
+import sharp from 'sharp'
+import type { Anchor } from '../anchors/anchor.type'
+import { log } from '../utils/log'
+import { anchors } from './anchors'
+import type { AnchorKey, Offset } from './img.type'
+import { loadBuffer } from './memo-img'
 
-const SIMILARITY_GOAL = 0.98;
+const SIMILARITY_GOAL = 0.98
 
 export async function findAnchor(
   targetImg: Buffer | string | null,
@@ -14,21 +14,16 @@ export async function findAnchor(
   debug: boolean = false
 ): Promise<boolean> {
   if (!targetImg) {
-    return false;
+    return false
   }
 
-  const anchor = anchors[anchorKey];
-  const similarity = await calculateSimilarityOpenCV(
-    targetImg,
-    anchor.img,
-    anchor.offset,
-    debug
-  );
+  const anchor = anchors[anchorKey]
+  const similarity = await calculateSimilarityOpenCV(targetImg, anchor.img, anchor.offset, debug)
 
   if (debug) {
-    log.info(`${anchorKey} similarity: ${similarity}`);
+    log.info(`${anchorKey} similarity: ${similarity}`)
   }
-  return similarity >= SIMILARITY_GOAL;
+  return similarity >= SIMILARITY_GOAL
 }
 
 export async function findAnchorV2(
@@ -37,22 +32,29 @@ export async function findAnchorV2(
   debug: boolean = false
 ): Promise<boolean> {
   if (!targetImg) {
-    return false;
+    return false
   }
   try {
     const similarity = await calculateSimilarityOpenCV(
       targetImg,
       anchor.img,
-      { left: anchor.offset.x, top: anchor.offset.y, width: anchor.offset.width, height: anchor.offset.height },
+      {
+        left: anchor.offset.x,
+        top: anchor.offset.y,
+        width: anchor.offset.width,
+        height: anchor.offset.height,
+      },
       debug
-    );
+    )
     if (debug) {
-      log.info(`${anchor.img} similarity: ${similarity}`);
+      log.info(`${anchor.img} similarity: ${similarity}`)
     }
-    return similarity >= SIMILARITY_GOAL;
+    return similarity >= SIMILARITY_GOAL
   } catch (error) {
-    log.error(`findAnchorV2: error: ${error} anchor: ${anchor.img} offset: ${JSON.stringify(anchor.offset)}`);
-    return false;
+    log.error(
+      `findAnchorV2: error: ${error} anchor: ${anchor.img} offset: ${JSON.stringify(anchor.offset)}`
+    )
+    return false
   }
 }
 
@@ -63,14 +65,14 @@ export async function calculateSimilarityOpenCV(
   debug: boolean = false
 ) {
   if (!bigImageBuffer || !smallImagePath) {
-    return 0;
+    return 0
   }
 
-  const smallImage = await loadBuffer(smallImagePath);
-  const bigImage = await loadBuffer(bigImageBuffer, offset);
+  const smallImage = await loadBuffer(smallImagePath)
+  const bigImage = await loadBuffer(bigImageBuffer, offset)
 
   if (!smallImage || !bigImage) {
-    return 0;
+    return 0
   }
 
   // * - `TM_CCOEFF`
@@ -80,15 +82,14 @@ export async function calculateSimilarityOpenCV(
   // * - `TM_SQDIFF`
   // * - `TM_SQDIFF_NORMED`
 
-  const { score, visualization } = await getImagesSimilarity(
-    bigImage,
-    smallImage,
-    { visualize: debug, method: "TM_CCORR_NORMED" }
-  );
+  const { score, visualization } = await getImagesSimilarity(bigImage, smallImage, {
+    visualize: debug,
+    method: 'TM_CCORR_NORMED',
+  })
 
   if (visualization) {
-    sharp(visualization).toFile(`./tmp/difference-${Date.now()}.png`);
+    sharp(visualization).toFile(`./tmp/difference-${Date.now()}.png`)
   }
 
-  return score;
+  return score
 }

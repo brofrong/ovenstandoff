@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 const envSchema = z.object({
   CH_TOKEN: z.string(),
@@ -8,6 +8,6 @@ const envSchema = z.object({
   EMAILS: z.string().transform((val) => val.split(',')),
   PASSWORDS: z.string().transform((val) => val.split(',')),
   MOCK: z.coerce.number().default(0),
-});
+})
 
-export const env = envSchema.parse(process.env);
+export const env = envSchema.parse(process.env)

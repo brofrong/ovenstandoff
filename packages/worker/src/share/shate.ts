@@ -1,64 +1,58 @@
-import clipboard from "clipboardy";
-import { wait } from "../utils/utils";
-import type { StateManager } from "../state-manager/state-manager";
-import { runSteps } from "../state-manager/steps";
+import clipboard from 'clipboardy'
+import type { StateManager } from '../state-manager/state-manager'
+import { runSteps } from '../state-manager/steps'
+import { wait } from '../utils/utils'
 
-const queue = new Map<
-  string,
-  { res: (ret: ReturnShare) => void; stateManager: StateManager }
->();
+const queue = new Map<string, { res: (ret: ReturnShare) => void; stateManager: StateManager }>()
 
-type ReturnShare = { code: string };
+type ReturnShare = { code: string }
 
-export async function share(
-  name: string,
-  stateManager: StateManager
-): Promise<ReturnShare> {
+export async function share(name: string, stateManager: StateManager): Promise<ReturnShare> {
   return new Promise(async (res, rej) => {
     if (queue.size) {
-      queue.set(name, { res, stateManager });
+      queue.set(name, { res, stateManager })
     } else {
-      queue.set(name, { res, stateManager });
+      queue.set(name, { res, stateManager })
       try {
-        shareSteps(name);
+        shareSteps(name)
       } catch (e) {
-        rej(e);
+        rej(e)
       }
     }
-  });
+  })
 }
 
 async function shareSteps(name: string) {
-  const queueObject = queue.get(name);
-  if (!queueObject) throw new Error(`share queue don't have ${name}`);
-  const { stateManager, res } = queueObject;
+  const queueObject = queue.get(name)
+  if (!queueObject) throw new Error(`share queue don't have ${name}`)
+  const { stateManager, res } = queueObject
 
   await runSteps(
     [
       // { step: "find", data: { x: "share_room_code" } },
-      { step: "click", data: { x: 1238, y: 94 } },
-      { step: "wait", data: { amount: 500 } },
-      { step: "click", data: { x: 99, y: 588 } }, // click away
+      { step: 'click', data: { x: 1238, y: 94 } },
+      { step: 'wait', data: { amount: 500 } },
+      { step: 'click', data: { x: 99, y: 588 } }, // click away
     ],
     stateManager
-  );
+  )
 
-  const code = await clipboard.read();
+  const code = await clipboard.read()
 
-  if (code === "clear") {
-    await wait(2000);
-    return await shareSteps(name);
+  if (code === 'clear') {
+    await wait(2000)
+    return await shareSteps(name)
   }
 
-  clipboard.writeSync("clear");
+  clipboard.writeSync('clear')
 
-  res({ code });
-  await wait(2000);
-  queue.delete(name);
+  res({ code })
+  await wait(2000)
+  queue.delete(name)
   if (queue.size) {
-    const nextName = queue.keys().next();
+    const nextName = queue.keys().next()
     if (nextName.value) {
-      shareSteps(nextName.value);
+      shareSteps(nextName.value)
     }
   }
 }

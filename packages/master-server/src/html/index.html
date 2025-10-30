@@ -540,12 +540,12 @@
 
         ws = new WebSocket(wsUrl);
 
-        ws.onopen = function () {
+        ws.onopen = () => {
           console.log('WebSocket соединение установлено');
           loadRunners();
         };
 
-        ws.onmessage = function (event) {
+        ws.onmessage = (event) => {
           console.log('Получено сообщение:', event.data);
           try {
             const message = JSON.parse(event.data);
@@ -558,13 +558,13 @@
           }
         };
 
-        ws.onclose = function () {
+        ws.onclose = () => {
           console.log('WebSocket соединение закрыто');
           // Попытка переподключения через 5 секунд
           setTimeout(initWebSocket, 5000);
         };
 
-        ws.onerror = function (error) {
+        ws.onerror = (error) => {
           console.error('WebSocket ошибка:', error);
         };
       }
@@ -692,7 +692,7 @@
       }
 
       // Завершение матча
-      async function endMatch(runnerName, winner) {
+      async function _endMatch(runnerName, winner) {
         if (!authToken) return;
 
         try {
@@ -728,7 +728,7 @@
       }
 
       // Отправка кода матча
-      async function sendMatchCode(runnerName) {
+      async function _sendMatchCode(runnerName) {
         if (!authToken) return;
 
         try {
@@ -766,14 +766,14 @@
       loadRunners();
 
       // Инициализация при загрузке страницы
-      document.addEventListener('DOMContentLoaded', function () {
+      document.addEventListener('DOMContentLoaded', () => {
         checkSavedToken();
       });
 
       // Обработка Enter в поле ввода токена
-      document.addEventListener('DOMContentLoaded', function () {
+      document.addEventListener('DOMContentLoaded', () => {
         const tokenInput = document.getElementById('secret-token');
-        tokenInput.addEventListener('keypress', function (e) {
+        tokenInput.addEventListener('keypress', (e) => {
           if (e.key === 'Enter') {
             authenticate();
           }

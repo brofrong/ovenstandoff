@@ -1,2 +1,2 @@
-export * from './src/rest';
-export * from './src/ws';
+export * from './src/rest'
+export * from './src/ws'

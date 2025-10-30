@@ -1,12 +1,11 @@
-import { expect, test } from "bun:test";
-import { findAnchor, findAnchorV2 } from "./img-proccesing";
-import type { AnchorKey } from "./img.type";
-import { anchors } from "../anchors";
+import { expect, test } from 'bun:test'
+import { anchors } from '../anchors'
+import { findAnchorV2 } from './img-proccesing'
 
-test("Find start game", async () => {
-  const ret = await findAnchorV2("./test-img/1761565793413.png", anchors.mainMenuPlay);
-  expect(ret).toBe(true);
-});
+test('Find start game', async () => {
+  const ret = await findAnchorV2('./test-img/1761565793413.png', anchors.mainMenuPlay)
+  expect(ret).toBe(true)
+})
 
 // test("Find menu group", async () => {
 //   const ret = await findAnchor(

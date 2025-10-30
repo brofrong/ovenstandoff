@@ -1,4 +1,4 @@
-import { setup } from "./src/setup";
+import { setup } from './src/setup'
 
-console.log('start setup');
-await setup();
+console.log('start setup')
+await setup()

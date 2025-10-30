@@ -1,9 +1,9 @@
 export type Anchor = {
-  img: string;
+  img: string
   offset: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  };
-};
+    x: number
+    y: number
+    width: number
+    height: number
+  }
+}

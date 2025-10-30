@@ -49,7 +49,9 @@ export const coords = [
     topLeft: { x: 692, y: 172 },
     bottomRight: { x: 775, y: 189 },
   },
-] as const;
+] as const
 
-
-export const canvasSize = { width: coords[0].bottomRight.x - coords[0].topLeft.x, height: coords[0].bottomRight.y - coords[0].topLeft.y } as const;
+export const canvasSize = {
+  width: coords[0].bottomRight.x - coords[0].topLeft.x,
+  height: coords[0].bottomRight.y - coords[0].topLeft.y,
+} as const

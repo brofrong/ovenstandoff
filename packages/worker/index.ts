@@ -1,5 +1,3 @@
-import { startWorker } from "./src/core/worket";
+import { startWorker } from './src/core/worket'
 
-
-
-startWorker();
+startWorker()

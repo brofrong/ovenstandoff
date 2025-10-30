@@ -1,20 +1,20 @@
-import { createContract } from "@ovenstandoff/type-safe-socket";
-import { z } from "zod";
-import { gameMaps } from './rest';
+import { createContract } from '@ovenstandoff/type-safe-socket'
+import { z } from 'zod'
+import { gameMaps } from './rest'
 
 export const AllStates = [
-  "booting",
-  "android",
-  "launching",
-  "readyForCreateLobby",
-  "createLobby",
-  "waitingForPlayers",
-  "lowSettings",
-  "changeName",
-  "inGame",
-  "debug",
-  "updateGame",
-] as const;
+  'booting',
+  'android',
+  'launching',
+  'readyForCreateLobby',
+  'createLobby',
+  'waitingForPlayers',
+  'lowSettings',
+  'changeName',
+  'inGame',
+  'debug',
+  'updateGame',
+] as const
 
 export const runner = z.object({
   name: z.string(),
@@ -23,12 +23,14 @@ export const runner = z.object({
   callbackUrl: z.string().nullable(),
   code: z.string().nullable(),
   map: z.enum(gameMaps).nullable(),
-  team: z.object({
-    ct: z.array(z.string()),
-    t: z.array(z.string()),
-  }).nullable(),
-});
-export type Runner = z.infer<typeof runner>;
+  team: z
+    .object({
+      ct: z.array(z.string()),
+      t: z.array(z.string()),
+    })
+    .nullable(),
+})
+export type Runner = z.infer<typeof runner>
 
 export const wsContract = createContract({
   registerRunners: {
@@ -61,10 +63,10 @@ export const wsContract = createContract({
   },
   matchEnded: {
     client: z.object({
-      winner: z.enum(["ct", "t", "error", "player dont connect to the lobby"]),
+      winner: z.enum(['ct', 't', 'error', 'player dont connect to the lobby']),
     }),
     server: z.object({
-      winner: z.enum(["ct", "t", "error", "player dont connect to the lobby"]),
+      winner: z.enum(['ct', 't', 'error', 'player dont connect to the lobby']),
     }),
   },
   // front-end
@@ -182,4 +184,4 @@ export const wsContract = createContract({
     client: z.string(),
     server: z.string(),
   },
-});
+})

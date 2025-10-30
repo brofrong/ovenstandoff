@@ -1,11 +1,11 @@
-import Fastify from 'fastify';
-import { initServer } from '@ts-rest/fastify';
-import { masterContract } from '@ovenstandoff/contract';
-import { initDB } from './register-client';
-import { env } from './utils/env';
-import { startMatchHandler, registerClientsHandler } from './services/match';
-import { enableMockWorkers } from './mock';
-import path from 'path';
+import path from 'node:path'
+import { masterContract } from '@ovenstandoff/contract'
+import { initServer } from '@ts-rest/fastify'
+import Fastify from 'fastify'
+import { enableMockWorkers } from './mock'
+import { initDB } from './register-client'
+import { registerClientsHandler, startMatchHandler } from './services/match'
+import { env } from './utils/env'
 
 const app = Fastify({
   logger: {
@@ -23,52 +23,48 @@ const app = Fastify({
           options: {
             destination: path.join(process.cwd(), 'logs/master-server.log'),
           },
-        }
-      ]
-    }
+        },
+      ],
+    },
   },
-},
-);
-const s = initServer();
+})
+const s = initServer()
 
-
-initDB();
-enableMockWorkers();
+initDB()
+enableMockWorkers()
 
 const router = s.router(masterContract, {
   startMatch: async (req) => await startMatchHandler(req),
   registerClients: async (req) => await registerClientsHandler(req),
-});
+})
 
-
-app.register(s.plugin(router));
+app.register(s.plugin(router))
 
 // Настройка статических файлов из front-end/dist
 await app.register(import('@fastify/static'), {
   root: path.join(__dirname, '../../front-end/dist'),
   prefix: '/',
-});
+})
 
 // Fallback для SPA - все неизвестные маршруты возвращают index.html
 app.setNotFoundHandler((request, reply) => {
   // Если это API запрос, возвращаем 404
   if (request.url.startsWith('/api/')) {
-    reply.code(404).send({ error: 'Not Found' });
-    return;
+    reply.code(404).send({ error: 'Not Found' })
+    return
   }
-
   // Для всех остальных запросов возвращаем index.html (SPA fallback)
   // Используем типизированный sendFile после регистрации @fastify/static
-  (reply as any).sendFile('index.html');
-});
+  ;(reply as any).sendFile('index.html')
+})
 
 const start = async () => {
   try {
-    await app.listen({ port: env.PORT });
-    console.log(`Server is running on port ${env.PORT}`);
+    await app.listen({ port: env.PORT })
+    console.log(`Server is running on port ${env.PORT}`)
   } catch (err) {
-    app.log.error(err);
-    process.exit(1);
+    app.log.error(err)
+    process.exit(1)
   }
-};
-start();
+}
+start()

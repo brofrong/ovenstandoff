@@ -1,9 +1,9 @@
-import { anchors } from "./anchors";
+import type { anchors } from './anchors'
 
 export type Offset = {
-  left: number;
-  top: number;
-  width: number;
-  height: number;
-};
-export type AnchorKey = keyof typeof anchors;
+  left: number
+  top: number
+  width: number
+  height: number
+}
+export type AnchorKey = keyof typeof anchors

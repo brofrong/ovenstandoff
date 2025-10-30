@@ -1,2 +1,2 @@
-export * from './contract';
-export * from './create-socket';
+export * from './contract'
+export * from './create-socket'

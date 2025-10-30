@@ -5,12 +5,15 @@
   "private": true,
   "scripts": {
     "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write ."
   },
   "devDependencies": {
     "@types/bun": "^1.2.21",
     "better-sqlite3": "^12.2.0",
-    "drizzle-kit": "^0.31.4"
+    "drizzle-kit": "^0.31.4",
+    "@biomejs/biome": "^2.3.2"
   },
   "peerDependencies": {
     "typescript": "^5"

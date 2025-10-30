@@ -1,5 +1,5 @@
-import pino from "pino";
-import path from 'path';
+import path from 'node:path'
+import pino from 'pino'
 
 export const log = pino({
   transport: {
@@ -16,7 +16,7 @@ export const log = pino({
         options: {
           destination: path.join(process.cwd(), 'logs/master-ws.log'),
         },
-      }
-    ]
-  }
-});
+      },
+    ],
+  },
+})

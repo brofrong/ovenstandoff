@@ -1,0 +1,38 @@
+.image-uploader {
+  padding: 60px;
+}
+
+.upload-area {
+  border: 3px dashed #667eea;
+  border-radius: 16px;
+  padding: 80px 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+}
+
+.upload-area:hover {
+  border-color: #764ba2;
+  background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+}
+
+.upload-icon {
+  color: #667eea;
+  margin: 0 auto 20px;
+  display: inline-block;
+}
+
+.upload-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.upload-hint {
+  font-size: 1rem;
+  color: #666;
+}
