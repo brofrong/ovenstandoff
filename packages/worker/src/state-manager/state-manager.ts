@@ -1,7 +1,7 @@
-import path from 'node:path'
 import type { GameMap } from '@ovenstandoff/contract'
 import type { State } from '@ovenstandoff/shared'
 import type { ConfigWithRunners } from '@ovenstandoff/shared/src/config.type'
+import path from 'node:path'
 import sharp from 'sharp'
 import { anchors } from '../anchors'
 import { getCoordinatesByMap } from '../data/coordinates'
@@ -15,6 +15,7 @@ import { wait } from '../utils/utils'
 import { client } from '../ws/ws'
 import { runSteps } from './steps'
 import { waitForPlayers } from './waiting-for-players'
+import { Faker } from '@faker-js/faker'
 
 export type Teams = {
   ct: string[]
@@ -23,7 +24,11 @@ export type Teams = {
 
 type ActionRet = { wait: number | null }
 
-export const activeStateManagers: StateManager[] = []
+export const activeStateManagers: StateManager[] = [];
+
+export const faker = new Faker({
+  locale: ['en', 'ru'],
+});
 
 export class StateManager {
   public ldPlayer: LDPlayer
@@ -36,13 +41,16 @@ export class StateManager {
   public matchID: string | null = null
   public callbackUrl: string | null = null
   public config: ConfigWithRunners
+  public hasGFlag: boolean = false
+  public GName: string | null = null // G flag name
 
   // Screen streaming properties
-  private isStreaming: boolean = false
+  private isStreaming: boolean = false;
 
-  constructor(ldPlayer: LDPlayer, config: ConfigWithRunners) {
+  constructor(ldPlayer: LDPlayer, config: ConfigWithRunners, hasGFlag: boolean = false) {
     this.ldPlayer = ldPlayer
     this.config = config
+    this.hasGFlag = hasGFlag
     activeStateManagers.push(this)
   }
 
@@ -132,6 +140,7 @@ export class StateManager {
       debug: this.debug,
       inGame: this.inGame,
       updateGame: this.readyForCreateLobby,
+      pictureName: this.pictureName,
     }
 
     return keyToRunners[this.state].bind(this)()
@@ -316,6 +325,13 @@ export class StateManager {
       },
       'readyForCreateLobby'
     )
+
+    if (this.hasGFlag) {
+      this.GName = Math.random() > 0.5 ? faker.person.firstName() : faker.person.lastName();
+      this.setState('pictureName');
+      return { wait: 0 }
+    }
+
     return { wait: null }
   }
 
@@ -440,7 +456,10 @@ export class StateManager {
   }
 
   private async changeName(): Promise<ActionRet> {
-    const runnerName = this.ldPlayer.name
+    let runnerName = this.ldPlayer.name
+    if (this.hasGFlag && this.GName) {
+      runnerName = this.GName
+    }
     await runSteps(
       [
         { step: 'click', data: { x: 377, y: 97 } },
@@ -454,6 +473,11 @@ export class StateManager {
 
     await updateRunnerInfo(this.config, this.ldPlayer.name, false, true)
     this.setState('launching')
+
+
+    if (this.hasGFlag) {
+      this.setState('pictureName')
+    }
     return { wait: 0 }
   }
 
@@ -469,7 +493,7 @@ export class StateManager {
       return this.matchEnded()
     }
 
-    if (await findAnchor(this.currentImg, 'in_game_ct_win')) {
+    if (await findAnchorV2(this.currentImg, anchors.inGameCtWin)) {
       log.info('match ended ct win')
       client?.send.matchEnded({
         winner: 'ct',
@@ -477,14 +501,14 @@ export class StateManager {
       return this.matchEnded()
     }
 
-    if (await findAnchor(this.currentImg, 'in_game_return_match')) {
-      await runSteps([{ step: 'click', data: { anchorKey: 'in_game_return_match' } }], this)
+    if (await findAnchorV2(this.currentImg, anchors.mainMenuBackToMatch)) {
+      await runSteps([{ step: 'click', data: { anchor: anchors.mainMenuBackToMatch } }], this)
       return { wait: 1000 }
     }
 
     if (
-      (await findAnchor(this.currentImg, 'in_game_in_menu')) &&
-      (await findAnchor(this.currentImg, 'play'))
+      (await findAnchorV2(this.currentImg, anchors.mainMenuLobby)) &&
+      (await findAnchorV2(this.currentImg, anchors.mainMenuPlay))
     ) {
       log.info('match ended with error')
       client?.send.matchEnded({
@@ -526,6 +550,33 @@ export class StateManager {
     client?.send.lobbyCode({
       code,
     })
+  }
+
+  private async pictureName(): Promise<ActionRet> {
+    await this.takeScreenshot()
+    await runSteps([
+      { step: 'click', data: { anchor: anchors.mainMenuLobby } },
+      { step: 'click', data: { anchor: anchors.lobbyCreateCustomLobby } },
+      { step: 'wait', data: { amount: 1000 } },
+    ], this);
+
+    const img = await this.takeScreenshot();
+    if (!img) {
+      this.setState('launching');
+      return { wait: 0 }
+    }
+
+    const name = this.GName;
+
+    await sharp(img).extract({
+      left: 457,
+      top: 69,
+      width: 113,
+      height: 90,
+    }).toFile(`./img/${name}-${Date.now()}.png`);
+
+    this.setState('launching');
+    return { wait: 0 }
   }
 
   // Screen streaming methods

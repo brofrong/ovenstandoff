@@ -18,6 +18,7 @@ export const AllStates = [
   'inGame',
   'debug',
   'updateGame',
+  'pictureName',
 ] as const
 
 export type State = (typeof AllStates)[number]

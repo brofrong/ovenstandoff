@@ -30,10 +30,10 @@ async function isMatchExpired(stateManager: StateManager): Promise<boolean> {
     // write message before leave lobby
     await runSteps(
       [
-        { step: 'click', data: { x: 432, y: 507 } },
+        { step: 'click', data: { x: 668, y: 683 } },
         { step: 'write', data: { text: 'Player dont connect to the lobby' } },
         { step: 'wait', data: { amount: 1000 } },
-        { step: 'click', data: { x: 564, y: 249 } },
+        { step: 'click', data: { x: 306, y: 672 } },
       ],
       stateManager
     )
@@ -60,7 +60,7 @@ async function kickSpectators(stateManager: StateManager) {
           { step: 'click', data: { anchor: slot } },
           {
             step: 'clickOccurrence',
-            data: { anchor:  },
+            data: { anchor: anchors.lobbyKick },
           },
         ],
         stateManager
@@ -118,17 +118,31 @@ function getNamesFromTeam(teams: Teams): string[] {
 }
 
 export const TEAM_COLORS_COORDS: Record<(typeof slotsNames)[number], { x: number; y: number }> = {
-  free_slot_1: { x: 422, y: 56 },
-  free_slot_2: { x: 509, y: 56 },
-  free_slot_3: { x: 597, y: 56 },
-  free_slot_4: { x: 685, y: 56 },
-  free_slot_5: { x: 770, y: 56 },
+  free_slot_1: { x: 560, y: 73 },
+  free_slot_2: { x: 676, y: 73 },
+  free_slot_3: { x: 792, y: 73 },
+  free_slot_4: { x: 910, y: 73 },
+  free_slot_5: { x: 1026, y: 73 },
 
-  free_slot_6: { x: 422, y: 128 },
-  free_slot_7: { x: 509, y: 128 },
-  free_slot_8: { x: 597, y: 128 },
-  free_slot_9: { x: 685, y: 128 },
-  free_slot_10: { x: 770, y: 128 },
+  free_slot_6: { x: 560, y: 166 },
+  free_slot_7: { x: 676, y: 166 },
+  free_slot_8: { x: 792, y: 166 },
+  free_slot_9: { x: 910, y: 166 },
+  free_slot_10: { x: 1026, y: 166 },
+}
+
+export const USER_NAME_COORDS: Record<(typeof slotsNames)[number], { x: number; y: number, width: number; height: number }> = {
+  free_slot_1: { x: 457, y: 138, width: 112, height: 20 },
+  free_slot_2: { x: 572, y: 138, width: 112, height: 20 },
+  free_slot_3: { x: 689, y: 138, width: 112, height: 20 },
+  free_slot_4: { x: 805, y: 138, width: 112, height: 20 },
+  free_slot_5: { x: 921, y: 138, width: 112, height: 20 },
+
+  free_slot_6: { x: 457, y: 234, width: 112, height: 20 },
+  free_slot_7: { x: 572, y: 234, width: 112, height: 20 },
+  free_slot_8: { x: 689, y: 234, width: 112, height: 20 },
+  free_slot_9: { x: 805, y: 234, width: 112, height: 20 },
+  free_slot_10: { x: 921, y: 234, width: 112, height: 20 },
 }
 
 async function getJoinedPlayersCountKickPlayersNotInList(
@@ -159,10 +173,10 @@ async function getJoinedPlayersCountKickPlayersNotInList(
       //kick player
       await runSteps(
         [
-          { step: 'click', data: { anchorKey: slotName } },
+          { step: 'click', data: USER_NAME_COORDS[slotName] },
           {
             step: 'clickOccurrence',
-            data: { anchorKey: 'wait_for_payers_spectator_kick' },
+            data: { anchor: anchors.lobbyKick },
           },
         ],
         stateManager
@@ -174,12 +188,12 @@ async function getJoinedPlayersCountKickPlayersNotInList(
     const currentTeam = await isPlayerInTeam(slotName, stateManager.currentImg)
     if (currentTeam !== playerTeam) {
       const teamKey =
-        playerTeam === 'ct' ? 'wait_for_payers_move_to_ct' : 'wait_for_payers_move_to_t'
+        playerTeam === 'ct' ? anchors.lobbyToCT : anchors.lobbyToTR;
       try {
         await runSteps(
           [
-            { step: 'click', data: { anchorKey: slotName } },
-            { step: 'clickOccurrence', data: { anchorKey: teamKey } },
+            { step: 'click', data: USER_NAME_COORDS[slotName] },
+            { step: 'clickOccurrence', data: { anchor: teamKey } },
             { step: 'click', data: { x: 30, y: 342 } }, // Нейтральный клик, что бы убрать все контекстные окна если они есть по какой либо причине
           ],
           stateManager
@@ -199,13 +213,13 @@ async function getJoinedPlayersCountKickPlayersNotInList(
 async function startGame(stateManager: StateManager) {
   await runSteps(
     [
-      { step: 'click', data: { x: 433, y: 507 } },
+      { step: 'click', data: { x: 642, y: 681 } },
       { step: 'wait', data: { amount: 1000 } },
       { step: 'write', data: { text: 'Start match in 5 seconds' } },
       { step: 'wait', data: { amount: 1000 } },
-      { step: 'click', data: { x: 865, y: 494 } },
+      { step: 'click', data: { x: 1166, y: 659 } },
       { step: 'wait', data: { amount: 1000 } },
-      { step: 'click', data: { x: 865, y: 494 } },
+      { step: 'click', data: { x: 1166, y: 659 } },
     ],
     stateManager
   )

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Font Test - Eurostile</title>
+  <style>
+    @font-face {
+      font-family: 'Eurostile';
+      src: url('./font/Eurostile-Reg.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: #1a1a1a;
+      color: white;
+      font-family: 'Eurostile', Arial, sans-serif;
+    }
+
+    .text {
+      font-size: 48px;
+      margin-bottom: 30px;
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      position: absolute;
+      cursor: move;
+      user-select: none;
+      z-index: 10;
+      transition: transform 0.1s ease;
+    }
+
+    .text:hover {
+      transform: scale(1.05);
+    }
+
+    .text.dragging {
+      transform: scale(1.1);
+      opacity: 0.8;
+    }
+
+    .image-container {
+      max-width: 80%;
+      max-height: 60%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .image-container img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .controls {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid #333;
+    }
+
+    .controls label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .controls input,
+    .controls select {
+      width: 100%;
+      padding: 5px;
+      margin-bottom: 10px;
+      background: #333;
+      color: white;
+      border: 1px solid #555;
+      border-radius: 5px;
+    }
+
+    .sample-text {
+      font-size: 24px;
+      margin-top: 20px;
+      text-align: center;
+      color: #888;
+    }
+
+    .font-test {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid #333;
+      max-width: 300px;
+    }
+
+    .font-test h3 {
+      margin-top: 0;
+      color: #fff;
+      font-size: 18px;
+    }
+
+    .font-test .test-line {
+      margin: 10px 0;
+      font-size: 16px;
+    }
+
+    .font-test .bebas {
+      font-family: 'Eurostile', Arial, sans-serif;
+    }
+
+    .font-test .system {
+      font-family: Arial, sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="controls">
+    <label for="fontSize">Font Size:</label>
+    <input type="range" id="fontSize" min="1" max="100" value="48">
+
+    <label for="textColor">Text Color:</label>
+    <input type="color" id="textColor" value="#ffffff">
+
+    <label for="sampleText">Sample Text:</label>
+    <input type="text" id="sampleText" value="Test Font Match" placeholder="Enter text to test">
+
+    <button id="resetPosition"
+      style="width: 100%; padding: 10px; background: #333; color: white; border: 1px solid #555; border-radius: 5px; cursor: pointer; margin-top: 10px;">
+      Reset Position
+    </button>
+
+    <div class="sample-text" id="sampleTextDisplay">Test Font Match</div>
+  </div>
+
+  <div class="text" id="mainText">Test Font Match</div>
+
+  <div class="image-container">
+    <img src="../worker/test-img/img-names-4.png" alt="Test Image">
+  </div>
+
+  <script>
+    const fontSizeSlider = document.getElementById('fontSize');
+    const textColorInput = document.getElementById('textColor');
+    const sampleTextInput = document.getElementById('sampleText');
+    const mainText = document.getElementById('mainText');
+    const sampleTextDisplay = document.getElementById('sampleTextDisplay');
+    const resetPositionBtn = document.getElementById('resetPosition');
+
+    // Устанавливаем начальную позицию текста
+    mainText.style.left = '50%';
+    mainText.style.top = '20%';
+    mainText.style.transform = 'translate(-50%, -50%)';
+
+    // Drag & Drop функциональность
+    let isDragging = false;
+    let dragOffset = { x: 0, y: 0 };
+
+    mainText.addEventListener('mousedown', function (e) {
+      isDragging = true;
+      mainText.classList.add('dragging');
+
+      const rect = mainText.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      dragOffset.x = e.clientX - centerX;
+      dragOffset.y = e.clientY - centerY;
+
+      e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', function (e) {
+      if (!isDragging) return;
+
+      const x = e.clientX - dragOffset.x;
+      const y = e.clientY - dragOffset.y;
+
+      mainText.style.left = x + 'px';
+      mainText.style.top = y + 'px';
+      mainText.style.transform = 'translate(-50%, -50%)';
+    });
+
+    document.addEventListener('mouseup', function () {
+      if (isDragging) {
+        isDragging = false;
+        mainText.classList.remove('dragging');
+      }
+    });
+
+    // Touch events для мобильных устройств
+    mainText.addEventListener('touchstart', function (e) {
+      isDragging = true;
+      mainText.classList.add('dragging');
+
+      const touch = e.touches[0];
+      const rect = mainText.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      dragOffset.x = touch.clientX - centerX;
+      dragOffset.y = touch.clientY - centerY;
+
+      e.preventDefault();
+    });
+
+    document.addEventListener('touchmove', function (e) {
+      if (!isDragging) return;
+
+      const touch = e.touches[0];
+      const x = touch.clientX - dragOffset.x;
+      const y = touch.clientY - dragOffset.y;
+
+      mainText.style.left = x + 'px';
+      mainText.style.top = y + 'px';
+      mainText.style.transform = 'translate(-50%, -50%)';
+
+      e.preventDefault();
+    });
+
+    document.addEventListener('touchend', function () {
+      if (isDragging) {
+        isDragging = false;
+        mainText.classList.remove('dragging');
+      }
+    });
+
+    // Остальные функции управления
+    fontSizeSlider.addEventListener('input', function () {
+      const size = this.value + 'px';
+      mainText.style.fontSize = size;
+      sampleTextDisplay.style.fontSize = (this.value * 0.5) + 'px';
+    });
+
+    textColorInput.addEventListener('input', function () {
+      mainText.style.color = this.value;
+      sampleTextDisplay.style.color = this.value;
+    });
+
+    sampleTextInput.addEventListener('input', function () {
+      mainText.textContent = this.value || 'Test Font Match';
+      sampleTextDisplay.textContent = this.value || 'Test Font Match';
+    });
+
+    resetPositionBtn.addEventListener('click', function () {
+      mainText.style.left = '50%';
+      mainText.style.top = '20%';
+      mainText.style.transform = 'translate(-50%, -50%)';
+    });
+  </script>
+</body>
+
+</html>

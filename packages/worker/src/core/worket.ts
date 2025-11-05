@@ -5,7 +5,7 @@ import { StateManager } from '../state-manager/state-manager'
 import { initStorage } from '../storage/init-storage'
 import { connectToMasterServer } from '../ws/ws'
 
-export async function startWorker() {
+export async function startWorker(hasGFlag: boolean = false) {
   const config = await getConfig()
   const LD = getLd(config)
 
@@ -13,10 +13,10 @@ export async function startWorker() {
   // stop all active ld clients
   // await LD.quitall();
 
-  await startEmulators()
+  await startEmulators(hasGFlag)
 
   // create state managers
-  const StateManagers = activeLdPlayers.map((player) => new StateManager(player, config))
+  const StateManagers = activeLdPlayers.map((player) => new StateManager(player, config, hasGFlag))
 
   // run players
   StateManagers.forEach((manager) => manager.run())
@@ -26,11 +26,11 @@ export async function startWorker() {
   await connectToMasterServer(config)
 }
 
-async function startEmulators() {
+async function startEmulators(hasGFlag: boolean = false) {
   let emulators
   const config = await getConfig()
   const LD = getLd(config)
-  if (config.debug) {
+  if (config.debug || hasGFlag) {
     emulators = (await LD.list2()).filter((it) => it.name !== 'clear').slice(0, 1)
   } else {
     emulators = (await LD.list2()).filter((it) => it.name !== 'clear')

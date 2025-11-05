@@ -14,6 +14,7 @@ export const AllStates = [
   'inGame',
   'debug',
   'updateGame',
+  'pictureName',
 ] as const
 
 export const runner = z.object({

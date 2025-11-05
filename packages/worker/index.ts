@@ -1,3 +1,4 @@
 import { startWorker } from './src/core/worket'
 
-startWorker()
+const hasGFlag = process.argv.includes('-g')
+startWorker(hasGFlag)

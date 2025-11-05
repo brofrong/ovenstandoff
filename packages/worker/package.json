@@ -9,6 +9,7 @@
     "lint:fix": "biome check --write ."
   },
   "dependencies": {
+    "@faker-js/faker": "^10.1.0",
     "@ovenstandoff/contract": "workspace:*",
     "@ovenstandoff/shared": "workspace:*",
     "@ovenstandoff/type-safe-socket": "workspace:*",
