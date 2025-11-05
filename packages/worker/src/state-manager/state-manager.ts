@@ -557,6 +557,7 @@ export class StateManager {
     await this.takeScreenshot()
     await runSteps([
       { step: 'click', data: { anchor: anchors.mainMenuLobby } },
+      { step: "wait", data: { amount: 1000 } },
       { step: 'click', data: { anchor: anchors.lobbyCreateCustomLobby } },
       { step: 'wait', data: { amount: 1000 } },
     ], this);
