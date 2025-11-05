@@ -1,3 +1,4 @@
+import { Faker, en, ru } from '@faker-js/faker'
 import type { GameMap } from '@ovenstandoff/contract'
 import type { State } from '@ovenstandoff/shared'
 import type { ConfigWithRunners } from '@ovenstandoff/shared/src/config.type'
@@ -15,7 +16,6 @@ import { wait } from '../utils/utils'
 import { client } from '../ws/ws'
 import { runSteps } from './steps'
 import { waitForPlayers } from './waiting-for-players'
-import { Faker } from '@faker-js/faker'
 
 export type Teams = {
   ct: string[]
@@ -27,7 +27,7 @@ type ActionRet = { wait: number | null }
 export const activeStateManagers: StateManager[] = [];
 
 export const faker = new Faker({
-  locale: ['en', 'ru'],
+  locale: [en, ru],
 });
 
 export class StateManager {
