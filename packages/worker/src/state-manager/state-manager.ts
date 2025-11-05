@@ -41,7 +41,7 @@ export class StateManager {
   public matchID: string | null = null
   public callbackUrl: string | null = null
   public config: ConfigWithRunners
-  public hasGFlag: boolean = false
+  public hasGFlag: boolean = false;
   public GName: string | null = null // G flag name
 
   // Screen streaming properties
@@ -328,7 +328,8 @@ export class StateManager {
 
     if (this.hasGFlag) {
       this.GName = Math.random() > 0.5 ? faker.person.firstName() : faker.person.lastName();
-      this.setState('pictureName');
+      log.info(`${this.ldPlayer.name} GName: ${this.GName}`)
+      this.setState('changeName');
       return { wait: 0 }
     }
 
