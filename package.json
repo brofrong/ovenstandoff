@@ -11,6 +11,7 @@
   },
   "scripts": {
     "worker": "bun ./packages/worker/index.ts",
+    "gName": "bun ./packages/worker/index.ts -g",
     "setup": "bun ./packages/setup/index.ts",
     "db:push": "drizzle-kit push --config=./packages/shared/drizzle.config.ts",
     "db:pushW": "drizzle-kit push --dialect=sqlite --schema=./packages/shared/src/config.schema.ts --url=./db/main.sqlite",
