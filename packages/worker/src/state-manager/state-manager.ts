@@ -573,7 +573,7 @@ export class StateManager {
       top: 69,
       width: 113,
       height: 90,
-    }).toFile(`./img/${name}-${Date.now()}.png`);
+    }).toFile(`./img/gnames/${name}-${Date.now()}.png`);
 
     this.setState('launching');
     return { wait: 0 }
