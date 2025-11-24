@@ -1,4 +1,4 @@
-import { Faker, en, ru } from '@faker-js/faker'
+import { Faker, en, mergeLocales, ru } from '@faker-js/faker'
 import type { GameMap } from '@ovenstandoff/contract'
 import type { State } from '@ovenstandoff/shared'
 import type { ConfigWithRunners } from '@ovenstandoff/shared/src/config.type'
@@ -26,8 +26,10 @@ type ActionRet = { wait: number | null }
 
 export const activeStateManagers: StateManager[] = [];
 
+const ru_en_with_fallbacks = mergeLocales([ru, en]);
+
 export const faker = new Faker({
-  locale: [en, ru],
+  locale: ru_en_with_fallbacks,
 });
 
 export class StateManager {
