@@ -329,7 +329,8 @@ export class StateManager {
     )
 
     if (this.hasGFlag) {
-      this.GName = Math.random() > 0.5 ? faker.person.firstName() : faker.person.lastName();
+      this.GName = 'Про_Геймер';
+      // this.GName = Math.random() > 0.5 ? faker.person.firstName() : faker.person.lastName();
       log.info(`${this.ldPlayer.name} GName: ${this.GName}`)
       this.setState('changeName');
       return { wait: 0 }
