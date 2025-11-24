@@ -1,4 +1,4 @@
-import { Faker, en, mergeLocales, ru } from '@faker-js/faker'
+import { Faker, en } from '@faker-js/faker'
 import type { GameMap } from '@ovenstandoff/contract'
 import type { State } from '@ovenstandoff/shared'
 import type { ConfigWithRunners } from '@ovenstandoff/shared/src/config.type'
@@ -26,10 +26,8 @@ type ActionRet = { wait: number | null }
 
 export const activeStateManagers: StateManager[] = [];
 
-const ru_en_with_fallbacks = mergeLocales([ru, en]);
-
 export const faker = new Faker({
-  locale: ru_en_with_fallbacks,
+  locale: en,
 });
 
 export class StateManager {
@@ -329,8 +327,7 @@ export class StateManager {
     )
 
     if (this.hasGFlag) {
-      this.GName = 'Про_Геймер';
-      // this.GName = Math.random() > 0.5 ? faker.person.firstName() : faker.person.lastName();
+      this.GName = Math.random() > 0.5 ? faker.person.firstName() : faker.person.lastName();
       log.info(`${this.ldPlayer.name} GName: ${this.GName}`)
       this.setState('changeName');
       return { wait: 0 }
