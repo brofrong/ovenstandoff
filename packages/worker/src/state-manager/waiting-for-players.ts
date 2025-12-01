@@ -1,6 +1,6 @@
 import sharp from 'sharp'
 import { findAnchor, findAnchorV2 } from '../img-proccesing/img-proccesing'
-import { getPlayerName } from '../img-proccesing/player-name-detection'
+import { getPlayerName, playerNameCoords } from '../img-proccesing/player-name-detection';
 import { log } from '../utils/log'
 import { fuzzySearchNames } from '../utils/utils'
 import { client } from '../ws/ws'
@@ -118,32 +118,22 @@ function getNamesFromTeam(teams: Teams): string[] {
 }
 
 export const TEAM_COLORS_COORDS: Record<(typeof slotsNames)[number], { x: number; y: number }> = {
-  free_slot_1: { x: 560, y: 73 },
-  free_slot_2: { x: 676, y: 73 },
-  free_slot_3: { x: 792, y: 73 },
-  free_slot_4: { x: 910, y: 73 },
-  free_slot_5: { x: 1026, y: 73 },
+  free_slot_1: { x: 702, y: 90 },
+  free_slot_2: { x: 846, y: 90 },
+  free_slot_3: { x: 993, y: 90 },
+  free_slot_4: { x: 1137, y: 90 },
+  free_slot_5: { x: 1284, y: 90 },
 
-  free_slot_6: { x: 560, y: 166 },
-  free_slot_7: { x: 676, y: 166 },
-  free_slot_8: { x: 792, y: 166 },
-  free_slot_9: { x: 910, y: 166 },
-  free_slot_10: { x: 1026, y: 166 },
-}
+  free_slot_6: { x: 702, y: 207 },
+  free_slot_7: { x: 846, y: 207 },
+  free_slot_8: { x: 993, y: 207 },
+  free_slot_9: { x: 1137, y: 207 },
+  free_slot_10: { x: 1284, y: 207 },
+} as const;
 
-export const USER_NAME_COORDS: Record<(typeof slotsNames)[number], { x: number; y: number, width: number; height: number }> = {
-  free_slot_1: { x: 457, y: 138, width: 112, height: 20 },
-  free_slot_2: { x: 572, y: 138, width: 112, height: 20 },
-  free_slot_3: { x: 689, y: 138, width: 112, height: 20 },
-  free_slot_4: { x: 805, y: 138, width: 112, height: 20 },
-  free_slot_5: { x: 921, y: 138, width: 112, height: 20 },
 
-  free_slot_6: { x: 457, y: 234, width: 112, height: 20 },
-  free_slot_7: { x: 572, y: 234, width: 112, height: 20 },
-  free_slot_8: { x: 689, y: 234, width: 112, height: 20 },
-  free_slot_9: { x: 805, y: 234, width: 112, height: 20 },
-  free_slot_10: { x: 921, y: 234, width: 112, height: 20 },
-}
+
+export const USER_NAME_COORDS = playerNameCoords;
 
 async function getJoinedPlayersCountKickPlayersNotInList(
   stateManager: StateManager
