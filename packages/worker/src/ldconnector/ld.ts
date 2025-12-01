@@ -73,7 +73,7 @@ export class LDPlayer {
   public waitForStart() {
     return new Promise(async (resolve, reject) => {
       for (let times = 0; times < 60; times++) {
-        const activity = await this.LD.adb(this.name, 'shell dumpsys activity')
+        const activity = await this.LD.adb(this.name, 'shell dumpsys activity');
         if (activity) {
           return resolve(true)
         }

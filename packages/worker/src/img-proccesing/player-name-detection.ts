@@ -3,8 +3,8 @@ import { createWorker, PSM } from 'tesseract.js'
 import { loadBuffer } from './memo-img'
 
 const playerNameBoxSizes = {
-  width: 83,
-  height: 14,
+  width: 111,
+  height: 22,
 } as const
 
 export const teamCoords = {
@@ -65,11 +65,14 @@ await engWorker.setParameters({
 })
 
 export async function getPlayerName(
-  slotName: string,
+  slotName: string | 'gnames',
   img: string | Buffer | null,
   config: { debug: boolean } = { debug: false }
 ) {
-  const coord = playerNameCoords[slotName]
+  let coord = playerNameCoords[slotName];
+  if (!coord && slotName === 'gnames') {
+    coord = { x: 0, y: 68 };
+  }
   if (!coord) {
     return null
   }

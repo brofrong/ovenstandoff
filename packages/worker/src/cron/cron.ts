@@ -1,22 +1,47 @@
-import { getConfig } from '@ovenstandoff/shared'
-import { CronJob } from 'cron'
+import { getConfig } from '@ovenstandoff/shared';
+import { CronJob } from 'cron';
 import {
   downloadLastVersion,
   STANDOFF2_DOWNLOAD_URL,
-} from '../../../setup/src/download-last-version'
-import { unzip } from '../../../setup/src/unzip'
-import { getLd } from '../../../shared/src/ld-command'
-import { startWorker } from '../core/worket'
-import { activeStateManagers, type StateManager } from '../state-manager/state-manager'
-import { log } from '../utils/log'
-import { wait } from '../utils/utils'
+} from '../../../setup/src/download-last-version';
+import { unzip } from '../../../setup/src/unzip';
+import { getLd } from '../../../shared/src/ld-command';
+import { startWorker } from '../core/worket';
+import { activeStateManagers, type StateManager } from '../state-manager/state-manager';
+import { log } from '../utils/log';
+import { wait } from '../utils/utils';
 
 export function startCron() {
   if (process.env.FORSE_UPDATE === 'true') {
     updateGameJob()
   }
-  new CronJob('0 0 3 * * *', updateGameJob, null, true, 'Europe/Moscow')
-  new CronJob('0 0 4 * * *', restartWorkers, null, true, 'Europe/Moscow')
+  new CronJob('0 0 3 * * *', updateGameJob, null, true, 'Europe/Moscow');
+  new CronJob('0 0 4 * * *', restartWorkers, null, true, 'Europe/Moscow');
+  new CronJob('0 */5 * * * *', healthCheck, null, true, 'Europe/Moscow');
+}
+
+async function healthCheck() {
+  const results = await Promise.allSettled(activeStateManagers.map((manager) => healthCheckEmulator(manager)));
+  for (const [index, result] of results.entries()) {
+    if (result.status === 'fulfilled') {
+      log.info(`health check success ${result.value.ldPlayer.name}`)
+    } else {
+      if (activeStateManagers[index]) {
+        await activeStateManagers[index].reboot();
+      }
+      log.error(`health check failed ${result.reason}`)
+    }
+  }
+}
+
+async function healthCheckEmulator(emulator: StateManager): Promise<StateManager> {
+  const activity = await emulator.ldPlayer.adb('shell dumpsys activity');
+  if (!activity || !activity.includes('com.axlebolt.standoff2')) {
+    await emulator.reboot();
+    return emulator;
+  }
+
+  return emulator;
 }
 
 let updateInProgress = false

@@ -43,6 +43,7 @@ export class StateManager {
   public config: ConfigWithRunners
   public hasGFlag: boolean = false;
   public GName: string | null = null // G flag name
+  private dropFrameCount: number = 0;
 
   // Screen streaming properties
   private isStreaming: boolean = false;
@@ -67,6 +68,7 @@ export class StateManager {
       //TODO: make half check if screen multiple times is empty
       console.warn(`${this.ldPlayer.name} img timeout`)
       this.currentImg = ''
+      this.dropFrameCount++;
     }
 
     // If streaming is active, send the screenshot frame
@@ -77,7 +79,16 @@ export class StateManager {
       })
     }
 
-    return this.currentImg
+
+    if (this.currentImg === '') {
+      this.dropFrameCount = 0;
+    };
+
+    if (this.dropFrameCount > 6) {
+      throw new Error('Emulator is not responding, cant take screenshot');
+    }
+
+    return this.currentImg;
   }
 
   private async sendScreenFrameIfStreaming(): Promise<void> {
@@ -174,8 +185,8 @@ export class StateManager {
         setTimeout(this.run.bind(this), neededAction.wait)
       }
     } catch (e) {
-      log.error(`${this.ldPlayer.name}, error: ${e}`)
-      this.ldPlayer.killapp('com.axlebolt.standoff2')
+      log.error(`${this.ldPlayer.name}, error: ${e}`);
+      this.reboot();
       this.setState('android')
     }
   }
@@ -541,6 +552,17 @@ export class StateManager {
     this.map = null
     this.setState('launching')
     return { wait: 1000 }
+  }
+
+  public async reboot(): Promise<ActionRet> {
+    this.ldPlayer.quit()
+    await wait(15000)
+    this.ldPlayer.start()
+    await this.ldPlayer.waitForStart()
+    log.info(`rebooted emulator ${this.ldPlayer.name}`);
+    await wait(5000)
+    this.setState('booting');
+    return { wait: 0 }
   }
 
   private setCode(code: string) {

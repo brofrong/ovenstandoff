@@ -73,9 +73,6 @@ export function getLd(config: Config) {
       return ret
     },
     adb: (name: string, command: string) => {
-      // command = command.replace(/\\/g, "\\\\");
-      // command = command.replace(/\//g, "\/\/");
-
       return $`${config.ldPath}\\ldconsole.exe adb --name ${name} --command "${command}"`.text()
     },
     screencap: async (name: string) => {

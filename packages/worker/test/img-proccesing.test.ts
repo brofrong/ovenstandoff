@@ -1,6 +1,6 @@
 import { expect, test } from 'bun:test'
-import { anchors } from '../anchors'
-import { findAnchorV2 } from './img-proccesing'
+import { anchors } from '../src/anchors'
+import { findAnchorV2 } from '../src/img-proccesing/img-proccesing'
 
 test('Find start game', async () => {
   const ret = await findAnchorV2('./test-img/1761565793413.png', anchors.mainMenuPlay)
