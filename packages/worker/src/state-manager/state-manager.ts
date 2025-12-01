@@ -555,13 +555,17 @@ export class StateManager {
   }
 
   public async reboot(): Promise<ActionRet> {
+    const oldState = this.state;
+    this.setState('booting');
     this.ldPlayer.quit()
     await wait(15000)
     this.ldPlayer.start()
     await this.ldPlayer.waitForStart()
     log.info(`rebooted emulator ${this.ldPlayer.name}`);
     await wait(5000)
-    this.setState('booting');
+    if (oldState === 'readyForCreateLobby') {
+      this.run();
+    }
     return { wait: 0 }
   }
 
