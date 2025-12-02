@@ -188,11 +188,16 @@ async function getJoinedPlayersCountKickPlayersNotInList(
           ],
           stateManager
         );
-        continue;
       } catch (_error) {
         console.error('catch error in move to team')
         continue;
       }
+    }
+
+    const checkTeam = await isPlayerInTeam(slotName, stateManager.currentImg)
+    if (checkTeam !== playerTeam) {
+      console.error('checkTeam !== playerTeam', checkTeam, playerTeam);
+      continue;
     }
 
     playersJoined.push(playerName)
