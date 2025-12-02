@@ -207,7 +207,7 @@ async function startGame(stateManager: StateManager) {
       { step: 'wait', data: { amount: 1000 } },
       { step: 'write', data: { text: 'Start match in 5 seconds' } },
       { step: 'wait', data: { amount: 1000 } },
-      { step: 'click', data: { x: 1166, y: 659 } },
+      { step: 'click', data: { x: 1238, y: 683 } },
       { step: 'wait', data: { amount: 1000 } },
       { step: 'click', data: { x: 1166, y: 659 } },
     ],
