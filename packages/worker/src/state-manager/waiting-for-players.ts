@@ -148,7 +148,8 @@ async function getJoinedPlayersCountKickPlayersNotInList(
     log.info(`slot: ${slot} is cheking`)
     await stateManager.takeScreenshot()
     const slotName = slot
-    const imgPlayerName = await getPlayerName(slotName, stateManager.currentImg)
+    const imgPlayerName = await getPlayerName(slotName, stateManager.currentImg);
+    console.log('imgPlayerName', imgPlayerName);
 
     const imgPlayerNameLength = (imgPlayerName?.ru.length ?? 0) + (imgPlayerName?.eng.length ?? 0)
 
