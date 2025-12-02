@@ -83,9 +83,9 @@ export const slotsNames = [
 ] as const
 
 const CT_COLOR = [131, 154, 202]
-const T_COLOR = [233, 175, 76]
+const T_COLOR = [233, 175, 77]
 
-async function isPlayerInTeam(slot: (typeof slotsNames)[number], img: string | Buffer | null) {
+export async function isPlayerInTeam(slot: (typeof slotsNames)[number], img: string | Buffer | null) {
   const coords = TEAM_COLORS_COORDS[slot]
   if (!img) {
     return false
@@ -120,14 +120,14 @@ function getNamesFromTeam(teams: Teams): string[] {
 export const TEAM_COLORS_COORDS: Record<(typeof slotsNames)[number], { x: number; y: number }> = {
   free_slot_1: { x: 560, y: 72 },
   free_slot_2: { x: 677, y: 72 },
-  free_slot_3: { x: 795, y: 72 },
-  free_slot_4: { x: 912, y: 72 },
+  free_slot_3: { x: 793, y: 72 },
+  free_slot_4: { x: 910, y: 72 },
   free_slot_5: { x: 1025, y: 72 },
 
   free_slot_6: { x: 560, y: 167 },
   free_slot_7: { x: 677, y: 167 },
-  free_slot_8: { x: 795, y: 167 },
-  free_slot_9: { x: 912, y: 167 },
+  free_slot_8: { x: 793, y: 167 },
+  free_slot_9: { x: 910, y: 167 },
   free_slot_10: { x: 1025, y: 167 },
 } as const;
 
