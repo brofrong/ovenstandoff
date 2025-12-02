@@ -83,7 +83,7 @@ export const slotsNames = [
 ] as const
 
 const CT_COLOR = [131, 154, 202]
-const T_COLOR = [233, 175, 77]
+const T_COLOR = [233, 175, 76]
 
 async function isPlayerInTeam(slot: (typeof slotsNames)[number], img: string | Buffer | null) {
   const coords = TEAM_COLORS_COORDS[slot]
@@ -96,7 +96,7 @@ async function isPlayerInTeam(slot: (typeof slotsNames)[number], img: string | B
     return false
   }
 
-  const bufferIndex = (coords.x + coords.y * 960) * 4
+  const bufferIndex = (coords.x + coords.y * 1280) * 4
   const r = imgBuffer[bufferIndex]
   const g = imgBuffer[bufferIndex + 1]
   const b = imgBuffer[bufferIndex + 2]
@@ -118,11 +118,11 @@ function getNamesFromTeam(teams: Teams): string[] {
 }
 
 export const TEAM_COLORS_COORDS: Record<(typeof slotsNames)[number], { x: number; y: number }> = {
-  free_slot_1: { x: 560, y: 74 },
-  free_slot_2: { x: 677, y: 74 },
-  free_slot_3: { x: 795, y: 74 },
-  free_slot_4: { x: 912, y: 74 },
-  free_slot_5: { x: 1025, y: 74 },
+  free_slot_1: { x: 560, y: 72 },
+  free_slot_2: { x: 677, y: 72 },
+  free_slot_3: { x: 795, y: 72 },
+  free_slot_4: { x: 912, y: 72 },
+  free_slot_5: { x: 1025, y: 72 },
 
   free_slot_6: { x: 560, y: 167 },
   free_slot_7: { x: 677, y: 167 },
