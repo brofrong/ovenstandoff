@@ -32,7 +32,7 @@ export async function findAnchorV2(
   debug: boolean = false
 ): Promise<boolean> {
   if (!targetImg) {
-    return false
+    return false;
   }
   try {
     const similarity = await calculateSimilarityOpenCV(

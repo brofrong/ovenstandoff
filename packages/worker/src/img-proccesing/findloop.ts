@@ -13,6 +13,7 @@ export async function findLoop(
   return new Promise(async (res) => {
     for (let i = 0; i < _options.times; i++) {
       const screenShot = await stateManager.takeScreenshot()
+
       if (await findAnchorV2(screenShot, anchor)) {
         return res({ sucess: true, error: false })
       }
