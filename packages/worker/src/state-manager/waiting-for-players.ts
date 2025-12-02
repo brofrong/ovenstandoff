@@ -33,7 +33,7 @@ async function isMatchExpired(stateManager: StateManager): Promise<boolean> {
         { step: 'click', data: { x: 668, y: 683 } },
         { step: 'write', data: { text: 'Player dont connect to the lobby' } },
         { step: 'wait', data: { amount: 1000 } },
-        { step: 'click', data: { x: 306, y: 672 } },
+        { step: 'click', data: { x: 646, y: 485 } },
       ],
       stateManager
     )
@@ -131,8 +131,6 @@ export const TEAM_COLORS_COORDS: Record<(typeof slotsNames)[number], { x: number
   free_slot_10: { x: 1025, y: 167 },
 } as const;
 
-
-
 export const USER_NAME_COORDS = playerNameCoords;
 
 async function getJoinedPlayersCountKickPlayersNotInList(
@@ -186,7 +184,7 @@ async function getJoinedPlayersCountKickPlayersNotInList(
           [
             { step: 'click', data: { x: USER_NAME_COORDS[slotName]?.x, y: USER_NAME_COORDS[slotName]?.y } },
             { step: 'clickOccurrence', data: { anchor: teamKey } },
-            { step: 'click', data: { x: 30, y: 342 } }, // Нейтральный клик, что бы убрать все контекстные окна если они есть по какой либо причине
+            { step: 'click', data: { x: 687, y: 459 } }, // Нейтральный клик, что бы убрать все контекстные окна если они есть по какой либо причине
           ],
           stateManager
         )
