@@ -1,12 +1,12 @@
-import sharp from 'sharp'
-import { findAnchor, findAnchorV2 } from '../img-proccesing/img-proccesing'
+import sharp from 'sharp';
+import { anchors } from '../anchors';
+import { findAnchorV2 } from '../img-proccesing/img-proccesing';
 import { getPlayerName, playerNameCoords } from '../img-proccesing/player-name-detection';
-import { log } from '../utils/log'
-import { fuzzySearchNames } from '../utils/utils'
-import { client } from '../ws/ws'
-import type { StateManager, Teams } from './state-manager'
-import { runSteps } from './steps'
-import { anchors } from '../anchors'
+import { log } from '../utils/log';
+import { fuzzySearchNames } from '../utils/utils';
+import { client } from '../ws/ws';
+import type { StateManager, Teams } from './state-manager';
+import { runSteps } from './steps';
 
 async function isMatchExpired(stateManager: StateManager): Promise<boolean> {
   // check if match startedTimestamp is set
@@ -163,7 +163,7 @@ async function getJoinedPlayersCountKickPlayersNotInList(
       //kick player
       await runSteps(
         [
-          { step: 'click', data: USER_NAME_COORDS[slotName] },
+          { step: 'click', data: { x: USER_NAME_COORDS[slotName]?.x, y: USER_NAME_COORDS[slotName]?.y } },
           {
             step: 'clickOccurrence',
             data: { anchor: anchors.lobbyKick },
@@ -182,7 +182,7 @@ async function getJoinedPlayersCountKickPlayersNotInList(
       try {
         await runSteps(
           [
-            { step: 'click', data: USER_NAME_COORDS[slotName] },
+            { step: 'click', data: { x: USER_NAME_COORDS[slotName]?.x, y: USER_NAME_COORDS[slotName]?.y } },
             { step: 'clickOccurrence', data: { anchor: teamKey } },
             { step: 'click', data: { x: 30, y: 342 } }, // Нейтральный клик, что бы убрать все контекстные окна если они есть по какой либо причине
           ],
