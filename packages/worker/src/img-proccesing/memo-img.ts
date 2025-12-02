@@ -38,7 +38,7 @@ function saveToMemo(imgPath: string, buffer: Buffer<ArrayBufferLike>, offset?: O
 
 function offsetToString(offset?: Offset): string {
   if (!offset) return ''
-  return `${offset.height}-${offset.left}-${offset.top}-${offset.width}`
+  return `${offset.left}-${offset.top}-${offset.width}-${offset.height}`
 }
 
 export async function loadBuffer(
@@ -77,6 +77,15 @@ export async function loadBuffer(
 
     return imgPath;
   } catch (error) {
+    if (typeof imgPath === 'string') {
+      console.error(`Error loading buffer: ${imgPath}`)
+    }
+    if (imgPath instanceof Buffer) {
+      //get img width and height using sharp
+      const meta = await sharp(imgPath).metadata()
+      console.error(`Error loading metadata: ${meta.width} ${meta.height}`)
+    }
+
     console.error(`Error loading buffer: offset ${offsetToString(offset)}, ${error}`)
     return null
   }
