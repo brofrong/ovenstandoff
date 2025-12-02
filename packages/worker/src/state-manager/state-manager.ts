@@ -389,7 +389,7 @@ export class StateManager {
         { step: 'click', data: { x: 1206, y: 689 } }, // apply
 
         //move self to spectator
-        { step: 'find', data: { anchor: anchors.lobbySettings } },
+        // { step: 'find', data: { anchor: anchors.lobbySettings } },
         { step: 'click', data: { x: 512, y: 102 } },
         { step: 'wait', data: { amount: 500 } },
         { step: 'click', data: { anchor: anchors.lobbyToSpectator } },
