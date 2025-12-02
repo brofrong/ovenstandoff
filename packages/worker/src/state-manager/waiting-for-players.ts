@@ -158,7 +158,8 @@ async function getJoinedPlayersCountKickPlayersNotInList(
       continue
     }
 
-    const playerName = fuzzySearchNames(imgPlayerName, allPlayers)
+    const playerName = fuzzySearchNames(imgPlayerName, allPlayers);
+    console.log('find name', slotName, 'playerName', playerName);
 
     if (!playerName) {
       //kick player
