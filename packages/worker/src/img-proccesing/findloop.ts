@@ -17,7 +17,7 @@ export async function findLoop(
       if (await findAnchorV2(screenShot, anchor)) {
         return res({ sucess: true, error: false })
       }
-      await wait(_options.wait)
+      await wait(1000);
     }
 
     return res({ sucess: false, error: true })

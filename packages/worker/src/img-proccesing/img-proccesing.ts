@@ -54,7 +54,7 @@ export async function findAnchorV2(
     log.error(
       `findAnchorV2: error: ${error} anchor: ${anchor.img} offset: ${JSON.stringify(anchor.offset)}`
     )
-    return false
+    return false;
   }
 }
 

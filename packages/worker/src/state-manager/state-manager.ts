@@ -80,7 +80,7 @@ export class StateManager {
     }
 
 
-    if (this.currentImg === '') {
+    if (this.currentImg !== '') {
       this.dropFrameCount = 0;
     };
 
