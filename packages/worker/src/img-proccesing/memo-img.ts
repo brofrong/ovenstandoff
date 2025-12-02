@@ -45,32 +45,39 @@ export async function loadBuffer(
   imgPath: string | Buffer | null,
   offset?: Offset
 ): Promise<Buffer<ArrayBufferLike> | null> {
-  let buffer: Buffer
+  try {
 
-  if (!imgPath) {
+
+    let buffer: Buffer
+
+    if (!imgPath) {
+      return null
+    }
+
+    if (typeof imgPath === 'string') {
+      const memo = getFromMemo(imgPath, offset)
+      if (memo) {
+        return memo
+      }
+      // Загружаем большое изображение
+      if (offset) {
+        buffer = await sharp(await sharp(imgPath).extract(offset).toBuffer()).toBuffer()
+      } else {
+        buffer = await sharp(imgPath).toBuffer()
+      }
+      if (typeof imgPath === 'string') {
+        saveToMemo(imgPath, buffer)
+      }
+      return buffer
+    }
+
+    if (offset) {
+      return sharp(await sharp(imgPath).extract(offset).toBuffer()).toBuffer()
+    }
+
+    return imgPath;
+  } catch (error) {
+    console.error(`Error loading buffer: offset ${offsetToString(offset)}, ${error}`)
     return null
   }
-
-  if (typeof imgPath === 'string') {
-    const memo = getFromMemo(imgPath, offset)
-    if (memo) {
-      return memo
-    }
-    // Загружаем большое изображение
-    if (offset) {
-      buffer = await sharp(await sharp(imgPath).extract(offset).toBuffer()).toBuffer()
-    } else {
-      buffer = await sharp(imgPath).toBuffer()
-    }
-    if (typeof imgPath === 'string') {
-      saveToMemo(imgPath, buffer)
-    }
-    return buffer
-  }
-
-  if (offset) {
-    return sharp(await sharp(imgPath).extract(offset).toBuffer()).toBuffer()
-  }
-
-  return imgPath
 }

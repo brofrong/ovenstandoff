@@ -187,7 +187,8 @@ export class StateManager {
     } catch (e) {
       log.error(`${this.ldPlayer.name}, error: ${e}`);
       this.reboot();
-      this.setState('android')
+      this.setState('android');
+      await this.run();
     }
   }
 
@@ -389,7 +390,8 @@ export class StateManager {
         { step: 'click', data: { x: 1206, y: 689 } }, // apply
 
         //move self to spectator
-        // { step: 'find', data: { anchor: anchors.lobbySettings } },
+        { step: 'wait', data: { amount: 1000 } },
+        { step: 'find', data: { anchor: anchors.lobbySettings } },
         { step: 'click', data: { x: 512, y: 102 } },
         { step: 'wait', data: { amount: 500 } },
         { step: 'click', data: { anchor: anchors.lobbyToSpectator } },

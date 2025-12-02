@@ -142,7 +142,7 @@ async function getJoinedPlayersCountKickPlayersNotInList(
   const playersJoined: string[] = []
 
   // get occupied slots to check
-  const occupiedSlots = slotsNames
+  const occupiedSlots = slotsNames;
 
   for (const slot of occupiedSlots) {
     log.info(`slot: ${slot} is cheking`)
