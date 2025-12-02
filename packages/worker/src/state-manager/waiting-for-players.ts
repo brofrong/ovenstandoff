@@ -118,17 +118,17 @@ function getNamesFromTeam(teams: Teams): string[] {
 }
 
 export const TEAM_COLORS_COORDS: Record<(typeof slotsNames)[number], { x: number; y: number }> = {
-  free_slot_1: { x: 702, y: 90 },
-  free_slot_2: { x: 846, y: 90 },
-  free_slot_3: { x: 993, y: 90 },
-  free_slot_4: { x: 1137, y: 90 },
-  free_slot_5: { x: 1284, y: 90 },
+  free_slot_1: { x: 560, y: 74 },
+  free_slot_2: { x: 677, y: 74 },
+  free_slot_3: { x: 795, y: 74 },
+  free_slot_4: { x: 912, y: 74 },
+  free_slot_5: { x: 1025, y: 74 },
 
-  free_slot_6: { x: 702, y: 207 },
-  free_slot_7: { x: 846, y: 207 },
-  free_slot_8: { x: 993, y: 207 },
-  free_slot_9: { x: 1137, y: 207 },
-  free_slot_10: { x: 1284, y: 207 },
+  free_slot_6: { x: 560, y: 167 },
+  free_slot_7: { x: 677, y: 167 },
+  free_slot_8: { x: 795, y: 167 },
+  free_slot_9: { x: 912, y: 167 },
+  free_slot_10: { x: 1025, y: 167 },
 } as const;
 
 

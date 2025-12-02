@@ -3,22 +3,22 @@ import { createWorker, PSM } from 'tesseract.js'
 import { loadBuffer } from './memo-img'
 
 const playerNameBoxSizes = {
-  width: 129,
-  height: 27,
+  width: 109,
+  height: 24,
 } as const
 
 export const playerNameCoords: Record<string, { x: number; y: number, width: number; height: number }> = {
-  free_slot_1: { x: 577, y: 171, width: 129, height: 27 },
-  free_slot_2: { x: 721, y: 171, width: 129, height: 27 },
-  free_slot_3: { x: 867, y: 171, width: 129, height: 27 },
-  free_slot_4: { x: 1011, y: 171, width: 129, height: 27 },
-  free_slot_5: { x: 1158, y: 171, width: 129, height: 27 },
+  free_slot_1: { x: 459, y: 136, width: 109, height: 24 },
+  free_slot_2: { x: 575, y: 136, width: 109, height: 24 },
+  free_slot_3: { x: 690, y: 136, width: 109, height: 24 },
+  free_slot_4: { x: 806, y: 136, width: 109, height: 24 },
+  free_slot_5: { x: 923, y: 136, width: 109, height: 24 },
 
-  free_slot_6: { x: 577, y: 287, width: 129, height: 27 },
-  free_slot_7: { x: 721, y: 287, width: 129, height: 27 },
-  free_slot_8: { x: 867, y: 287, width: 129, height: 27 },
-  free_slot_9: { x: 1011, y: 287, width: 129, height: 27 },
-  free_slot_10: { x: 1158, y: 287, width: 129, height: 27 },
+  free_slot_6: { x: 459, y: 227, width: 109, height: 24 },
+  free_slot_7: { x: 575, y: 227, width: 109, height: 24 },
+  free_slot_8: { x: 690, y: 227, width: 109, height: 24 },
+  free_slot_9: { x: 806, y: 227, width: 109, height: 24 },
+  free_slot_10: { x: 923, y: 227, width: 109, height: 24 },
 }
 
 const rusWorker = await createWorker(['rus'], 2)
