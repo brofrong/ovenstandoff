@@ -187,10 +187,11 @@ async function getJoinedPlayersCountKickPlayersNotInList(
             { step: 'click', data: { x: 687, y: 459 } }, // Нейтральный клик, что бы убрать все контекстные окна если они есть по какой либо причине
           ],
           stateManager
-        )
+        );
+        continue;
       } catch (_error) {
         console.error('catch error in move to team')
-        continue
+        continue;
       }
     }
 
