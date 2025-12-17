@@ -499,14 +499,14 @@ export class StateManager {
   private async inGame(): Promise<ActionRet> {
     await this.takeScreenshot()
 
-    // if (await findAnchorV2(this.currentImg, anchors.inGameCtWin)) {
-    //   log.info('match ended t win')
-    //   client?.send.matchEnded({
-    //     winner: 't',
-    //   })
+    if (await findAnchorV2(this.currentImg, anchors.inGameTWin)) {
+      log.info('match ended t win')
+      client?.send.matchEnded({
+        winner: 't',
+      })
 
-    //   return this.matchEnded()
-    // }
+      return this.matchEnded()
+    }
 
     if (await findAnchorV2(this.currentImg, anchors.inGameCtWin)) {
       log.info('match ended ct win')
