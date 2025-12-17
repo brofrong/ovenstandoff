@@ -378,6 +378,7 @@ export class StateManager {
         // { step: "click", data: { x: 586, y: 292 } }, // длительность подготовки к раунду увеличить
 
         // debug settings
+        { step: 'wait', data: { amount: 2000 } },
         { step: 'click', data: getLobbySettingsCoordinates('limit_team_selection', 'increase') },
         { step: 'click', data: getLobbySettingsCoordinates('warmup_time', 'decrease') },
         { step: 'click', data: getLobbySettingsCoordinates('warmup_time', 'decrease') },
