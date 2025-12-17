@@ -9,36 +9,36 @@ import type { StateManager } from './state-manager'
 
 type Step =
   | {
-      step: 'find'
-      data: { anchor: Anchor }
-    }
+    step: 'find'
+    data: { anchor: Anchor }
+  }
   | {
-      step: 'click'
-      data: { anchor?: Anchor; x?: number; y?: number }
-    }
+    step: 'click'
+    data: { anchor?: Anchor; x?: number; y?: number }
+  }
   | {
-      step: 'write'
-      data: { text: string }
-    }
+    step: 'write'
+    data: { text: string }
+  }
   | {
-      step: 'share'
-      data: { setCode: (code: string) => void }
-    }
+    step: 'share'
+    data: { setCode: (code: string, runnerName: string) => void }
+  }
   | {
-      step: 'wait'
-      data: { amount: number }
-    }
+    step: 'wait'
+    data: { amount: number }
+  }
   | {
-      step: 'clickOccurrence'
-      data: { anchor: Anchor }
-    }
+    step: 'clickOccurrence'
+    data: { anchor: Anchor }
+  }
   | {
-      step: 'deleteAllText'
-    }
+    step: 'deleteAllText'
+  }
   | {
-      step: 'swipe'
-      data: { x1: number; y1: number; x2: number; y2: number; duration: number }
-    }
+    step: 'swipe'
+    data: { x1: number; y1: number; x2: number; y2: number; duration: number }
+  }
 
 type Steps = Step[]
 
@@ -62,7 +62,7 @@ export async function runSteps(steps: Steps, stateManager: StateManager) {
         break
       case 'share': {
         const shareRet = await share(stateManager.ldPlayer.name, stateManager)
-        step.data.setCode(shareRet.code)
+        step.data.setCode(shareRet.code, stateManager.ldPlayer.name)
         break
       }
       case 'wait': {

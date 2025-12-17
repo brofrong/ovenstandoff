@@ -582,13 +582,13 @@ export class StateManager {
     return { wait: 0 }
   }
 
-  private setCode(code: string) {
+  private setCode(code: string, runnerName: string) {
     this.lobbyCode = code
     if (!client) {
       console.error('Client not found!!!!!!!!')
     }
     client?.send.lobbyCode({
-      runnerName: this.ldPlayer.name,
+      runnerName,
       code,
     })
   }
