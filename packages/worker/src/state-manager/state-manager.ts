@@ -7,7 +7,7 @@ import sharp from 'sharp'
 import { anchors } from '../anchors'
 import { getCoordinatesByMap } from '../data/coordinates'
 import { getLobbySettingsCoordinates } from '../data/lobby-settings'
-import { findAnchor, findAnchorV2 } from '../img-proccesing/img-proccesing'
+import { findAnchorV2 } from '../img-proccesing/img-proccesing'
 import type { LDPlayer } from '../ldconnector/ld'
 import { getRunnerAuthInfo } from '../storage/get-runner-info'
 import { updateRunnerInfo } from '../storage/update-storage'
@@ -16,7 +16,6 @@ import { wait } from '../utils/utils'
 import { client } from '../ws/ws'
 import { runSteps } from './steps'
 import { waitForPlayers } from './waiting-for-players'
-import { throws } from 'node:assert'
 
 export type Teams = {
   ct: string[]
@@ -429,7 +428,7 @@ export class StateManager {
     await waitForPlayers.startGame(this)
 
     this.setState('inGame')
-    return { wait: 10000 }
+    return { wait: 30000 }
   }
 
   private async lowSettings(): Promise<ActionRet> {
