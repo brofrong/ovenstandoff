@@ -59,6 +59,7 @@ export const wsContract = createContract({
   },
   lobbyCode: {
     client: z.object({
+      runnerName: z.string(),
       code: z.string(),
     }),
   },

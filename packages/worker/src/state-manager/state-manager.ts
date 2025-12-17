@@ -16,6 +16,7 @@ import { wait } from '../utils/utils'
 import { client } from '../ws/ws'
 import { runSteps } from './steps'
 import { waitForPlayers } from './waiting-for-players'
+import { throws } from 'node:assert'
 
 export type Teams = {
   ct: string[]
@@ -498,14 +499,14 @@ export class StateManager {
   private async inGame(): Promise<ActionRet> {
     await this.takeScreenshot()
 
-    if (await findAnchor(this.currentImg, 'in_game_t_win')) {
-      log.info('match ended t win')
-      client?.send.matchEnded({
-        winner: 't',
-      })
+    // if (await findAnchorV2(this.currentImg, anchors.inGameCtWin)) {
+    //   log.info('match ended t win')
+    //   client?.send.matchEnded({
+    //     winner: 't',
+    //   })
 
-      return this.matchEnded()
-    }
+    //   return this.matchEnded()
+    // }
 
     if (await findAnchorV2(this.currentImg, anchors.inGameCtWin)) {
       log.info('match ended ct win')
@@ -518,6 +519,15 @@ export class StateManager {
     if (await findAnchorV2(this.currentImg, anchors.mainMenuBackToMatch)) {
       await runSteps([{ step: 'click', data: { anchor: anchors.mainMenuBackToMatch } }], this)
       return { wait: 1000 }
+    }
+
+    if (await findAnchorV2(this.currentImg, anchors.lobbyExitFromLobby)) {
+      log.info('match ended with error')
+      client?.send.matchEnded({
+        winner: 'error',
+      })
+
+      return this.matchEnded();
     }
 
     if (
@@ -577,6 +587,7 @@ export class StateManager {
       console.error('Client not found!!!!!!!!')
     }
     client?.send.lobbyCode({
+      runnerName: this.ldPlayer.name,
       code,
     })
   }

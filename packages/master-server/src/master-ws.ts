@@ -62,7 +62,7 @@ const applyMessageHandlers = (
   })
 
   server.on.lobbyCode(async (data) => {
-    const runner = runners.find((it) => it.ws === ws)
+    const runner = runners.find((it) => it.name === data.runnerName);
     if (!runner) {
       return { error: `Runner not found` }
     }
