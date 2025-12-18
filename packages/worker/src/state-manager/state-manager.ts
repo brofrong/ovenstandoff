@@ -26,6 +26,10 @@ type ActionRet = { wait: number | null }
 
 export const activeStateManagers: StateManager[] = [];
 
+export function clearActiveStateManagers(): void {
+  activeStateManagers.length = 0;
+}
+
 export const faker = new Faker({
   locale: en,
 });

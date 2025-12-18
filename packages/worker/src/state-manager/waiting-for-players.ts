@@ -171,7 +171,22 @@ async function getJoinedPlayersCountKickPlayersNotInList(
       continue
     }
 
-    const playerTeam = stateManager.teams.ct.includes(playerName) ? 'ct' : 't';
+    const findPlayerTeam = (name: string) => {
+      const inCT = stateManager.teams.ct.includes(name);
+      const inT = stateManager.teams.t.includes(name);
+      if (inCT && inT) {
+        return null;
+      }
+      if (inCT) {
+        return 'ct';
+      }
+      if (inT) {
+        return 't';
+      }
+      return null;
+    }
+    
+    const playerTeam = findPlayerTeam(playerName);
     log.info(`playerName ${playerName} - playerTeam ${playerTeam}`);
     const currentTeam = await isPlayerInTeam(slotName, stateManager.currentImg);
     if (currentTeam !== playerTeam) {

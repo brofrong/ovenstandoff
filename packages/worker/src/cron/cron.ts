@@ -7,7 +7,7 @@ import {
 import { unzip } from '../../../setup/src/unzip';
 import { getLd } from '../../../shared/src/ld-command';
 import { startWorker } from '../core/worket';
-import { activeStateManagers, type StateManager } from '../state-manager/state-manager';
+import {activeStateManagers, StateManager, clearActiveStateManagers} from '../state-manager/state-manager';
 import { log } from '../utils/log';
 import { wait } from '../utils/utils';
 
@@ -48,7 +48,8 @@ let updateInProgress = false
 
 async function restartWorkers() {
   const config = await getConfig()
-  await getLd(config).quitall()
+  await getLd(config).quitall();
+  clearActiveStateManagers();
   await wait(10000)
   await startWorker()
 }
