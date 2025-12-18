@@ -1,14 +1,13 @@
 import sharp from 'sharp';
 import { anchors } from '../anchors';
 import { findAnchorV2 } from '../img-proccesing/img-proccesing';
-import { getPlayerName, playerNameCoords } from '../img-proccesing/player-name-detection';
+import { playerNameCoords } from '../img-proccesing/player-name-detection';
+import { getPlayerNamePaddleRemote } from '../img-proccesing/player-name-detection-paddle-remote';
 import { log } from '../utils/log';
 import { fuzzySearchNames } from '../utils/utils';
 import { client } from '../ws/ws';
 import type { StateManager, Teams } from './state-manager';
 import { runSteps } from './steps';
-import { getPlayerNamePaddle } from '../img-proccesing/player-name-detection-paddle';
-import { getPlayerNamePaddleRemote } from '../img-proccesing/player-name-detection-paddle-remote';
 
 async function isMatchExpired(stateManager: StateManager): Promise<boolean> {
   // check if match startedTimestamp is set

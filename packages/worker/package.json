@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "create-anchors": "bun ./script/create-anchors.ts",
+    "create-anchors": "bun run ./script/create-anchors-v2.ts",
     "lint": "biome check .",
     "lint:fix": "biome check --write ."
   },
