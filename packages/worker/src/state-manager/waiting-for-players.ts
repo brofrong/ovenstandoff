@@ -8,6 +8,7 @@ import { client } from '../ws/ws';
 import type { StateManager, Teams } from './state-manager';
 import { runSteps } from './steps';
 import { getPlayerNamePaddle } from '../img-proccesing/player-name-detection-paddle';
+import { getPlayerNamePaddleRemote } from '../img-proccesing/player-name-detection-paddle-remote';
 
 async function isMatchExpired(stateManager: StateManager): Promise<boolean> {
   // check if match startedTimestamp is set
@@ -147,7 +148,7 @@ async function getJoinedPlayersCountKickPlayersNotInList(
     log.info(`slot: ${slot} is cheking`)
     await stateManager.takeScreenshot()
     const slotName = slot
-    const imgPlayerName = await getPlayerNamePaddle(slotName, stateManager.currentImg);
+    const imgPlayerName = await getPlayerNamePaddleRemote(slotName, stateManager.currentImg);
 
     if (!imgPlayerName) {
       continue;

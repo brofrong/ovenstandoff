@@ -1,7 +1,6 @@
-import { expect, test } from 'bun:test'
-import { loadBuffer } from '../src/img-proccesing/memo-img'
-import { getPlayerNamePaddle } from '../src/img-proccesing/player-name-detection-paddle'
-import { fuzzySearchNames } from '../src/utils/utils'
+import { loadBuffer } from '../src/img-proccesing/memo-img';
+import { getPlayerNamePaddleRemote } from '../src/img-proccesing/player-name-detection-paddle-remote';
+import { fuzzySearchNames } from '../src/utils/utils';
 
 // test('find player names', async () => {
 const slotsNames = [
@@ -29,7 +28,7 @@ const img = await loadBuffer('./test-img/namesv2-1.png')
 
 for (const slot of slotsNames) {
   const index = slotsNames.indexOf(slot)
-  const name = await getPlayerNamePaddle(slot, img)
+  const name = await getPlayerNamePaddleRemote(slot, img)
   console.log(name)
 
   if (!name) {
