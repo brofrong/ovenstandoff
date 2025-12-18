@@ -23,7 +23,7 @@ export function fuzzySearchNames(
   name: string,
   allNames: string[]
 ): string | null {
-  const cleanAllNames = allNames.map(removeNonLatin)
+  const cleanAllNames = allNames.map(removeNonLatin).map(name => name.trim());
 
   const fuse = new Fuse(cleanAllNames, {
     threshold: 0.4,
@@ -32,7 +32,7 @@ export function fuzzySearchNames(
     includeScore: true,
   })
 
-  const result = fuse.search(name)
+  const result = fuse.search(name.trim())
 
-  return result[0]?.item ?? null
+  return result.at(0)?.item ?? null
 }

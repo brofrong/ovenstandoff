@@ -154,7 +154,7 @@ async function getJoinedPlayersCountKickPlayersNotInList(
     }
 
     const playerName = fuzzySearchNames(imgPlayerName, allPlayers);
-    console.log('find name', slotName, 'playerName', playerName);
+    log.info(`find name ${slotName} - playerName ${playerName}`);
 
     if (!playerName) {
       //kick player
@@ -171,8 +171,9 @@ async function getJoinedPlayersCountKickPlayersNotInList(
       continue
     }
 
-    const playerTeam = stateManager.teams.ct.includes(playerName) ? 'ct' : 't'
-    const currentTeam = await isPlayerInTeam(slotName, stateManager.currentImg)
+    const playerTeam = stateManager.teams.ct.includes(playerName) ? 'ct' : 't';
+    log.info(`playerName ${playerName} - playerTeam ${playerTeam}`);
+    const currentTeam = await isPlayerInTeam(slotName, stateManager.currentImg);
     if (currentTeam !== playerTeam) {
       const teamKey =
         playerTeam === 'ct' ? anchors.lobbyToCT : anchors.lobbyToTR;
