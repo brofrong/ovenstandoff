@@ -32,7 +32,8 @@ export function fuzzySearchNames(
     includeScore: true,
   })
 
-  const result = fuse.search(name.trim())
+  const result = fuse.search(name.trim());
+  const resultIndex = result.at(0)?.refIndex ?? -1;
 
-  return result.at(0)?.item ?? null
+  return resultIndex !== -1 ? allNames[resultIndex] ?? null : null;
 }
