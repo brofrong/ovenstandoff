@@ -1,50 +1,94 @@
-import { loadBuffer } from '../src/img-proccesing/memo-img';
-import { getPlayerNamePaddleRemote } from '../src/img-proccesing/player-name-detection-paddle-remote';
-import { fuzzySearchNames } from '../src/utils/utils';
+import { expect, test } from 'bun:test'
+import { loadBuffer } from '../src/img-proccesing/memo-img'
+import { getPlayerNamePaddleRemote } from '../src/img-proccesing/player-name-detection-paddle-remote'
+import { fuzzySearchNames } from '../src/utils/utils'
 
-// test('find player names', async () => {
-const slotsNames = [
-  'free_slot_1',
-  'free_slot_2',
-  'free_slot_3',
-  'free_slot_4',
-  'free_slot_5',
-  'free_slot_6',
-  'free_slot_7',
-  'free_slot_8',
-  'free_slot_9',
-  'free_slot_10',
-]
+test('find player names 1', async (done) => {
+  const slotsNames = [
+    'free_slot_1',
+    'free_slot_2',
+    'free_slot_3',
+    'free_slot_4',
+    'free_slot_5',
+    'free_slot_6',
+    'free_slot_7',
+    'free_slot_8',
+    'free_slot_9',
+    'free_slot_10',
+  ]
 
-const teams = {
-  teams: {
-    ct: ['Militriss', 'ch1', 'BalaganSky', 'Milichka', 'ch3'],
-    t: ['ch2', 'ch6', 'ch4', 'ch7', 'ch5'],
-  },
-}
-
-const allPlayers = [...teams.teams.ct, ...teams.teams.t]
-const img = await loadBuffer('./test-img/namesv2-1.png')
-
-for (const slot of slotsNames) {
-  const index = slotsNames.indexOf(slot)
-  const name = await getPlayerNamePaddleRemote(slot, img)
-  console.log(name)
-
-  if (!name) {
-    throw new Error(`${slot} not found`)
+  const teams = {
+    teams: {
+      ct: ['Militriss', 'ch1', 'BalaganSky', 'Milichka', 'ch3'],
+      t: ['ch2', 'ch6', 'ch4', 'ch7', 'ch5'],
+    },
   }
-  const expectedName = fuzzySearchNames(name, allPlayers)
-  if (!expectedName) {
-    console.log(`${name} not found in ${allPlayers}`)
-  }
-  console.log(`${expectedName === allPlayers[index] ? "success" : "failed"} - expectedName ${expectedName} - allPlayers ${allPlayers[index]}`)
-  // expect(expectedName).toBe(allPlayers[index] ?? null)
-  // expect(name).toBe(allPlayers[index]?.trim() ?? null)
-}
 
-// done();
-// })
+  const allPlayers = [...teams.teams.ct, ...teams.teams.t]
+  const img = await loadBuffer('./test-img/namesv2-1.png')
+
+  for (const slot of slotsNames) {
+    const index = slotsNames.indexOf(slot)
+    const name = await getPlayerNamePaddleRemote(slot, img)
+    console.log(name)
+
+    if (!name) {
+      throw new Error(`${slot} not found`)
+    }
+    const expectedName = fuzzySearchNames(name, allPlayers)
+    if (!expectedName) {
+      console.log(`${name} not found in ${allPlayers}`)
+    }
+    console.log(
+      `${expectedName === allPlayers[index] ? 'success' : 'failed'} - expectedName ${expectedName} - allPlayers ${allPlayers[index]}`
+    )
+    expect(expectedName).toBe(allPlayers[index] ?? null)
+  }
+  done()
+})
+
+test('find player names 2 with russian names', async (done) => {
+  const slotsNames = [
+    'free_slot_1',
+    'free_slot_2',
+    'free_slot_3',
+    'free_slot_4',
+    'free_slot_5',
+    'free_slot_6',
+    'free_slot_7',
+    'free_slot_8',
+    'free_slot_9',
+  ]
+
+  const teams = {
+    teams: {
+      ct: ['BalaganSky', 'pen1lo', 'ch5', 'ch1', 'ch4'],
+      t: ['Relax', 'Blg1', 'D1esel', 'Кирилл'],
+    },
+  }
+
+  const allPlayers = [...teams.teams.ct, ...teams.teams.t]
+  const img = await loadBuffer('./test-img/namesv2-2.png')
+
+  for (const slot of slotsNames) {
+    const index = slotsNames.indexOf(slot)
+    const name = await getPlayerNamePaddleRemote(slot, img)
+    console.log(name)
+
+    if (!name) {
+      throw new Error(`${slot} not found`)
+    }
+    const expectedName = fuzzySearchNames(name, allPlayers)
+    if (!expectedName) {
+      console.log(`${name} not found in ${allPlayers}`)
+    }
+    console.log(
+      `${expectedName === allPlayers[index] ? 'success' : 'failed'} - expectedName ${expectedName} - allPlayers ${allPlayers[index]}`
+    )
+    expect(expectedName).toBe(allPlayers[index] ?? null)
+  }
+  done()
+})
 
 // test('find player names 2', async () => {
 //   const slotsNames = ['free_slot_1', 'free_slot_2']
